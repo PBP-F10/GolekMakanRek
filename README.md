@@ -1,9 +1,8 @@
 <!-- Kalau ada yang mau ditambah/diedit boleh yaa, misal mau tambah emoji, bikin bagus tampilannya, dll. -->
 # <!-- emote apa yang bagus ya --> GolekMakanRek!
 **GolekMakanRek!** adalah website untuk Anda para penduduk dan juga turis di Surabaya untuk memilih kuliner sesuai selera Anda.
-> Proyek ini dibuat untuk memenuhi tugas Proyek Tengah Semester (PTS) pada mata kuliah Pemrograman Berbasis Platform (CSGE602022) yang diselenggarakan oleh Fakultas Ilmu Komputer, Universitas Indonesia Tahun Ajaran 2024/2025 Semester Gasal.
 
-## 👥 Anggota Kelompok
+## Anggota Kelompok
 | Nama | NPM | Akun GitHub | 
 | -- | -- | -- |
 | Nisrina Annaisha Sarnadi | 2306275960 | [aisss](https://github.com/nsrnannaisha) |
@@ -16,7 +15,7 @@
 ## Deskripsi Aplikasi
 **GolekMakanRek!** adalah website untuk Anda para penduduk dan juga turis di Surabaya untuk memilih kuliner sesuai selera Anda.
 
-## 📚 Daftar Modul
+## Daftar Modul
 Berikut adalah daftar modul yang akan di-implementasikan:
  
 | Modul | Pengembang | Penjelasan |
@@ -30,10 +29,26 @@ Berikut adalah daftar modul yang akan di-implementasikan:
 
 ## *Role*/Peran Pengguna
 ### Pengguna
-Isi dengan peran pengguna.
+#### Pengguna (terautentikasi)
+Pengguna yang sudah melakukan register dan login dapat:
+- Melakukan pencarian dan filtering daftar makanan dan restoran.
+- Membuka fitur food preview dan restaurant preview.
+- Membuka dan mengubah informasi pengguna pada user dashboard.
+- Membuka dan menambahkan wishlist pribadi pengguna.
+#### Pengguna (belum terautentikasi)
+Pengguna yang belum melakukan register dan login hanya dapat:
+- Membuka homepage.
+- Melakukan pencarian dan filtering daftar makanan dan restoran.
+- Membuka fitur food preview dan restaurant preview.
 
 ### Admin
-Isi dengan peran Admin.
+Role admin memiliki akses untuk mengelola aplikasi.
+- Menghapus rating makanan
+- Menghapus review makanan
+
 
 ## *Dataset* yang Digunakan
 Dataset yang digunakan berasal dari [nama link]().
+
+## Deployment URL
+Aplikasi kami dapat diakses pada tautan http://joshua-montolalu-golekmakanrek.pbp.cs.ui.ac.id/.

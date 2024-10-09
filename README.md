@@ -2,6 +2,9 @@
 # 🍲 GolekMakanRek! 🍜
 **GolekMakanRek!** adalah website untuk Anda para penduduk dan juga turis di Surabaya untuk memilih kuliner sesuai selera.
 
+## 📜 Back Story
+Surabaya, sebagai salah satu kota besar di Indonesia, memiliki kekayaan kuliner yang sangat beragam, mulai dari jajanan kaki lima hingga restoran mewah. Namun, dengan begitu banyak pilihan, baik penduduk lokal maupun wisatawan sering kali kebingungan menentukan tempat makan yang sesuai dengan selera dan kebutuhan mereka. Dari sinilah ide GolekMakanRek! muncul—sebuah platform yang dirancang untuk membantu masyarakat Surabaya dan para wisatawan menjelajahi serta menemukan kuliner terbaik di kota ini dengan mudah. GolekMakanRek! bertujuan menjadi solusi bagi setiap orang yang ingin menikmati hidangan lezat, tanpa harus repot memilih di tengah keramaian kota.
+
 ## 👥 Anggota Kelompok
 | Nama | NPM | Akun GitHub | 
 | -- | -- | -- |

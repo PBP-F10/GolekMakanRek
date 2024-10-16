@@ -9,8 +9,13 @@ class SearchFoodForm(ModelForm):
         model = Food
         fields = ["name", "category", "price"]
         widgets = {
-            'name': TextInput(attrs={'class': 'form-control form-control-border', 'placeholder': 'Search Food'}),
-            'category': Select(attrs={'class': 'form-control form-control-border'}, choices=Food.objects.values_list('category', 'category').distinct()),
+            'name': TextInput(attrs={'class': 'form-control form-control-border', 'placeholder': 'Masukkan nama makanan'}),
+            'category': Select(attrs={'class': 'form-control form-control-border'}, choices=[('None', 'Pilih kategori')] + list(Food.objects.values_list('category', 'category').distinct())),
+        }
+        labels = {
+            'name': 'Nama makanan',
+            'category': 'Kategori',
+            'price': 'Harga Makanan'
         }
 
     def __init__(self, *args, **kwargs):
@@ -28,8 +33,12 @@ class SearchRestaurantForm(ModelForm):
         model = Restaurant
         fields = ["name", "category"]
         widgets = {
-            'name': TextInput(attrs={'class': 'form-control form-control-border', 'placeholder': 'Search Restaurant'}),
-            'category': Select(attrs={'class': 'form-control form-control-border'}, choices=Restaurant.objects.values_list('category', 'category').distinct()),
+            'name': TextInput(attrs={'class': 'form-control form-control-border', 'placeholder': 'Masukkan nama restoran'}),
+            'category': Select(attrs={'class': 'form-control form-control-border'}, choices= [('None', 'Pilih kategori')] + list(Restaurant.objects.values_list('category', 'category').distinct())),
+        }
+        labels = {
+            'name': 'Nama Restoran',
+            'category': 'Kategori',
         }
     
     def __init__(self, *args, **kwargs):

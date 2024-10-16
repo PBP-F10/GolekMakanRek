@@ -28,7 +28,7 @@ def search(request, type):
         search_form = SearchFoodForm()
     else:
         search_form = SearchRestaurantForm()
-    return HttpResponse("OK", status=200)
+    return HttpResponse(b"OK", status=200)
 
 @login_required(login_url='/login')
 @require_POST
@@ -51,10 +51,11 @@ def get_food(request):
     if request.GET:
         filters = {}
         for param in request.GET:
-            filters[f"{param}__icontains"] = request.GET.get(param)
+            if request.GET.get(param) != "None":
+                filters[f"{param}__icontains"] = request.GET.get(param)
         data = serializers.serialize("json", Food.objects.filter(**filters))
         return HttpResponse(data, content_type="application/json")
-    
+
     data = serializers.serialize("json", Food.objects.all())
     return HttpResponse(data, content_type="application/json")
 
@@ -62,7 +63,8 @@ def get_restaurant(request):
     if request.GET:
         filters = {}
         for param in request.GET:
-            filters[f"{param}__icontains"] = request.GET.get(param)
+            if request.GET.get(param) != "None":
+                filters[f"{param}__icontains"] = request.GET.get(param)
         data = serializers.serialize("json", Restaurant.objects.filter(**filters))
         return HttpResponse(data, content_type="application/json")
     

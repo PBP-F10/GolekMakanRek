@@ -55,5 +55,6 @@ class LikeForm(ModelForm):
         model = Likes
         fields = ["user_id" , "food_id"]
         widgets = {
+            'user_id': HiddenInput(),
             'food_id': HiddenInput(),
         }

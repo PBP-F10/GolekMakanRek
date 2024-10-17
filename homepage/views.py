@@ -12,14 +12,21 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
+from django.contrib.auth.models import User
 
 # Create your views here.
 def show_homepage(request):
     food_search = SearchFoodForm()
     restaurant_search = SearchRestaurantForm()
+    like = LikeForm()
+    login(request, User.objects.get(username='joshua'))
     context = {
         'food_search': food_search,
         'restaurant_search': restaurant_search,
+        'like_form': like,
+        'likes': Likes.objects.filter(user_id=request.user) if request.user.is_authenticated else None,
+        'foods': Food.objects.all(),
+        'restaurants': Restaurant.objects.all()
     }
     return render(request, "index.html", context)
 
@@ -34,18 +41,21 @@ def search(request, type):
 @require_POST
 @csrf_exempt
 def toggle_like(request):
-    like = Likes.objects.get(user_id=request.user, food_id=request.POST.get("food_id"))
+    try:
+        like = Likes.objects.get(user_id=request.user, food_id=request.POST.get("food_id"))
+    except Exception as e:
+        like = None
 
     if like:
         like.delete()
-        return HttpResponse(b"Success", status=201)
+        return HttpResponseRedirect(reverse("homepage:show_homepage"))
 
     like_form = LikeForm(request.POST)
-    if like_form.is_valid():
+    print(like_form.as_table())
+    if like_form.is_valid() and like_form.cleaned_data["user_id"] == request.user:
         like = like_form.save(commit=False)
-        like.user_id = request.user
         like.save()
-        return HttpResponse(b"Success", status=201)
+        return HttpResponseRedirect(reverse("homepage:show_homepage"))
 
 def get_food(request):
     if request.GET:

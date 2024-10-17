@@ -10,6 +10,7 @@
     <div style="margin-bottom: 10px;">
         <form action="/get_food" method="get">
             {{ food_search }}
+            <input type="checkbox" name="like_filter">Tampilkan makanan yang disukai saja</input><br>
             <input type="submit" value="Submit">
         </form>
     </div>
@@ -19,4 +20,24 @@
             <input type="submit" value="Submit">
         </form>
     </div>
+    {% for food in foods %}
+    <div>
+        <h2>{{ food.name }}</h2>
+        <p>{{ food.description }}</p>
+        <p>{{ food.price }}</p>
+        <form action="/toggle_like/" method="post">
+            {% csrf_token %}
+            <!-- {{ like_form }} -->
+            <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
+            <input type="hidden" id="id_food_id" name="food_id" value="{{ food.pk }}">
+            <button type="submit">
+            {% for like in likes %}
+                {% if food.pk == like.food_id.pk %}
+                    Remove 
+                {% endif %}
+            {% endfor %}
+            Like!</button>
+        </form>
+    </div>
+    {% endfor %}
 {% endblock %}

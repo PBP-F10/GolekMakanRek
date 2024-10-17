@@ -6,7 +6,7 @@ import uuid
 
 # Create your models here.
 class Food(models.Model):
-    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
     category = models.CharField(max_length=255)
     price = models.IntegerField()
@@ -26,7 +26,7 @@ class Food(models.Model):
         return self.discount > 0
 
 class Restaurant(models.Model):
-    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
     category = models.CharField(max_length=255)
     description = models.TextField()

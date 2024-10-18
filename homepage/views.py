@@ -1,12 +1,9 @@
-import datetime
 from django.shortcuts import render, redirect, reverse
 from .forms import SearchFoodForm, SearchRestaurantForm, LikeForm
 from .models import Food, Restaurant, Likes
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core import serializers
 from django.urls import reverse
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -18,12 +15,10 @@ from django.contrib.auth.models import User
 def show_homepage(request):
     food_search = SearchFoodForm()
     restaurant_search = SearchRestaurantForm()
-    like = LikeForm()
-    login(request, User.objects.get(username='joshua'))
+    login(request, User.objects.get(username='joshua')) # hapus nanti kalau udah ada auth
     context = {
         'food_search': food_search,
         'restaurant_search': restaurant_search,
-        'like_form': like,
         'likes': Likes.objects.filter(user_id=request.user) if request.user.is_authenticated else None,
         'foods': Food.objects.all(),
         'restaurants': Restaurant.objects.all()
@@ -51,10 +46,9 @@ def toggle_like(request):
         return HttpResponseRedirect(reverse("homepage:show_homepage"))
 
     like_form = LikeForm(request.POST)
-    print(like_form.as_table())
+    # print(like_form.as_table())
     if like_form.is_valid() and like_form.cleaned_data["user_id"] == request.user:
-        like = like_form.save(commit=False)
-        like.save()
+        like_form.save()
         return HttpResponseRedirect(reverse("homepage:show_homepage"))
 
 def get_food(request):

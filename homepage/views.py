@@ -43,20 +43,29 @@ def toggle_like(request):
 
     if like:
         like.delete()
-        return HttpResponseRedirect(reverse("homepage:show_homepage"))
+        return HttpResponse(b"Success", 201)
 
     like_form = LikeForm(request.POST)
     # print(like_form.as_table())
     if like_form.is_valid() and like_form.cleaned_data["user_id"] == request.user:
         like_form.save()
-        return HttpResponseRedirect(reverse("homepage:show_homepage"))
+        return HttpResponse(b"Success", 201)
+    print(like_form.errors)
+    return HttpResponse(b"Invalid form", status=400)
 
 def get_food(request):
     if request.GET:
         filters = {}
+        like_only = False
         for param in request.GET:
+            if param == "like_filter":
+                like_only = True
+                continue
             if request.GET.get(param) != "None":
                 filters[f"{param}__icontains"] = request.GET.get(param)
+        #if like_only:
+        #    data = serializers.serialize("json", Food.objects.filter(**filters).filter(likes__user_id=request.user))
+        #    return HttpResponse(data, content_type="application/json")
         data = serializers.serialize("json", Food.objects.filter(**filters))
         return HttpResponse(data, content_type="application/json")
 
@@ -73,4 +82,8 @@ def get_restaurant(request):
         return HttpResponse(data, content_type="application/json")
     
     data = serializers.serialize("json", Restaurant.objects.all())
+    return HttpResponse(data, content_type="application/json")
+
+def get_likes(request):
+    data = serializers.serialize("json", Likes.objects.filter(user_id=request.user))
     return HttpResponse(data, content_type="application/json")

@@ -11,4 +11,5 @@ urlpatterns = [
     path('toggle_like/', toggle_like, name='toggle_like'),
     path('get_food/', get_food, name='get_food'),
     path('get_restaurant/', get_restaurant, name='get_restaurant'),
+    path('get_likes/', get_likes, name='get_likes'),
 ]

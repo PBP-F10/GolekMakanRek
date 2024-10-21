@@ -1,7 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block meta %}
     <title>GolekMakanRek!</title>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
 {% endblock meta %}
 
 {% block content %}
@@ -11,21 +13,22 @@
         <form action="/get_food" method="get">
             {{ food_search }}
             <input type="checkbox" name="like_filter">Tampilkan makanan yang disukai saja</input><br>
-            <input type="submit" value="Submit">
+            <input type="submit" value="Cari">
         </form>
     </div>
     <div>
         <form action="/get_restaurant" method="get">
             {{ restaurant_search }}
-            <input type="submit" value="Submit">
+            <input type="submit" value="Cari">
         </form>
     </div>
+    <div id="food_cards">
     {% for food in foods %}
     <div>
         <h2>{{ food.name }}</h2>
         <p>{{ food.description }}</p>
         <p>{{ food.price }}</p>
-        <form action="/toggle_like/" method="post">
+        <form class="like_form" id="{{ food_id }}">
             {% csrf_token %}
             <!-- {{ like_form }} -->
             <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
@@ -40,4 +43,93 @@
         </form>
     </div>
     {% endfor %}
+    </div>
+    <script>
+        async function getFood() {
+            return fetch("{% url 'homepage:get_food' %}").then(
+                (res) => res.json()
+            )
+        }
+        async function getRestaurants() {
+            return fetch("{% url 'homepage:get_restaurant' %}").then(
+                (res) => res.json()
+            )
+        }
+        async function getLikes() {
+            return fetch("{% url 'homepage:get_likes' %}").then(
+                (res) => res.json()
+            )
+        }
+        async function refreshFood() {
+            document.getElementById("food_cards").innerHTML = "";
+            document.getElementById("food_cards").className = "";
+            const food = await getFood();
+            const likes = await getLikes();
+            let htmlString = "";
+            let classNameString = "";
+        
+            if (food.length === 0) {
+                classNameString = "container";
+                htmlString = `
+                    <img src="{% static 'image/sad_image.png' %}" alt="Crying girl" class="img-fluid" width="100" height="100" />
+                    <h3 class="title mt-3">Belum ada makanan terdaftar!</h3>
+                `;
+            }
+            else {
+                classNameString = "container";
+                htmlString = "";
+                food.forEach((item) => {
+                    const isLiked = likes.some((like) => like.fields.food_id === item.pk);
+                    const name = DOMPurify.sanitize(item.fields.name);
+                    const description = DOMPurify.sanitize(item.fields.description);
+                    htmlString += `
+                    <div>
+                        <h2>${name}</h2>
+                        <p>${description}</p>
+                        <p>${item.fields.price}</p>
+                        <form class="like_form" id="${item.pk}">
+                            <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
+                            <input type="hidden" id="id_food_id" name="food_id" value="${item.pk}">
+                            <button type="submit">${isLiked ? "Remove Like!" : "Like!"}</button>
+                        </form>
+                    </div>
+                `;
+                });
+                htmlString += "</div>";
+            }
+            
+            document.getElementById("food_cards").className = classNameString;
+            document.getElementById("food_cards").innerHTML = htmlString;
+            document.querySelectorAll(".like_form").forEach((form) => {
+                form.addEventListener("submit", (e) => {
+                    e.preventDefault();
+                    toggleLike(form.id);
+                });
+            });
+        }
+        async function refreshRestaurants() {
+            document.getElementById("restaurant_cards").innerHTML = "";
+            document.getElementById("restaurant_cards").className = "";
+            const restaurants = await getRestaurants();
+            let htmlString = "";
+            let classNameString = "";
+        }
+        function toggleLike(formId) {
+            fetch("{% url 'homepage:toggle_like' %}", {
+                method: "POST",
+                body: new FormData(document.getElementById(formId)),
+            })
+            .then(response => refreshFood());
+
+            return false;
+        }
+        document.querySelectorAll(".like_form").forEach((form) => {
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+                toggleLike(form.id);
+            });
+        });
+        refreshFood();
+    </script>
+    <script src="{% static 'js/index.js' %}"></script>
 {% endblock %}

@@ -50,6 +50,10 @@
             </div>
             <div id="food_cards"></div>
         `;
+        document.querySelector("#searchFoodForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            refreshFoodSearch();
+        });
         refreshFood();
       }
       function toggleRestaurant() {
@@ -62,6 +66,10 @@
             </div>
             <div id="restaurant_cards"></div>
           `;
+          document.querySelector("#searchRestaurantForm").addEventListener("submit", (e) => {
+              e.preventDefault();
+              refreshRestaurantsSearch();
+          });
           refreshRestaurants();
       }
       async function refreshFood() {
@@ -151,6 +159,46 @@
           return fetch("{% url 'homepage:get_food' %}?" + params).then(
               response => response.json()
           );
+      }
+      async function searchRestaurant() {
+          const params = new URLSearchParams(new FormData(document.getElementById("searchRestaurantForm"))).toString();
+          return fetch("{% url 'homepage:get_restaurant' %}?" + params).then(
+              response => response.json()
+          );
+      }
+      async function refreshRestaurantsSearch() {
+          document.getElementById("restaurant_cards").innerHTML = "";
+          document.getElementById("restaurant_cards").className = "";
+          const restaurant = await searchRestaurant();
+          let htmlString = "";
+          let classNameString = "";
+      
+          if (restaurant.length === 0) {
+              classNameString = "container";
+              htmlString = `
+                  <img src="{% static 'image/sad_image.png' %}" alt="Crying girl" class="img-fluid" width="100" height="100" />
+                  <h3 class="title mt-3">Belum ada makanan terdaftar!</h3>
+              `;
+          }
+          else {
+              classNameString = "container";
+              htmlString = "";
+              restaurant.forEach((resto) => {
+                  const name = DOMPurify.sanitize(resto.fields.name);
+                  const description = DOMPurify.sanitize(resto.fields.description);
+                  htmlString += `
+                  <div>
+                      <h2>${name}</h2>
+                      <p>${description}</p>
+                      <a href=""><button>View</button></a>
+                  </div>
+              `;
+              });
+              htmlString += "</div>";
+          }
+          
+          document.getElementById("restaurant_cards").className = classNameString;
+          document.getElementById("restaurant_cards").innerHTML = htmlString;
       }
       async function refreshFoodSearch() {
           document.getElementById("food_cards").innerHTML = "";

@@ -13,7 +13,7 @@ class SearchFoodForm(ModelForm):
             'category': Select(attrs={'class': 'form-control form-control-border'}, choices=[('None', 'Pilih kategori')] + list(Food.objects.values_list('category', 'category').distinct())),
         }
         labels = {
-            'name': 'Nama makanan',
+            'name': 'Nama Makanan',
             'category': 'Kategori',
             'price': 'Harga Makanan'
         }

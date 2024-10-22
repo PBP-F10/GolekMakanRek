@@ -2,197 +2,230 @@
 {% load static %}
 
 {% block meta %}
-    <title>GolekMakanRek!</title>
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
+  <title>GolekMakanRek!</title>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
 {% endblock meta %}
 
 {% block content %}
-    <h1>Selamat datang!</h1>
-    <p>Ingin makanan apa?</p>
+  <h1>Selamat datang!</h1>
+  <p>Apa yang ingin kamu cari?</p>
+  <div class="buttons" style="margin-bottom: 10px;">
+    <button id="foodToggle">Makanan</button>
+    <button id="restoToggle">Restoran</button>
+  </div>
+  <div id="container">
     <div style="margin-bottom: 10px;">
-        <form id="searchFoodForm">
-            {{ food_search }}
-            <input type="checkbox" name="like_filter">Tampilkan makanan yang disukai saja</input><br>
-            <input type="submit" value="Cari">
-        </form>
+      <form id="searchFoodForm">
+        {{ food_search }}
+        <input type="checkbox" name="like_filter">Tampilkan makanan yang disukai saja</input><br>
+        <input type="submit" value="Cari">
+      </form>
     </div>
-    <div>
-        <form id="searchRestaurantForm">
-            {{ restaurant_search }}
-            <input type="submit" value="Cari">
-        </form>
-    </div>
-    <div id="food_cards">
-    {% for food in foods %}
-    <div>
-        <h2>{{ food.name }}</h2>
-        <p>{{ food.description }}</p>
-        <p>{{ food.price }}</p>
-        <form class="like_form" id="{{ food_id }}">
-            {% csrf_token %}
-            <!-- {{ like_form }} -->
-            <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
-            <input type="hidden" id="id_food_id" name="food_id" value="{{ food.pk }}">
-            <button type="submit">
-            {% for like in likes %}
-                {% if food.pk == like.food_id.pk %}
-                    Remove 
-                {% endif %}
-            {% endfor %}
-            Like!</button>
-        </form>
-    </div>
-    {% endfor %}
-    </div>
-    <script>
-        async function getFood() {
-            return fetch("{% url 'homepage:get_food' %}").then(
-                (res) => res.json()
-            )
-        }
-        async function getRestaurants() {
-            return fetch("{% url 'homepage:get_restaurant' %}").then(
-                (res) => res.json()
-            )
-        }
-        async function getLikes() {
-            return fetch("{% url 'homepage:get_likes' %}").then(
-                (res) => res.json()
-            )
-        }
-        async function refreshFood() {
-            document.getElementById("food_cards").innerHTML = "";
-            document.getElementById("food_cards").className = "";
-            const food = await getFood();
-            const likes = await getLikes();
-            let htmlString = "";
-            let classNameString = "";
-        
-            if (food.length === 0) {
-                classNameString = "container";
-                htmlString = `
-                    <img src="{% static 'image/sad_image.png' %}" alt="Crying girl" class="img-fluid" width="100" height="100" />
-                    <h3 class="title mt-3">Belum ada makanan terdaftar!</h3>
-                `;
-            }
-            else {
-                classNameString = "container";
-                htmlString = "";
-                food.forEach((item) => {
-                    const isLiked = likes.some((like) => like.fields.food_id === item.pk);
-                    const name = DOMPurify.sanitize(item.fields.name);
-                    const description = DOMPurify.sanitize(item.fields.description);
-                    htmlString += `
-                    <div>
-                        <h2>${name}</h2>
-                        <p>${description}</p>
-                        <p>${item.fields.price}</p>
-                        <form class="like_form" id="${item.pk}">
-                            <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
-                            <input type="hidden" id="id_food_id" name="food_id" value="${item.pk}">
-                            <button type="submit">${isLiked ? "Remove Like!" : "Like!"}</button>
-                        </form>
-                    </div>
-                `;
-                });
-                htmlString += "</div>";
-            }
-            
-            document.getElementById("food_cards").className = classNameString;
-            document.getElementById("food_cards").innerHTML = htmlString;
-            document.querySelectorAll(".like_form").forEach((form) => {
-                form.addEventListener("submit", (e) => {
-                    e.preventDefault();
-                    toggleLike(form.id);
-                });
-            });
-        }
-        async function refreshRestaurants() {
-            document.getElementById("restaurant_cards").innerHTML = "";
-            document.getElementById("restaurant_cards").className = "";
-            const restaurants = await getRestaurants();
-            let htmlString = "";
-            let classNameString = "";
-        }
-        async function searchFood() {
-            const params = new URLSearchParams(new FormData(document.getElementById("searchFoodForm"))).toString();
-            return fetch("{% url 'homepage:get_food' %}?" + params).then(
-                response => response.json()
-            );
-        }
-        async function refreshFoodSearch() {
-            document.getElementById("food_cards").innerHTML = "";
-            document.getElementById("food_cards").className = "";
-            const food = await searchFood();
-            const likes = await getLikes();
-            let htmlString = "";
-            let classNameString = "";
-        
-            if (food.length === 0) {
-                classNameString = "container";
-                htmlString = `
-                    <img src="{% static 'image/sad_image.png' %}" alt="Crying girl" class="img-fluid" width="100" height="100" />
-                    <h3 class="title mt-3">Belum ada makanan terdaftar!</h3>
-                `;
-            }
-            else {
-                classNameString = "container";
-                htmlString = "";
-                food.forEach((item) => {
-                    const isLiked = likes.some((like) => like.fields.food_id === item.pk);
-                    const name = DOMPurify.sanitize(item.fields.name);
-                    const description = DOMPurify.sanitize(item.fields.description);
-                    htmlString += `
-                    <div>
-                        <h2>${name}</h2>
-                        <p>${description}</p>
-                        <p>${item.fields.price}</p>
-                        <form class="like_form" id="${item.pk}">
-                            <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
-                            <input type="hidden" id="id_food_id" name="food_id" value="${item.pk}">
-                            <button type="submit">${isLiked ? "Remove Like!" : "Like!"}</button>
-                        </form>
-                    </div>
-                `;
-                });
-                htmlString += "</div>";
-            }
-            
-            document.getElementById("food_cards").className = classNameString;
-            document.getElementById("food_cards").innerHTML = htmlString;
-            document.querySelectorAll(".like_form").forEach((form) => {
-                form.addEventListener("submit", (e) => {
-                    e.preventDefault();
-                    toggleLike(form.id);
-                });
-            });
-        }
-        function toggleLike(formId) {
-            fetch("{% url 'homepage:toggle_like' %}", {
-                method: "POST",
-                body: new FormData(document.getElementById(formId)),
-            })
-            .then(response => { 
-                if (response.ok) {
-                    document.getElementById(formId).querySelector("button").textContent = document.getElementById(formId).querySelector("button").textContent === "Like!" ? "Remove Like!" : "Like!";
-                }
-                else {
-                    alert("Failed to save changes! Try again later.");
-                }
-            });
-            return false;
-        }
-        document.querySelectorAll(".like_form").forEach((form) => {
-            form.addEventListener("submit", (e) => {
-                e.preventDefault();
-                toggleLike(form.id);
-            });
-        });
-        document.querySelector("#searchFoodForm").addEventListener("submit", (e) => {
-            e.preventDefault();
-            refreshFoodSearch();
-        });
+    <div id="food_cards"></div>
+  </div>
+  <script>
+      async function getFood() {
+          return fetch("{% url 'homepage:get_food' %}").then(
+              (res) => res.json()
+          )
+      }
+      async function getRestaurants() {
+          return fetch("{% url 'homepage:get_restaurant' %}").then(
+              (res) => res.json()
+          )
+      }
+      async function getLikes() {
+          return fetch("{% url 'homepage:get_likes' %}").then(
+              (res) => res.json()
+          )
+      }
+      function toggleFood() {
+          document.getElementById("container").innerHTML = `
+            <div style="margin-bottom: 10px;">
+              <form id="searchFoodForm">
+                {{ food_search }}
+                <input type="checkbox" name="like_filter">Tampilkan makanan yang disukai saja</input><br>
+                <input type="submit" value="Cari">
+              </form>
+            </div>
+            <div id="food_cards"></div>
+        `;
         refreshFood();
-    </script>
-    <script src="{% static 'js/index.js' %}"></script>
+      }
+      function toggleRestaurant() {
+          document.getElementById("container").innerHTML = `
+            <div style="margin-bottom: 10px;">
+              <form id="searchRestaurantForm">
+                {{ restaurant_search }}
+                <input type="submit" value="Cari">
+              </form>
+            </div>
+            <div id="restaurant_cards"></div>
+          `;
+          refreshRestaurants();
+      }
+      async function refreshFood() {
+          document.getElementById("food_cards").innerHTML = "";
+          document.getElementById("food_cards").className = "";
+          const food = await getFood();
+          const likes = await getLikes();
+          let htmlString = "";
+          let classNameString = "";
+      
+          if (food.length === 0) {
+              classNameString = "container";
+              htmlString = `
+                  <img src="{% static 'image/sad_image.png' %}" alt="Crying girl" class="img-fluid" width="100" height="100" />
+                  <h3 class="title mt-3">Belum ada makanan terdaftar!</h3>
+              `;
+          }
+          else {
+              classNameString = "container";
+              htmlString = "";
+              food.forEach((resto) => {
+                  const isLiked = likes.some((like) => like.fields.food_id === resto.pk);
+                  const name = DOMPurify.sanitize(resto.fields.name);
+                  const description = DOMPurify.sanitize(resto.fields.description);
+                  htmlString += `
+                  <div>
+                      <h2>${name}</h2>
+                      <p>${description}</p>
+                      <p>${resto.fields.price}</p>
+                      <form class="like_form" id="${resto.pk}">
+                          <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
+                          <input type="hidden" id="id_food_id" name="food_id" value="${resto.pk}">
+                          <button type="submit">${isLiked ? "Remove Like!" : "Like!"}</button>
+                      </form>
+                      <a href=""><button>View</button></a>
+                  </div>
+              `;
+              });
+              htmlString += "</div>";
+          }
+          
+          document.getElementById("food_cards").className = classNameString;
+          document.getElementById("food_cards").innerHTML = htmlString;
+          document.querySelectorAll(".like_form").forEach((form) => {
+              form.addEventListener("submit", (e) => {
+                  e.preventDefault();
+                  toggleLike(form.id);
+              });
+          });
+      }
+      async function refreshRestaurants() {
+          document.getElementById("restaurant_cards").innerHTML = "";
+          document.getElementById("restaurant_cards").className = "";
+          const restaurant = await getRestaurants();
+          let htmlString = "";
+          let classNameString = "";
+      
+          if (restaurant.length === 0) {
+              classNameString = "container";
+              htmlString = `
+                  <img src="{% static 'image/sad_image.png' %}" alt="Crying girl" class="img-fluid" width="100" height="100" />
+                  <h3 class="title mt-3">Belum ada makanan terdaftar!</h3>
+              `;
+          }
+          else {
+              classNameString = "container";
+              htmlString = "";
+              restaurant.forEach((resto) => {
+                  const name = DOMPurify.sanitize(resto.fields.name);
+                  const description = DOMPurify.sanitize(resto.fields.description);
+                  htmlString += `
+                  <div>
+                      <h2>${name}</h2>
+                      <p>${description}</p>
+                      <a href=""><button>View</button></a>
+                  </div>
+              `;
+              });
+              htmlString += "</div>";
+          }
+          
+          document.getElementById("restaurant_cards").className = classNameString;
+          document.getElementById("restaurant_cards").innerHTML = htmlString;
+      }
+      async function searchFood() {
+          const params = new URLSearchParams(new FormData(document.getElementById("searchFoodForm"))).toString();
+          return fetch("{% url 'homepage:get_food' %}?" + params).then(
+              response => response.json()
+          );
+      }
+      async function refreshFoodSearch() {
+          document.getElementById("food_cards").innerHTML = "";
+          document.getElementById("food_cards").className = "";
+          const food = await searchFood();
+          const likes = await getLikes();
+          let htmlString = "";
+          let classNameString = "";
+      
+          if (food.length === 0) {
+              classNameString = "container";
+              htmlString = `
+                  <img src="{% static 'image/sad_image.png' %}" alt="Crying girl" class="img-fluid" width="100" height="100" />
+                  <h3 class="title mt-3">Belum ada makanan terdaftar!</h3>
+              `;
+          }
+          else {
+              classNameString = "container";
+              htmlString = "";
+              food.forEach((resto) => {
+                  const isLiked = likes.some((like) => like.fields.food_id === resto.pk);
+                  const name = DOMPurify.sanitize(resto.fields.name);
+                  const description = DOMPurify.sanitize(resto.fields.description);
+                  htmlString += `
+                  <div>
+                      <h2>${name}</h2>
+                      <p>${description}</p>
+                      <p>${resto.fields.price}</p>
+                      <form class="like_form" id="${resto.pk}">
+                          <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
+                          <input type="hidden" id="id_food_id" name="food_id" value="${resto.pk}">
+                          <button type="submit">${isLiked ? "Remove Like!" : "Like!"}</button>
+                      </form>
+                  </div>
+              `;
+              });
+              htmlString += "</div>";
+          }
+          
+          document.getElementById("food_cards").className = classNameString;
+          document.getElementById("food_cards").innerHTML = htmlString;
+          document.querySelectorAll(".like_form").forEach((form) => {
+              form.addEventListener("submit", (e) => {
+                  e.preventDefault();
+                  toggleLike(form.id);
+              });
+          });
+      }
+      function toggleLike(formId) {
+          fetch("{% url 'homepage:toggle_like' %}", {
+              method: "POST",
+              body: new FormData(document.getElementById(formId)),
+          })
+          .then(response => { 
+              if (response.ok) {
+                  document.getElementById(formId).querySelector("button").textContent = document.getElementById(formId).querySelector("button").textContent === "Like!" ? "Remove Like!" : "Like!";
+              }
+              else {
+                  alert("Failed to save changes! Try again later.");
+              }
+          });
+          return false;
+      }
+      document.querySelectorAll(".like_form").forEach((form) => {
+          form.addEventListener("submit", (e) => {
+              e.preventDefault();
+              toggleLike(form.id);
+          });
+      });
+      document.querySelector("#searchFoodForm").addEventListener("submit", (e) => {
+          e.preventDefault();
+          refreshFoodSearch();
+      });
+      document.querySelector("#foodToggle").addEventListener("click", toggleFood);
+      document.querySelector("#restoToggle").addEventListener("click", toggleRestaurant);
+      refreshFood();
+  </script>
 {% endblock %}

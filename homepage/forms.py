@@ -10,8 +10,9 @@ class SearchFoodForm(ModelForm):
         model = Food
         fields = ["nama", "kategori", "harga"]
         widgets = {
-            'nama': TextInput(attrs={'class': 'form-control form-control-border', 'placeholder': 'Masukkan nama makanan'}),
-            'kategori': Select(attrs={'class': 'form-control form-control-border'}, choices=[('None', 'Pilih kategori')] + list(Food.objects.values_list('kategori', 'kategori').distinct())),
+            'nama': TextInput(attrs={'class': 'mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', 'placeholder': 'Masukkan nama makanan'}),
+            'kategori': Select(attrs={'class': 'form-select mt-2 block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'}, choices=[('None', 'Pilih kategori')] + list(Food.objects.values_list('kategori', 'kategori').distinct())),
+            'harga': NumberInput(attrs={'class': 'mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', 'placeholder': 'Masukkan harga makanan'}),
         }
         labels = {
             'nama': 'Nama Makanan',
@@ -34,8 +35,8 @@ class SearchRestaurantForm(ModelForm):
         model = Restaurant
         fields = ["nama", "kategori"]
         widgets = {
-            'nama': TextInput(attrs={'class': 'form-control form-control-border', 'placeholder': 'Masukkan nama restoran'}),
-            'kategori': Select(attrs={'class': 'form-control form-control-border'}, choices= [('None', 'Pilih kategori')] + list(Restaurant.objects.values_list('kategori', 'kategori').distinct())),
+            'nama': TextInput(attrs={'class': 'mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', 'placeholder': 'Masukkan nama restoran'}),
+            'kategori': Select(attrs={'class': 'form-select mt-2 block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'}, choices= [('None', 'Pilih kategori')] + list(Restaurant.objects.values_list('kategori', 'kategori').distinct())),
         }
         labels = {
             'nama': 'Nama Restoran',

@@ -4,25 +4,29 @@
 {% block meta %}
   <title>GolekMakanRek!</title>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 {% endblock meta %}
 
 {% block content %}
 {% include 'navbar.html' %}
-  <h1>Selamat datang!</h1>
-  <p>Apa yang ingin kamu cari?</p>
-  <div class="buttons" style="margin-bottom: 10px;">
-    <button id="foodToggle">Makanan</button>
-    <button id="restoToggle">Restoran</button>
+  <h1 class="text-3xl font-bold text-center mt-8">Selamat datang!</h1>
+  <p class="text-center mt-2">Apa yang ingin kamu cari?</p>
+  <div class="flex justify-center mt-4 mb-8">
+    <button id="foodToggle" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-2">Makanan</button>
+    <button id="restoToggle" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mx-2">Restoran</button>
   </div>
-  <div id="container">
-    <div style="margin-bottom: 10px;">
-      <form id="searchFoodForm">
+  <div id="container" class="max-w-4xl mx-auto p-4 bg-white shadow-md rounded-lg">
+    <div class="mb-4">
+      <form id="searchFoodForm" class="flex flex-col space-y-4">
         {{ food_search }}
-        <input type="checkbox" name="like_filter">Tampilkan makanan yang disukai saja</input><br>
-        <input type="submit" value="Cari">
+        <label class="inline-flex items-center mt-2">
+          <input type="checkbox" name="like_filter" class="form-checkbox h-5 w-5 text-blue-600">
+          <span class="ml-2 text-gray-700">Tampilkan makanan yang disukai saja</span>
+        </label>
+        <input type="submit" value="Cari" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
       </form>
     </div>
-    <div id="food_cards"></div>
+    <div id="food_cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
   </div>
   <script>
       // refactor + check auth for likes + check view buttons
@@ -51,40 +55,49 @@
       function toggleFood() {
           document.getElementById("container").innerHTML = `
             <div style="margin-bottom: 10px;">
-              <form id="searchFoodForm">
+              <form id="searchFoodForm" class="flex flex-col space-y-4">
                 {{ food_search }}
-                <input type="checkbox" name="like_filter">Tampilkan makanan yang disukai saja</input><br>
-                <input type="submit" value="Cari">
+                <label class="inline-flex items-center mt-2">
+                  <input type="checkbox" name="like_filter" class="form-checkbox h-5 w-5 text-blue-600">
+                  <span class="ml-2 text-gray-700">Tampilkan makanan yang disukai saja</span>
+                </label>
+                <input type="submit" value="Cari" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
               </form>
             </div>
             <div id="food_cards"></div>
         `;
         document.querySelector("#searchFoodForm").addEventListener("submit", (e) => {
             e.preventDefault();
-            refreshFoodSearch();
+            refreshFood(true);
         });
         refreshFood();
       }
       function toggleRestaurant() {
           document.getElementById("container").innerHTML = `
             <div style="margin-bottom: 10px;">
-              <form id="searchRestaurantForm">
+              <form id="searchRestaurantForm" class="flex flex-col space-y-4">
                 {{ restaurant_search }}
-                <input type="submit" value="Cari">
+                <input type="submit" value="Cari" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
               </form>
             </div>
             <div id="restaurant_cards"></div>
           `;
           document.querySelector("#searchRestaurantForm").addEventListener("submit", (e) => {
               e.preventDefault();
-              refreshRestaurantsSearch();
+              refreshRestaurants(true);
           });
           refreshRestaurants();
       }
-      async function refreshFood() {
+      async function refreshFood(search=false) {
           document.getElementById("food_cards").innerHTML = "";
           document.getElementById("food_cards").className = "";
-          const food = await getFood();
+          let food;
+          if (search) {
+              food = await searchFood();              
+          }
+          else {
+              food = await getFood();
+          }
           const likes = await getLikes();
           let htmlString = "";
           let classNameString = "";
@@ -123,16 +136,16 @@
                       const name = DOMPurify.sanitize(item.fields.nama);
                       const description = DOMPurify.sanitize(item.fields.deskripsi);
                       htmlString += `
-                      <div>
-                          <h2>${name}</h2>
-                          <p>${description}</p>
-                          <p>Rp ${item.fields.harga}</p>
+                        <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4 border-2 border-gray-300">
+                          <h2 class="text-xl font-semibold">${name}</h2>
+                          <p class="text-gray-700">${description}</p>
+                          <p class="text-green-600 font-bold">Rp ${item.fields.harga}</p>
                           <form class="like_form" id="${item.pk}">
                               <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
                               <input type="hidden" id="id_food_id" name="food_id" value="${item.pk}">
-                              <button type="submit">${isLiked ? "Remove Like!" : "Like!"}</button>
+                              <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">${isLiked ? "Remove Like!" : "Like!"}</button>
                           </form>
-                          <a href=""><button>View</button></a>
+                          <a href=""><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2">View</button></a>
                       </div>
                   `;
                   });
@@ -149,10 +162,16 @@
               });
           });
       }
-      async function refreshRestaurants() {
+      async function refreshRestaurants(search=false) {
           document.getElementById("restaurant_cards").innerHTML = "";
           document.getElementById("restaurant_cards").className = "";
-          const restaurant = await getRestaurants();
+          let restaurant;
+          if (search) {
+              restaurant = await searchRestaurant();
+          }
+          else {
+              restaurant = await getRestaurants();
+          }
           let htmlString = "";
           let classNameString = "";
       
@@ -170,11 +189,11 @@
                   const name = DOMPurify.sanitize(resto.fields.nama);
                   const description = DOMPurify.sanitize(resto.fields.deskripsi);
                   htmlString += `
-                  <div>
-                      <h2>${name}</h2>
-                      <p>${description}</p>
-                      <a href=""><button>View</button></a>
-                  </div>
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4 border-2 border-gray-300">
+                      <h2 class="text-xl font-semibold">${name}</h2>
+                      <p class="text-gray-700">${description}</p>
+                      <a href=""><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2">View</button></a>
+                    </div>
               `;
               });
               htmlString += "</div>";
@@ -194,87 +213,6 @@
           return fetch("{% url 'homepage:get_restaurant' %}?" + params).then(
               response => response.json()
           );
-      }
-      async function refreshRestaurantsSearch() {
-          document.getElementById("restaurant_cards").innerHTML = "";
-          document.getElementById("restaurant_cards").className = "";
-          const restaurant = await searchRestaurant();
-          let htmlString = "";
-          let classNameString = "";
-      
-          if (restaurant.length === 0) {
-              classNameString = "container";
-              htmlString = `
-                  <img src="{% static 'image/sad_image.png' %}" alt="Crying girl" class="img-fluid" width="100" height="100" />
-                  <h3 class="title mt-3">Tidak ada restoran yang ditemukan!</h3>
-              `;
-          }
-          else {
-              classNameString = "container";
-              htmlString = "";
-              restaurant.forEach((resto) => {
-                  const name = DOMPurify.sanitize(resto.fields.nama);
-                  const description = DOMPurify.sanitize(resto.fields.deskripsi);
-                  htmlString += `
-                  <div>
-                      <h2>${name}</h2>
-                      <p>${description}</p>
-                      <a href=""><button>View</button></a>
-                  </div>
-              `;
-              });
-              htmlString += "</div>";
-          }
-          
-          document.getElementById("restaurant_cards").className = classNameString;
-          document.getElementById("restaurant_cards").innerHTML = htmlString;
-      }
-      async function refreshFoodSearch() {
-          document.getElementById("food_cards").innerHTML = "";
-          document.getElementById("food_cards").className = "";
-          const food = await searchFood();
-          const likes = await getLikes();
-          let htmlString = "";
-          let classNameString = "";
-      
-          if (food.length === 0) {
-              classNameString = "container";
-              htmlString = `
-                  <img src="{% static 'image/sad_image.png' %}" alt="Crying girl" class="img-fluid" width="100" height="100" />
-                  <h3 class="title mt-3">Tidak ada makanan yang ditemukan!</h3>
-              `;
-          }
-          else {
-              classNameString = "container";
-              htmlString = "";
-              food.forEach((item) => {
-                  const isLiked = likes.some((like) => like.fields.food_id === item.pk);
-                  const name = DOMPurify.sanitize(item.fields.nama);
-                  const description = DOMPurify.sanitize(item.fields.deskripsi);
-                  htmlString += `
-                  <div>
-                      <h2>${name}</h2>
-                      <p>${description}</p>
-                      <p>Rp ${item.fields.harga}</p>
-                      <form class="like_form" id="${item.pk}">
-                          <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
-                          <input type="hidden" id="id_food_id" name="food_id" value="${item.pk}">
-                          <button type="submit">${isLiked ? "Remove Like!" : "Like!"}</button>
-                      </form>
-                  </div>
-              `;
-              });
-              htmlString += "</div>";
-          }
-          
-          document.getElementById("food_cards").className = classNameString;
-          document.getElementById("food_cards").innerHTML = htmlString;
-          document.querySelectorAll(".like_form").forEach((form) => {
-              form.addEventListener("submit", (e) => {
-                  e.preventDefault();
-                  toggleLike(form.id);
-              });
-          });
       }
       function toggleLike(formId) {
           fetch("{% url 'homepage:toggle_like' %}", {
@@ -299,7 +237,7 @@
       });
       document.querySelector("#searchFoodForm").addEventListener("submit", (e) => {
           e.preventDefault();
-          refreshFoodSearch();
+          refreshFood(true);
       });
       document.querySelector("#foodToggle").addEventListener("click", toggleFood);
       document.querySelector("#restoToggle").addEventListener("click", toggleRestaurant);

@@ -29,7 +29,7 @@
     <div id="food_cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
   </div>
   <script>
-      // refactor + check auth for likes + check view buttons
+      // check auth for likes + check view buttons
       async function getFood() {
           return fetch("{% url 'homepage:get_food' %}").then(
               (res) => res.json()
@@ -98,7 +98,11 @@
           else {
               food = await getFood();
           }
+          {% if user.is_authenticated %}
           const likes = await getLikes();
+          {% else %}
+          const likes = null;
+          {% endif %}
           let htmlString = "";
           let classNameString = "";
       
@@ -114,15 +118,18 @@
                   classNameString = "container";
                   htmlString = "";
                   food.forEach((item) => {
-                      const isLiked = likes.some((like) => like.fields.food_id === item.pk);
                       const name = DOMPurify.sanitize(item.fields.nama);
                       const description = DOMPurify.sanitize(item.fields.deskripsi);
                       htmlString += `
-                      <div>
-                          <h2>${name}</h2>
-                          <p>${description}</p>
-                          <p>${item.fields.price}</p>
-                          <a href=""><button>View</button></a>
+                      <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4 border-2 border-gray-300">
+                          <h2 class="text-xl font-semibold">${name}</h2>
+                          <p class="text-gray-700">${description}</p>
+                          <p class="text-green-600 font-bold">Rp ${item.fields.harga}</p>
+                          <form class="like_form" id="${item.pk}">
+                              <input type="hidden" id="id_food_id" name="food_id" value="${item.pk}">
+                              <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Like!</button>
+                          </form>
+                          <a href=""><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2">View</button></a>
                       </div>
                   `;
                   });
@@ -222,6 +229,9 @@
           .then(response => { 
               if (response.ok) {
                   document.getElementById(formId).querySelector("button").textContent = document.getElementById(formId).querySelector("button").textContent === "Like!" ? "Remove Like!" : "Like!";
+              }
+              else if (response.redirected){
+                  window.location.href = response.url;
               }
               else {
                   alert("Failed to save changes! Try again later.");

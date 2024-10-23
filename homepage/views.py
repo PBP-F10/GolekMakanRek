@@ -16,8 +16,8 @@ from django.contrib.auth.models import User
 def show_homepage(request):
     food_search = SearchFoodForm()
     restaurant_search = SearchRestaurantForm()
-    login(request, User.objects.get(username='joshua')) # hapus nanti kalau udah ada auth
-    # logout(request)
+    # login(request, User.objects.get(username='joshua')) # hapus nanti kalau udah ada auth
+    logout(request)
     context = {
         'food_search': food_search,
         'restaurant_search': restaurant_search,
@@ -82,9 +82,8 @@ def get_restaurant(request):
     data = serializers.serialize("json", Restaurant.objects.all())
     return HttpResponse(data, content_type="application/json")
 
+@login_required(login_url='/login')
 def get_likes(request):
     if request.user.is_authenticated:
         data = serializers.serialize("json", Likes.objects.filter(user_id=request.user))
         return HttpResponse(data, content_type="application/json")
-    else:
-        return HttpResponse(b"Unauthorized", status=401)

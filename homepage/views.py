@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, reverse
 from .forms import SearchFoodForm, SearchRestaurantForm, LikeForm
-from .models import Food, Restaurant, Likes
+from main.models import Food, Restaurant
+from .models import Likes
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core import serializers
 from django.urls import reverse
@@ -16,12 +17,10 @@ def show_homepage(request):
     food_search = SearchFoodForm()
     restaurant_search = SearchRestaurantForm()
     login(request, User.objects.get(username='joshua')) # hapus nanti kalau udah ada auth
+    # logout(request)
     context = {
         'food_search': food_search,
         'restaurant_search': restaurant_search,
-        'likes': Likes.objects.filter(user_id=request.user) if request.user.is_authenticated else None,
-        'foods': Food.objects.all(),
-        'restaurants': Restaurant.objects.all()
     }
     return render(request, "index.html", context)
 
@@ -46,7 +45,6 @@ def toggle_like(request):
         return HttpResponse(b"Success", 201)
 
     like_form = LikeForm(request.POST)
-    # print(like_form.as_table())
     if like_form.is_valid() and like_form.cleaned_data["user_id"] == request.user:
         like_form.save()
         return HttpResponse(b"Success", 201)
@@ -85,5 +83,8 @@ def get_restaurant(request):
     return HttpResponse(data, content_type="application/json")
 
 def get_likes(request):
-    data = serializers.serialize("json", Likes.objects.filter(user_id=request.user))
-    return HttpResponse(data, content_type="application/json")
+    if request.user.is_authenticated:
+        data = serializers.serialize("json", Likes.objects.filter(user_id=request.user))
+        return HttpResponse(data, content_type="application/json")
+    else:
+        return HttpResponse(b"Unauthorized", status=401)

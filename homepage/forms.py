@@ -1,53 +1,54 @@
 from django.forms import *
 # from .models import Food
 # from .models import Restaurant
-from .models import Food, Restaurant, Likes
+from main.models import Food, Restaurant
+from .models import Likes
 from django.utils.html import strip_tags
 
 class SearchFoodForm(ModelForm):
     class Meta:
         model = Food
-        fields = ["name", "category", "price"]
+        fields = ["nama", "kategori", "harga"]
         widgets = {
-            'name': TextInput(attrs={'class': 'form-control form-control-border', 'placeholder': 'Masukkan nama makanan'}),
-            'category': Select(attrs={'class': 'form-control form-control-border'}, choices=[('None', 'Pilih kategori')] + list(Food.objects.values_list('category', 'category').distinct())),
+            'nama': TextInput(attrs={'class': 'form-control form-control-border', 'placeholder': 'Masukkan nama makanan'}),
+            'kategori': Select(attrs={'class': 'form-control form-control-border'}, choices=[('None', 'Pilih kategori')] + list(Food.objects.values_list('kategori', 'kategori').distinct())),
         }
         labels = {
-            'name': 'Nama Makanan',
-            'category': 'Kategori',
-            'price': 'Harga Makanan'
+            'nama': 'Nama Makanan',
+            'kategori': 'Kategori',
+            'harga': 'Harga Makanan'
         }
 
     def __init__(self, *args, **kwargs):
         super(SearchFoodForm, self).__init__(*args, **kwargs)
-        self.fields['name'].required = False
-        self.fields['category'].required = False
-        self.fields['price'].required = False
+        self.fields['nama'].required = False
+        self.fields['kategori'].required = False
+        self.fields['harga'].required = False
 
     def clean_name(self):
-        name = self.cleaned_data["name"]
+        name = self.cleaned_data["nama"]
         return strip_tags(name)
 
 class SearchRestaurantForm(ModelForm):
     class Meta:
         model = Restaurant
-        fields = ["name", "category"]
+        fields = ["nama", "kategori"]
         widgets = {
-            'name': TextInput(attrs={'class': 'form-control form-control-border', 'placeholder': 'Masukkan nama restoran'}),
-            'category': Select(attrs={'class': 'form-control form-control-border'}, choices= [('None', 'Pilih kategori')] + list(Restaurant.objects.values_list('category', 'category').distinct())),
+            'nama': TextInput(attrs={'class': 'form-control form-control-border', 'placeholder': 'Masukkan nama restoran'}),
+            'kategori': Select(attrs={'class': 'form-control form-control-border'}, choices= [('None', 'Pilih kategori')] + list(Restaurant.objects.values_list('kategori', 'kategori').distinct())),
         }
         labels = {
-            'name': 'Nama Restoran',
-            'category': 'Kategori',
+            'nama': 'Nama Restoran',
+            'kategori': 'Kategori',
         }
     
     def __init__(self, *args, **kwargs):
         super(SearchRestaurantForm, self).__init__(*args, **kwargs)
-        self.fields['name'].required = False
-        self.fields['category'].required = False
+        self.fields['nama'].required = False
+        self.fields['kategori'].required = False
 
     def clean_name(self):
-        name = self.cleaned_data["name"]
+        name = self.cleaned_data["nama"]
         return strip_tags(name)
 
 class LikeForm(ModelForm):

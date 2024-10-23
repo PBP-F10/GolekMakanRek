@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Likes, Food, Restaurant
+from .models import Likes
+from main.models import Food, Restaurant
 
 # Register your models here.
 admin.site.register(Food)

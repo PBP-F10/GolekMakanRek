@@ -7,6 +7,7 @@
 {% endblock meta %}
 
 {% block content %}
+{% include 'navbar.html' %}
   <h1>Selamat datang!</h1>
   <p>Apa yang ingin kamu cari?</p>
   <div class="buttons" style="margin-bottom: 10px;">
@@ -24,6 +25,7 @@
     <div id="food_cards"></div>
   </div>
   <script>
+      // refactor + check auth for likes + check view buttons
       async function getFood() {
           return fetch("{% url 'homepage:get_food' %}").then(
               (res) => res.json()
@@ -36,7 +38,14 @@
       }
       async function getLikes() {
           return fetch("{% url 'homepage:get_likes' %}").then(
-              (res) => res.json()
+              (res) => {
+                  if (res.ok) {
+                      return res.json()
+                  }
+                  else {
+                      return null;
+                  }
+              }
           )
       }
       function toggleFood() {
@@ -88,27 +97,47 @@
               `;
           }
           else {
-              classNameString = "container";
-              htmlString = "";
-              food.forEach((resto) => {
-                  const isLiked = likes.some((like) => like.fields.food_id === resto.pk);
-                  const name = DOMPurify.sanitize(resto.fields.name);
-                  const description = DOMPurify.sanitize(resto.fields.description);
-                  htmlString += `
-                  <div>
-                      <h2>${name}</h2>
-                      <p>${description}</p>
-                      <p>${resto.fields.price}</p>
-                      <form class="like_form" id="${resto.pk}">
-                          <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
-                          <input type="hidden" id="id_food_id" name="food_id" value="${resto.pk}">
-                          <button type="submit">${isLiked ? "Remove Like!" : "Like!"}</button>
-                      </form>
-                      <a href=""><button>View</button></a>
-                  </div>
-              `;
-              });
-              htmlString += "</div>";
+              if (likes == null) {
+                  classNameString = "container";
+                  htmlString = "";
+                  food.forEach((item) => {
+                      const isLiked = likes.some((like) => like.fields.food_id === item.pk);
+                      const name = DOMPurify.sanitize(item.fields.nama);
+                      const description = DOMPurify.sanitize(item.fields.deskripsi);
+                      htmlString += `
+                      <div>
+                          <h2>${name}</h2>
+                          <p>${description}</p>
+                          <p>${item.fields.price}</p>
+                          <a href=""><button>View</button></a>
+                      </div>
+                  `;
+                  });
+                  htmlString += "</div>";
+              }
+              else {
+                  classNameString = "container";
+                  htmlString = "";
+                  food.forEach((item) => {
+                      const isLiked = likes.some((like) => like.fields.food_id === item.pk);
+                      const name = DOMPurify.sanitize(item.fields.nama);
+                      const description = DOMPurify.sanitize(item.fields.deskripsi);
+                      htmlString += `
+                      <div>
+                          <h2>${name}</h2>
+                          <p>${description}</p>
+                          <p>Rp ${item.fields.harga}</p>
+                          <form class="like_form" id="${item.pk}">
+                              <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
+                              <input type="hidden" id="id_food_id" name="food_id" value="${item.pk}">
+                              <button type="submit">${isLiked ? "Remove Like!" : "Like!"}</button>
+                          </form>
+                          <a href=""><button>View</button></a>
+                      </div>
+                  `;
+                  });
+                  htmlString += "</div>";
+              }
           }
           
           document.getElementById("food_cards").className = classNameString;
@@ -138,8 +167,8 @@
               classNameString = "container";
               htmlString = "";
               restaurant.forEach((resto) => {
-                  const name = DOMPurify.sanitize(resto.fields.name);
-                  const description = DOMPurify.sanitize(resto.fields.description);
+                  const name = DOMPurify.sanitize(resto.fields.nama);
+                  const description = DOMPurify.sanitize(resto.fields.deskripsi);
                   htmlString += `
                   <div>
                       <h2>${name}</h2>
@@ -184,8 +213,8 @@
               classNameString = "container";
               htmlString = "";
               restaurant.forEach((resto) => {
-                  const name = DOMPurify.sanitize(resto.fields.name);
-                  const description = DOMPurify.sanitize(resto.fields.description);
+                  const name = DOMPurify.sanitize(resto.fields.nama);
+                  const description = DOMPurify.sanitize(resto.fields.deskripsi);
                   htmlString += `
                   <div>
                       <h2>${name}</h2>
@@ -218,18 +247,18 @@
           else {
               classNameString = "container";
               htmlString = "";
-              food.forEach((resto) => {
-                  const isLiked = likes.some((like) => like.fields.food_id === resto.pk);
-                  const name = DOMPurify.sanitize(resto.fields.name);
-                  const description = DOMPurify.sanitize(resto.fields.description);
+              food.forEach((item) => {
+                  const isLiked = likes.some((like) => like.fields.food_id === item.pk);
+                  const name = DOMPurify.sanitize(item.fields.nama);
+                  const description = DOMPurify.sanitize(item.fields.deskripsi);
                   htmlString += `
                   <div>
                       <h2>${name}</h2>
                       <p>${description}</p>
-                      <p>${resto.fields.price}</p>
-                      <form class="like_form" id="${resto.pk}">
+                      <p>Rp ${item.fields.harga}</p>
+                      <form class="like_form" id="${item.pk}">
                           <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
-                          <input type="hidden" id="id_food_id" name="food_id" value="${resto.pk}">
+                          <input type="hidden" id="id_food_id" name="food_id" value="${item.pk}">
                           <button type="submit">${isLiked ? "Remove Like!" : "Like!"}</button>
                       </form>
                   </div>

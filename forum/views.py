@@ -13,14 +13,17 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from .models import Post, Like
 
+from django.contrib.auth.models import User
 def show_post(request):
     posts = Post.objects.all().order_by('-created_at')
-    user_liked_posts = Like.objects.filter(user=request.user).values_list('post_id', flat=True) if request.user.is_authenticated else []
+    
+    # Get the first user in the database as the default user
+    user = User.objects.first()
+    
+    # Get a list of post IDs liked by the user
+    user_liked_posts = Like.objects.filter(user=user).values_list('post_id', flat=True)
 
     return render(request, 'show_post.html', {'posts': posts, 'user_liked_posts': user_liked_posts})
-
-
-
 
 def add_post(request):
     if request.method == 'POST':
@@ -70,3 +73,19 @@ def like_post(request):
         return JsonResponse({'success': True, 'like_count': post.like_count, 'liked': liked})
     else:
         return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+from django.http import JsonResponse
+
+def post_comment(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        post_id = data.get('post_id')
+        comment_text = data.get('comment')
+        user = User.objects.first()  # Use the first user as the commenter
+
+        if post_id and comment_text:
+            post = get_object_or_404(Post, id=post_id)
+            comment = Comment.objects.create(post=post, user=user, text=comment_text)
+            return JsonResponse({'success': True, 'username': user.username, 'comment': comment.text})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request'})

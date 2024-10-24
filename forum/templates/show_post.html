@@ -78,12 +78,29 @@
             font-weight: bold;
             display: inline-block;
         }
-        .text-center {
-            text-align: center;
-        }
         .liked {
             color: #2ce62c !important; /* Green color when liked */
             font-weight: bold;
+        }
+        .comments-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+        }
+        .comment-form textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .comment-form button {
+            background-color: #2ce62c;
+            color: #fff;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -115,14 +132,30 @@
                         {% endif %}
                     </div>
                     <div class="post-actions">
-                        <button onclick="handleLike({{ post.id }})" 
-                                id="like-btn-{{ post.id }}" 
-                                class="{% if post.id in user_liked_posts %}liked{% endif %}">
+                        <button 
+                            onclick="handleLike({{ post.id }})" 
+                            id="like-btn-{{ post.id }}"
+                            class="{% if post.id in user_liked_posts %}liked{% endif %}"
+                        >
                             <i class="fas fa-thumbs-up"></i> Like
                         </button>
-                        <button onclick="handleComment({{ post.id }})"><i class="fas fa-comment"></i> Comment</button>
+                        <button onclick="toggleComments({{ post.id }})"><i class="fas fa-comment"></i> Comment</button>
                         <button onclick="handleShare({{ post.id }})"><i class="fas fa-share"></i> Share</button>
                         <button onclick="handleReport({{ post.id }})"><i class="fas fa-flag"></i> Report</button>
+                    </div>
+                    <div id="comments-{{ post.id }}" class="comments-section" style="display: none;">
+                        <h4>Comments</h4>
+                        <div class="existing-comments">
+                            {% for comment in post.comments.all %}
+                                <p><strong>{{ comment.user.username }}:</strong> {{ comment.text }}</p>
+                            {% empty %}
+                                <p>No comments yet.</p>
+                            {% endfor %}
+                        </div>
+                        <form class="comment-form" onsubmit="postComment(event, {{ post.id }})">
+                            <textarea name="comment" placeholder="Add a comment..." required></textarea>
+                            <button type="submit">Post Comment</button>
+                        </form>
                     </div>
                 </article>
                 {% empty %}
@@ -143,40 +176,53 @@
                 },
                 body: JSON.stringify({ post_id: postId })
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
+                const likeButton = document.querySelector(`#like-btn-${postId}`);
                 if (data.success) {
-                    const likeButton = document.querySelector(`#like-btn-${postId}`);
-                    if (likeButton) {
-                        likeButton.innerHTML = `<i class="fas fa-thumbs-up"></i> Like (${data.like_count})`;
-                        likeButton.classList.toggle('liked', data.liked);
-                    } else {
-                        alert('Like button element not found in the DOM.');
-                    }
+                    likeButton.classList.toggle('liked', data.liked);
                 } else {
-                    alert(`Failed to like the post: ${data.error || 'Unknown error'}`);
+                    alert(`Failed to like the post: ${data.error}`);
                 }
             })
             .catch(error => {
-                alert(`An error occurred while liking the post: ${error.message}`);
+                console.error('Error:', error);
             });
         }
 
-        function handleComment(postId) {
-            alert(`Commenting on post with ID: ${postId}`);
+        function toggleComments(postId) {
+            const commentsSection = document.getElementById(`comments-${postId}`);
+            commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
         }
 
-        function handleShare(postId) {
-            alert(`Sharing post with ID: ${postId}`);
-        }
+        function postComment(event, postId) {
+            event.preventDefault();
+            const commentInput = event.target.querySelector('textarea');
+            const commentText = commentInput.value;
 
-        function handleReport(postId) {
-            alert(`Reporting post with ID: ${postId}`);
+            fetch(`/post_comment/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ post_id: postId, comment: commentText })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const commentsSection = document.querySelector(`#comments-${postId} .existing-comments`);
+                    const newComment = document.createElement('p');
+                    newComment.innerHTML = `<strong>${data.username}:</strong> ${data.comment}`;
+                    commentsSection.appendChild(newComment);
+                    commentInput.value = '';
+                } else {
+                    alert(`Failed to post comment: ${data.error}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         }
     </script>
 </body>

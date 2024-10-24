@@ -12,4 +12,5 @@ urlpatterns = [
     path('get_food/', get_food, name='get_food'),
     path('get_restaurant/', get_restaurant, name='get_restaurant'),
     path('get_likes/', get_likes, name='get_likes'),
+    # path('test/', set_test, name='test'),
 ]

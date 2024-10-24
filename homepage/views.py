@@ -11,13 +11,15 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
 from django.contrib.auth.models import User
+import json
+import os
 
 # Create your views here.
 def show_homepage(request):
     food_search = SearchFoodForm()
     restaurant_search = SearchRestaurantForm()
-    # login(request, User.objects.get(username='joshua')) # hapus nanti kalau udah ada auth
-    logout(request)
+    login(request, User.objects.get(username='joshua')) # hapus nanti kalau udah ada auth
+    # logout(request)
     context = {
         'food_search': food_search,
         'restaurant_search': restaurant_search,
@@ -61,9 +63,9 @@ def get_food(request):
                 continue
             if request.GET.get(param) != "None":
                 filters[f"{param}__icontains"] = request.GET.get(param)
-        #if like_only:
-        #    data = serializers.serialize("json", Food.objects.filter(**filters).filter(likes__user_id=request.user))
-        #    return HttpResponse(data, content_type="application/json")
+        if like_only:
+            data = serializers.serialize("json", Food.objects.filter(**filters).filter(likes__user_id=request.user))
+            return HttpResponse(data, content_type="application/json")
         data = serializers.serialize("json", Food.objects.filter(**filters))
         return HttpResponse(data, content_type="application/json")
 
@@ -87,3 +89,34 @@ def get_likes(request):
     if request.user.is_authenticated:
         data = serializers.serialize("json", Likes.objects.filter(user_id=request.user))
         return HttpResponse(data, content_type="application/json")
+
+# hanya untuk test
+'''
+def set_test(request):
+    Restaurant.objects.all().delete()
+    Food.objects.all().delete()
+    file_path_1 = os.path.join(os.path.dirname(os.path.dirname(__file__)), "merchant_gofood_dataset.json")
+    with open(file_path_1, "r") as json_file:
+        data = json.load(json_file)
+        for restaurant in data:
+            new_restaurant = Restaurant.objects.create(
+                nama=restaurant['fields']['nama'],
+                kategori=restaurant['fields']['kategori'],
+                deskripsi=restaurant['fields']['deskripsi'],
+            )
+            new_restaurant.save()
+    file_path_2 = os.path.join(os.path.dirname(os.path.dirname(__file__)), "gofood_dataset.json")
+    with open(file_path_2, "r") as json_file:
+        data = json.load(json_file)
+        for food in data:
+            new_food = Food.objects.create(
+                nama=food['product'],
+                kategori=food['category'],
+                harga=food['price'],
+                diskon=food['discount_price'] if food['discount_price'] else 0,
+                deskripsi=food['description'],
+                restoran=Restaurant.objects.get(nama=food['merchant_name'])
+            )
+            new_food.save()
+    return HttpResponseRedirect(reverse('homepage:show_homepage'))
+'''

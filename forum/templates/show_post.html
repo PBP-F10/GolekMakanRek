@@ -4,79 +4,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forum - Post List</title>
+    <title>Forum - Jelajahi Makanan di Surabaya!</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'base.css' %}">
+    <!-- Font Awesome CDN for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            margin: 0;
-            padding: 0;
-        }
-        .header {
-            background-color: #2ce62c; /* Warna hijau */
-            color: #ffd700; /* Warna kuning untuk teks */
+        .content-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-            text-align: center;
-            border-radius: 8px 8px 0 0; /* Membuat sudut atas melengkung */
-            max-width: 800px;
-            margin: 20px auto 0; /* Margin atas untuk pemisahan dan auto untuk center */
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto 20px; /* Margin bawah untuk pemisahan */
+        .post-card {
             background-color: #fff;
-            padding: 20px;
-            border-radius: 0 0 8px 8px; /* Membuat sudut bawah melengkung */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .add-post {
-            text-align: right;
-            margin-top: -10px; /* Mengurangi sedikit margin agar lebih dekat dengan header */
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
+            padding: 20px;
         }
-        .add-post a {
-            background-color: #000; /* Hitam untuk warna latar belakang */
-            color: #fff; /* Putih untuk teks */
-            padding: 10px 15px;
-            border-radius: 5px;
-            text-decoration: none;
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .post-header img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+        }
+        .post-header .user-info {
+            flex: 1;
+        }
+        .post-header .user-info h3 {
+            margin: 0;
+            font-size: 18px;
             font-weight: bold;
         }
-        .add-post a:hover {
-            background-color: #555; /* Warna abu-abu saat di-hover */
-        }
-        .post {
-            border-bottom: 1px solid #ddd;
-            padding: 10px 0;
-        }
-        .post:last-child {
-            border-bottom: none;
-        }
-        .post-title {
-            font-weight: bold;
+        .post-header .user-info p {
+            margin: 0;
+            font-size: 14px;
+            color: #777;
         }
         .post-content {
             margin-top: 10px;
+            font-size: 16px;
+        }
+        .post-actions {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+        .post-actions button {
+            background: none;
+            border: none;
+            color: #555;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .post-actions button i {
+            margin-right: 5px;
+        }
+        .btn-primary {
+            background-color: #2ce62c;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .liked {
+            color: #2ce62c !important; /* Green color when liked */
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Jelajahi Makanan di Surabaya!</h1>
+    <div class="content-wrapper">
+        <!-- Header -->
+        <header class="text-center">
+            <h1>Jelajahi Makanan di Surabaya!</h1>
+            <p>Temukan makanan terbaik di kota dan bergabunglah dalam diskusi dengan pengguna lainnya.</p>
+            <a href="{% url 'forum:add_post' %}" class="btn-primary">Posting di Forum</a>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+            <section class="post-list">
+                {% for post in posts %}
+                <article class="post-card">
+                    <div class="post-header">
+                        <img src="{% static 'images/user-avatar.png' %}" alt="User Profile">
+                        <div class="user-info">
+                            <h3>{{ post.user.username }}</h3>
+                            <p>Posted {{ post.created_at|timesince }} ago</p>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <p>{{ post.text }}</p>
+                        {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="Post Image" style="max-width: 100%; border-radius: 8px; margin-top: 15px;">
+                        {% endif %}
+                    </div>
+                    <div class="post-actions">
+                        <button onclick="handleLike({{ post.id }})" 
+                                id="like-btn-{{ post.id }}" 
+                                class="{% if post.id in user_liked_posts %}liked{% endif %}">
+                            <i class="fas fa-thumbs-up"></i> Like
+                        </button>
+                        <button onclick="handleComment({{ post.id }})"><i class="fas fa-comment"></i> Comment</button>
+                        <button onclick="handleShare({{ post.id }})"><i class="fas fa-share"></i> Share</button>
+                        <button onclick="handleReport({{ post.id }})"><i class="fas fa-flag"></i> Report</button>
+                    </div>
+                </article>
+                {% empty %}
+                <p class="text-center">Tidak ada postingan tersedia.</p>
+                {% endfor %}
+            </section>
+        </main>
     </div>
-    <div class="container">
-        <div class="add-post">
-            <a href="{% url 'forum:add_post' %}">Posting di Forum</a>
-        </div>
-        <h2>Post List</h2>
-        {% for post in posts %}
-        <div class="post">
-            <div class="post-title">{{ post.user.username }}</div>
-            <div class="post-content">{{ post.text }}</div>
-        </div>
-        {% empty %}
-        <p>No posts available.</p>
-        {% endfor %}
-    </div>
+
+    <!-- JavaScript Functions -->
+    <script>
+        function handleLike(postId) {
+            fetch(`/like_post/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ post_id: postId })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    const likeButton = document.querySelector(`#like-btn-${postId}`);
+                    if (likeButton) {
+                        likeButton.innerHTML = `<i class="fas fa-thumbs-up"></i> Like (${data.like_count})`;
+                        likeButton.classList.toggle('liked', data.liked);
+                    } else {
+                        alert('Like button element not found in the DOM.');
+                    }
+                } else {
+                    alert(`Failed to like the post: ${data.error || 'Unknown error'}`);
+                }
+            })
+            .catch(error => {
+                alert(`An error occurred while liking the post: ${error.message}`);
+            });
+        }
+
+        function handleComment(postId) {
+            alert(`Commenting on post with ID: ${postId}`);
+        }
+
+        function handleShare(postId) {
+            alert(`Sharing post with ID: ${postId}`);
+        }
+
+        function handleReport(postId) {
+            alert(`Reporting post with ID: ${postId}`);
+        }
+    </script>
 </body>
 </html>

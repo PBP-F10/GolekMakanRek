@@ -8,5 +8,8 @@ def restaurant_preview(request):
 
 def restaurant_detail(request, id):
     restaurant = get_object_or_404(Restaurant, id=id)
-    return render(request, 'restaurant_detail.html', {'restaurant': restaurant})
 
+    return render(request, 'restaurant_detail.html', {
+        'restaurant': restaurant,
+        
+    })

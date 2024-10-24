@@ -15,5 +15,5 @@ class Restaurant(models.Model):
     nama = models.CharField(max_length=255)
     kategori = models.CharField(max_length=255)
     deskripsi = models.TextField()
-    random_products = models.JSONField(null=True, blank=True)
+    random_products = models.JSONField(default=list, blank=True)
     

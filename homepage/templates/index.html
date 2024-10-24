@@ -29,7 +29,6 @@
     <div id="food_cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
   </div>
   <script>
-      // check auth for likes + check view buttons
       async function getFood() {
           return fetch("{% url 'homepage:get_food' %}").then(
               (res) => res.json()
@@ -42,14 +41,7 @@
       }
       async function getLikes() {
           return fetch("{% url 'homepage:get_likes' %}").then(
-              (res) => {
-                  if (res.ok) {
-                      return res.json()
-                  }
-                  else {
-                      return null;
-                  }
-              }
+              (res) => res.json()
           )
       }
       function toggleFood() {
@@ -120,14 +112,20 @@
                   food.forEach((item) => {
                       const name = DOMPurify.sanitize(item.fields.nama);
                       const description = DOMPurify.sanitize(item.fields.deskripsi);
+                      const harga = item.fields.harga.toLocaleString('id-id');
+                      const hargaDiskon = item.fields.diskon.toLocaleString('id-id');
                       htmlString += `
                       <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4 border-2 border-gray-300">
                           <h2 class="text-xl font-semibold">${name}</h2>
                           <p class="text-gray-700">${description}</p>
-                          <p class="text-green-600 font-bold">Rp ${item.fields.harga}</p>
+                          <p class="text-green-600 font-bold">Rp ${harga}</p>
                           <form class="like_form" id="${item.pk}">
                               <input type="hidden" id="id_food_id" name="food_id" value="${item.pk}">
-                              <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Like!</button>
+                                <button type="submit" class="text-white rounded flex items-center">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-1" viewBox="0 0 24 24" fill="rgb(245, 158, 11)" stroke="gray" stroke-width="1.5" fill-opacity="0">
+                                    <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.782 1.4 8.168L12 18.896l-7.334 3.864 1.4-8.168L.132 9.21l8.2-1.192z"/>
+                                  </svg>
+                              </button>
                           </form>
                           <a href=""><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2">View</button></a>
                       </div>
@@ -142,15 +140,21 @@
                       const isLiked = likes.some((like) => like.fields.food_id === item.pk);
                       const name = DOMPurify.sanitize(item.fields.nama);
                       const description = DOMPurify.sanitize(item.fields.deskripsi);
+                      const harga = item.fields.harga.toLocaleString('id-id');
+                      const hargaDiskon = item.fields.diskon.toLocaleString('id-id');
                       htmlString += `
                         <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4 border-2 border-gray-300">
                           <h2 class="text-xl font-semibold">${name}</h2>
                           <p class="text-gray-700">${description}</p>
-                          <p class="text-green-600 font-bold">Rp ${item.fields.harga}</p>
+                          ${hargaDiskon == "0" ? '<p class="text-xl font-bold">Rp ' + harga + '</p>' : '<p class="text-xl font-bold"><span class="text-red-600"><s>Rp ' + harga + '</s></span> <span class="text-green-600">Rp ' + hargaDiskon + '</span></p>'}
                           <form class="like_form" id="${item.pk}">
-                              <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
-                              <input type="hidden" id="id_food_id" name="food_id" value="${item.pk}">
-                              <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">${isLiked ? "Remove Like!" : "Like!"}</button>
+                            <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
+                            <input type="hidden" id="id_food_id" name="food_id" value="${item.pk}">
+                            <button type="submit" class="text-white rounded flex items-center">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-1" viewBox="0 0 24 24" fill="rgb(245, 158, 11)" stroke="gray" stroke-width="1.5" fill-opacity=${isLiked ? "1" : "0"}>
+                                <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.782 1.4 8.168L12 18.896l-7.334 3.864 1.4-8.168L.132 9.21l8.2-1.192z"/>
+                              </svg>
+                            </button>
                           </form>
                           <a href=""><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2">View</button></a>
                       </div>
@@ -228,7 +232,7 @@
           })
           .then(response => { 
               if (response.ok) {
-                  document.getElementById(formId).querySelector("button").textContent = document.getElementById(formId).querySelector("button").textContent === "Like!" ? "Remove Like!" : "Like!";
+                  document.getElementById(formId).querySelector("svg").style.fillOpacity = document.getElementById(formId).querySelector("svg").style.fillOpacity === "1" ? "0" : "1";
               }
               else if (response.redirected){
                   window.location.href = response.url;

@@ -1,0 +1,82 @@
+<!-- templates/forum/show_post.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum - Post List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #2ce62c; /* Warna hijau */
+            color: #ffd700; /* Warna kuning untuk teks */
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0; /* Membuat sudut atas melengkung */
+            max-width: 800px;
+            margin: 20px auto 0; /* Margin atas untuk pemisahan dan auto untuk center */
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto 20px; /* Margin bawah untuk pemisahan */
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 0 0 8px 8px; /* Membuat sudut bawah melengkung */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .add-post {
+            text-align: right;
+            margin-top: -10px; /* Mengurangi sedikit margin agar lebih dekat dengan header */
+            margin-bottom: 20px;
+        }
+        .add-post a {
+            background-color: #000; /* Hitam untuk warna latar belakang */
+            color: #fff; /* Putih untuk teks */
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .add-post a:hover {
+            background-color: #555; /* Warna abu-abu saat di-hover */
+        }
+        .post {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+        .post:last-child {
+            border-bottom: none;
+        }
+        .post-title {
+            font-weight: bold;
+        }
+        .post-content {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Jelajahi Makanan di Surabaya!</h1>
+    </div>
+    <div class="container">
+        <div class="add-post">
+            <a href="{% url 'forum:add_post' %}">Posting di Forum</a>
+        </div>
+        <h2>Post List</h2>
+        {% for post in posts %}
+        <div class="post">
+            <div class="post-title">{{ post.user.username }}</div>
+            <div class="post-content">{{ post.text }}</div>
+        </div>
+        {% empty %}
+        <p>No posts available.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

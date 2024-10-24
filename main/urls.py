@@ -1,7 +1,8 @@
-from django.urls import path
-
-app_name = 'main'
+from django.contrib import admin
+from django.urls import include, path
 
 urlpatterns = [
-    
+    path('admin/', admin.site.urls),
+    path('', include('resto_preview.urls')),  # Meng-include URL dari aplikasi resto_preview
 ]
+

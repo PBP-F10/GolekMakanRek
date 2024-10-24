@@ -3,49 +3,70 @@
 {% block content %}
 {% include 'navbar.html' %}
 
-    <head>
-        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-        <style>
-            .restaurant-card {
-                transition: transform 0.2s, box-shadow 0.2s;
-            }
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .restaurant-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
 
-            .restaurant-card:hover {
-                transform: scale(1.05);
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            }
-        </style>
-    </head>
+        .restaurant-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
 
-    <h1 class="text-3xl font-bold mb-6 text-center">Restaurant Preview</h1>
+        .clicked {
+            background-color: green !important; /* Warna baru saat diklik */
+        }
+    </style>
+</head>
 
-    <div class="container mx-auto p-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {% if restaurants %}
-                {% for restaurant in restaurants %}
-                    <div class="relative break-inside-avoid">
-                        <div class="relative top-5 bg-indigo-100 shadow-md rounded-lg mb-6 break-inside-avoid flex flex-col border-2 border-indigo-300 restaurant-card">
-                            <div class="bg-indigo-200 text-gray-800 p-4 rounded-t-lg border-b-2 border-indigo-300">
-                                <h2 class="font-bold text-xl mb-2">{{ restaurant.nama }}</h2>
-                                <p class="text-gray-600">{{ restaurant.deskripsi }}</p>
-                            </div>
-                            <div class="p-4 flex justify-between">
-                                <form action="#" method="post">
-                                    {% csrf_token %}
-                                    <button type="submit" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-600 transition-transform duration-300 hover:scale-105">
-                                        Follow
-                                    </button>
-                                </form>
-                                <a href="{% url 'resto_preview:restaurant_detail' restaurant.id %}" class="bg-yellow-500 hover:bg-yellow-600 text-white rounded-full p-2 transition-transform duration-300 hover:scale-105 shadow-md">
-                                    Detail
-                                </a>
-                            </div>
+<h1 class="text-3xl font-bold mb-6 text-center">Restaurant Preview</h1>
+
+<div class="container mx-auto p-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% if restaurants %}
+            {% for restaurant in restaurants %}
+                <div class="relative break-inside-avoid">
+                    <div class="relative top-5 bg-indigo-100 shadow-md rounded-lg mb-6 break-inside-avoid flex flex-col border-2 border-indigo-300 restaurant-card">
+                        <div class="bg-indigo-200 text-gray-800 p-4 rounded-t-lg border-b-2 border-indigo-300">
+                            <h2 class="font-bold text-xl mb-2">{{ restaurant.nama }}</h2>
+                            <p class="text-gray-600">{{ restaurant.deskripsi }}</p>
+                        </div>
+                        <div class="p-4 flex justify-between">
+                            <form action="#" method="post">
+                                {% csrf_token %}
+                                <button type="button" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded follow-button">
+                                    Follow
+                                </button>
+                            </form>
+                            <a href="{% url 'resto_preview:restaurant_detail' restaurant.id %}" class="bg-yellow-500 hover:bg-yellow-600 text-white rounded-full p-2 transition-transform duration-300 hover:scale-105 shadow-md">
+                                Detail
+                            </a>
                         </div>
                     </div>
-                {% endfor %}
-            {% else %}
-                <p class="text-center text-gray-500 mt-4">Tidak ada restoran yang ditemukan.</p>
-            {% endif %}
-        </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center text-gray-500 mt-4">Tidak ada restoran yang ditemukan.</p>
+        {% endif %}
     </div>
+</div>
+
+<script>
+    const buttons = document.querySelectorAll('.follow-button');
+    
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            if (this.innerText === 'Follow') {
+                this.innerText = 'Followed'; 
+                this.classList.add('clicked'); 
+            } else {
+                this.innerText = 'Follow'; 
+                this.classList.remove('clicked'); 
+            }
+        });
+    });
+</script>
+
 {% endblock %}

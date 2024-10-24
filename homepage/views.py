@@ -18,7 +18,7 @@ import os
 def show_homepage(request):
     food_search = SearchFoodForm()
     restaurant_search = SearchRestaurantForm()
-    login(request, User.objects.get(username='joshua')) # hapus nanti kalau udah ada auth
+    # login(request, User.objects.get(username='joshua')) # hapus nanti kalau udah ada auth
     # logout(request)
     context = {
         'food_search': food_search,

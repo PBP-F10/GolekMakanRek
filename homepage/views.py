@@ -44,12 +44,12 @@ def toggle_like(request):
 
     if like:
         like.delete()
-        return HttpResponse(b"Success", 201)
+        return HttpResponse(b"Unliked!", 201)
 
     like_form = LikeForm(request.POST)
     if like_form.is_valid() and like_form.cleaned_data["user_id"] == request.user:
         like_form.save()
-        return HttpResponse(b"Success", 201)
+        return HttpResponse(b"Liked!", 201)
     print(like_form.errors)
     return HttpResponse(b"Invalid form", status=400)
 

@@ -11,7 +11,7 @@ class SearchFoodForm(ModelForm):
         fields = ["nama", "kategori", "harga"]
         widgets = {
             'nama': TextInput(attrs={'class': 'mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', 'placeholder': 'Masukkan nama makanan'}),
-            'kategori': Select(attrs={'class': 'form-select mt-2 block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'}, choices=[('None', 'Pilih kategori')] + list(Food.objects.values_list('kategori', 'kategori').distinct())),
+            'kategori': Select(attrs={'class': 'form-select mt-2 block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'}),
             'harga': NumberInput(attrs={'class': 'mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', 'placeholder': 'Masukkan harga makanan'}),
         }
         labels = {
@@ -25,6 +25,14 @@ class SearchFoodForm(ModelForm):
         self.fields['nama'].required = False
         self.fields['kategori'].required = False
         self.fields['harga'].required = False
+        choices = [('None', 'Pilih kategori')]
+        categories = Food.objects.values_list('kategori', flat=True).distinct()
+        for category in categories:
+            split_categories = category.split('/')
+            for split_category in split_categories:
+                if (split_category, split_category) not in choices:
+                    choices.append((split_category, split_category))
+        self.fields['kategori'].widget.choices = choices
 
     def clean_name(self):
         name = self.cleaned_data["nama"]
@@ -36,7 +44,7 @@ class SearchRestaurantForm(ModelForm):
         fields = ["nama", "kategori"]
         widgets = {
             'nama': TextInput(attrs={'class': 'mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', 'placeholder': 'Masukkan nama restoran'}),
-            'kategori': Select(attrs={'class': 'form-select mt-2 block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'}, choices= [('None', 'Pilih kategori')] + list(Restaurant.objects.values_list('kategori', 'kategori').distinct())),
+            'kategori': Select(attrs={'class': 'form-select mt-2 block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'}),
         }
         labels = {
             'nama': 'Nama Restoran',
@@ -47,6 +55,14 @@ class SearchRestaurantForm(ModelForm):
         super(SearchRestaurantForm, self).__init__(*args, **kwargs)
         self.fields['nama'].required = False
         self.fields['kategori'].required = False
+        choices = [('None', 'Pilih kategori')]
+        categories = Restaurant.objects.values_list('kategori', flat=True).distinct()
+        for category in categories:
+            split_categories = category.split('/')
+            for split_category in split_categories:
+                if (split_category, split_category) not in choices:
+                    choices.append((split_category, split_category))
+        self.fields['kategori'].widget.choices = choices
 
     def clean_name(self):
         name = self.cleaned_data["nama"]

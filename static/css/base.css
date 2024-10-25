@@ -1,122 +1,194 @@
-/* Forum Header */
+@import url('https://fonts.cdnfonts.com/css/helvetica-neue-5');
+@import url('https://fonts.googleapis.com/css?family=Poppins'); 
+
+:root {
+    --primary: #28a745;
+    --secondary: #000;
+    --accent: #ffcc00;
+    --background-color: #fff;
+    --text-color: #000;
+    --muted-text-color: #666;
+    --border-color: #ccc;
+    --hairline-color: #e8e8e8;
+    --button-bg: var(--primary);
+    --button-hover-bg: #28a745;
+    --button-text-color: #fff;
+    --link-color: #28a745;
+    --link-hover-color: #28a745;
+    --font-family-h: 'Helvetica Neue', Arial;
+    --font-family-p: 'Poppins'
+}
+
+/* Basic Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Body Styling */
+body {
+    font-family: var(--font-family-p); /* Use Poppins as the default font for the body */
+    color: var(--text-color);
+    background-color: var(--background-color);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    font-weight: 700; 
+    font-family: var(--font-family-h);
+
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.75rem;
+}
+
+h4 {
+    font-size: 1.5rem;
+}
+
+h5 {
+    font-size: 1.25rem;
+}
+
+h6 {
+    font-size: 1rem;
+    color: var(--muted-text-color);
+}
+
+p {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    font-family: var(--font-family-p)
+}
+
+/* Utility Classes */
+.text-center {
+    text-align: center;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: var(--background-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+/* Button Styles */
+.btn {
+    background-color: var(--button-bg);
+    color: var(--button-text-color);
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    cursor: pointer;
+    border: none;
+}
+
+.btn:hover {
+    background-color: var(--button-hover-bg);
+}
+
+/* Header Styles */
 .header-wrapper {
-    background-color: #FFD700;
+    background-color: var(--accent);
     color: var(--text-color);
     padding: 20px 0;
     text-align: center;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
 }
 
-.header-content {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-/* Post Card */
-.post-card {
+/* Card Styling */
+.card {
     background-color: var(--background-color);
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
     margin-bottom: 20px;
-    padding: 20px;
 }
 
-/* User Info */
-.post-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.post-header img {
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    margin-right: 15px;
-}
-
-.user-info h3 {
-    font-size: 14px;
-    font-weight: bold;
-    margin: 0;
-}
-
-.user-info p {
-    font-size: 12px;
-    color: var(--muted-text-color);
-    margin: 0;
-}
-
-/* Post Content */
-.post-content {
+.card-content {
     font-size: 16px;
-    margin-top: 5px;
-}
-
-/* Post Actions */
-.post-actions {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 15px;
-    border-top: 1px solid var(--hairline-color);
-    padding-top: 10px;
-}
-
-.post-actions button {
-    background: none;
-    border: none;
     color: var(--text-color);
-    font-size: 14px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
 }
 
-/* Report Modal */
-.report-modal {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+/* Link Styles */
+a {
+    color: var(--link-color);
+    text-decoration: none;
 }
 
-.report-modal-content {
-    background: var(--background-color);
-    padding: 20px;
-    border-radius: 8px;
-    width: 300px;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+a:hover {
+    color: var(--link-hover-color);
 }
 
-.report-form select,
-.comment-form textarea {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 8px;
-    border-radius: 5px;
+/* Form Styling */
+form, 
+form * {
+    font-style: normal !important; /* Force all form elements to have normal font style */
+    font-weight: normal !important; /* Optional: ensure normal font weight */
+}
+
+textarea {
     border: 1px solid var(--border-color);
+    border-radius: 5px;
+    padding: 10px;
+    font-family: var(--font-family-h);
+    width: 100%;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-style: normal; /* Ensure textarea text is not italic */
 }
 
-/* Button Styles */
-.btn {
-    width: 48%;
-    margin: 5px;
+/* Form Group Styling */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input, 
+.form-group textarea {
+    width: 100%;
     padding: 10px;
-    border: none;
+    border: 1px solid var(--border-color);
     border-radius: 5px;
-    cursor: pointer;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.form-group button {
     background-color: var(--primary);
     color: var(--button-text-color);
-    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 20px;
+    }
 }

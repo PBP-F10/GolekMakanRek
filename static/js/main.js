@@ -1,9 +1,10 @@
+// static/js/main.js
 function handleLike(postId) {
-    fetch(`/like_post/`, {
+    fetch('/like_post/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token }}'
+            'X-CSRFToken': csrfToken
         },
         body: JSON.stringify({ post_id: postId })
     })
@@ -31,11 +32,11 @@ function postComment(event, postId) {
     const commentInput = event.target.querySelector('textarea');
     const commentText = commentInput.value;
 
-    fetch(`/post_comment/`, {
+    fetch('/post_comment/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token }}'
+            'X-CSRFToken': csrfToken
         },
         body: JSON.stringify({ post_id: postId, comment: commentText })
     })
@@ -87,7 +88,7 @@ function submitReport(postId) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token }}'
+            'X-CSRFToken': csrfToken
         },
         body: JSON.stringify({ post_id: postId, reason: reason })
     })

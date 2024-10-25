@@ -7,16 +7,16 @@
     <title>Forum - Jelajahi Makanan di Surabaya!</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    <!-- Font Awesome CDN for Icons -->
+    <link rel="stylesheet" href="{% static 'image/user-pic-default.png' %}">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body {
-            font-family: var(--font-family-h); /* Use Helvetica Neue from base.css */
-
+            font-family: var(--font-family-h);
         }
         .header-wrapper {
-            background-color: #FFD700; /* Explicit yellow background */
-            color: var(--text-color); /* Black text */
+            background-color: #FFD700;
+            color: var(--text-color);
             padding: 20px 0;
             text-align: center;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -44,7 +44,7 @@
         .post-header {
             display: flex;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         .post-header img {
             border-radius: 50%;
@@ -52,9 +52,21 @@
             height: 50px;
             margin-right: 15px;
         }
+        .user-info h3 {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0;
+        }
+        .user-info p {
+            font-size: 12px;
+            color: var(--muted-text-color);
+            margin: 0;
+        }
+
+        
         .post-content {
-            font-size: 16px !important;
-            font-style: normal !important;
+            font-size: 16px;
+            margin-top: 5px;
         }
         .post-actions {
             display: flex;
@@ -76,7 +88,7 @@
             margin-right: 5px;
         }
         .liked {
-            color: var(--primary) !important; /* Green when liked */
+            color: var(--primary) !important;
             font-weight: bold;
         }
         .comments-section {
@@ -91,50 +103,114 @@
             border-radius: 5px;
             border: 1px solid var(--border-color);
         }
-
-
+        .pagination {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .pagination .step-links a {
+            margin: 0 5px;
+            padding: 5px 10px;
+            text-decoration: none;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 4px;
+        }
+        .pagination .step-links a:hover {
+            background-color: var(--button-hover-bg);
+        }
+        .pagination .step-links .current {
+            font-weight: bold;
+            margin: 0 5px;
+        }
+        .report-modal {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .report-modal-content {
+            background: var(--background-color);
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .report-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .report-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: var(--font-family-h);
+        }
+        .report-form .btn {
+            width: 48%;
+            margin: 5px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: var(--primary);
+            color: var(--button-text-color);
+            font-weight: bold;
+        }
+        .report-form .btn:hover {
+            background-color: var(--button-hover-bg);
+        }
     </style>
 </head>
 <body>
-    <!-- Yellow Header Section -->
     <div class="header-wrapper">
         <div class="header-content">
             <h1>Jelajahi Makanan di Surabaya!</h1>
             <p><strong>Temukan makanan terbaik di kota dan bergabunglah dalam diskusi dengan pengguna lainnya.</strong></p>
-            <a href="{% url 'forum:add_post' %}" class="btn">Posting di Forum</a> <!-- Button styled with base.css -->
+            <a href="{% url 'forum:add_post' %}" class="btn">Posting di Forum</a>
         </div>
     </div>
-
     <div class="content-wrapper">
-        <!-- Main Content -->
         <main>
             <section class="post-list">
-                {% for post in posts %}
+                {% for post in page_obj %}
                 <article class="post-card">
                     <div class="post-header">
-                        <img src="{% static 'images/user-avatar.png' %}" alt="User Profile">
+                        <img src="{% if post.user.profile_image %}{{ post.user.profile_image.url }}{% else %}{% static 'image/user-pic-default.png' %}{% endif %}" alt="User Profile" style="width: 50px; height: 50px;">
                         <div class="user-info">
-                            <h3>{{ post.user.username }}</h3>
-                            <p class="small-text">Posted {{ post.created_at|timesince }} ago</p>
+                            <p style="font-weight: bold; font-size: 18px;">{{ post.user.username }}</p>
+                            <p class="small-text" style="font-size: 16px;">{{ post.created_at|timesince }} ago</p>
                         </div>
                     </div>
                     <div class="post-content">
+                        {% if post.restaurant %}
+                            <p><strong>Restoran:</strong> {{ post.restaurant.nama }}</p>
+                        {% endif %}
                         <p>{{ post.text }}</p>
                         {% if post.image %}
-                        <img src="{{ post.image.url }}" alt="Post Image" style="max-width: 100%; border-radius: 8px; margin-top: 15px;">
+                            <img src="{{ post.image.url }}" alt="Post Image" style="max-width: 100%; border-radius: 8px; margin-top: 15px;">
                         {% endif %}
                     </div>
                     <div class="post-actions">
-                        <button 
-                            onclick="handleLike({{ post.id }})" 
-                            id="like-btn-{{ post.id }}"
-                            class="{% if post.id in user_liked_posts %}liked{% endif %}"
-                        >
+                        <button onclick="handleLike({{ post.id }})" id="like-btn-{{ post.id }}" class="{% if post.id in user_liked_posts %}liked{% endif %}">
                             <i class="fas fa-thumbs-up"></i> Like
                         </button>
                         <button onclick="toggleComments({{ post.id }})"><i class="fas fa-comment"></i> Comment</button>
-                        <button onclick="handleShare({{ post.id }})"><i class="fas fa-share"></i> Share</button>
-                        <button onclick="handleReport({{ post.id }})"><i class="fas fa-flag"></i> Report</button>
+                        <button onclick="handleShare('{{ request.build_absolute_uri }}')" id="share-btn-{{ post.id }}">
+                            <i class="fas fa-share"></i> Share
+                        </button>
+                        <button onclick="showReportModal({{ post.id }})"><i class="fas fa-flag"></i> Laporkan</button>
                     </div>
                     <div id="comments-{{ post.id }}" class="comments-section" style="display: none;">
                         <h4>Comments</h4>
@@ -147,18 +223,49 @@
                         </div>
                         <form class="comment-form" onsubmit="postComment(event, {{ post.id }})">
                             <textarea name="comment" placeholder="Add a comment..." required></textarea>
-                            <button type="submit" class="btn">Post Comment</button> <!-- Use button style from base.css -->
+                            <button type="submit" class="btn">Post Comment</button>
                         </form>
+                    </div>
+                    <div id="report-modal-{{ post.id }}" class="report-modal" style="display: none;">
+                        <div class="report-modal-content">
+                            <h4>Laporkan Postingan</h4>
+                            <form class="report-form">
+                                <select id="report-reason-{{ post.id }}">
+                                    <option value="Konten Tidak Pantas">Konten Tidak Pantas</option>
+                                    <option value="Spam atau Iklan">Spam atau Iklan</option>
+                                    <option value="Bahasa Kasar atau Menyinggung">Bahasa Kasar atau Menyinggung</option>
+                                    <option value="Misinformasi">Misinformasi</option>
+                                    <option value="Topik Tidak Relevan">Topik Tidak Relevan</option>
+                                </select>
+                                <div style="margin-top: 10px; display: flex; justify-content: space-between;">
+                                    <button type="button" class="btn" onclick="closeReportModal({{ post.id }})">Batal</button>
+                                    <button type="button" class="btn" onclick="submitReport({{ post.id }})">Kirim</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </article>
                 {% empty %}
                 <p class="text-center">Tidak ada postingan tersedia.</p>
                 {% endfor %}
             </section>
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% endif %}
+                    <span class="current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                    </span>
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
         </main>
     </div>
-
-    <!-- JavaScript Functions -->
     <script>
         function handleLike(postId) {
             fetch(`/like_post/`, {
@@ -215,6 +322,56 @@
             })
             .catch(error => {
                 console.error('Error:', error);
+            });
+        }
+
+        function handleShare(url) {
+            navigator.clipboard.writeText(url)
+            .then(() => {
+                alert("Link copied to clipboard!");
+            })
+            .catch((err) => {
+                console.error("Failed to copy: ", err);
+                alert("Failed to copy the link.");
+            });
+        }
+
+        function showReportModal(postId) {
+            document.getElementById(`report-modal-${postId}`).style.display = 'flex';
+        }
+
+        function closeReportModal(postId) {
+            document.getElementById(`report-modal-${postId}`).style.display = 'none';
+        }
+
+        function submitReport(postId) {
+            const reason = document.getElementById(`report-reason-${postId}`).value;
+
+            if (!reason) {
+                alert("Silakan pilih alasan laporan.");
+                return;
+            }
+
+            fetch('/report_post/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ post_id: postId, reason: reason })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Postingan telah dilaporkan.');
+                    closeReportModal(postId);
+                } else {
+                    alert('Gagal melaporkan postingan: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat mengirim laporan.');
             });
         }
     </script>

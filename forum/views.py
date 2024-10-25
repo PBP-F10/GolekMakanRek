@@ -11,34 +11,46 @@ from random import sample
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
-from .models import Post, Like
-
+from .models import Post, Like, Report
+from main.models import Restaurant, Food
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
+
 def show_post(request):
     posts = Post.objects.all().order_by('-created_at')
-    
+
     # Get the first user in the database as the default user
-    user = User.objects.first()
-    
+    user = User.objects.get(username='Kaindra')
+
     # Get a list of post IDs liked by the user
     user_liked_posts = Like.objects.filter(user=user).values_list('post_id', flat=True)
 
-    return render(request, 'show_post.html', {'posts': posts, 'user_liked_posts': user_liked_posts})
+    # Pagination setup
+    paginator = Paginator(posts, 5)  # Show 5 posts per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'show_post.html', {'page_obj': page_obj, 'user_liked_posts': user_liked_posts})
 
 def add_post(request):
     if request.method == 'POST':
         text = request.POST.get('text')
         image = request.FILES.get('image')
-        user = User.objects.first()  # Use the first user in the database for testing
+        restaurant_id = request.POST.get('restaurant')
+        user = User.objects.get(username='Kaindra')  # For testing, use the first user
+
+        # Get the selected restaurant, if any
+        restaurant = Restaurant.objects.filter(id=restaurant_id).first() if restaurant_id else None
 
         # Create a new Post object
-        post = Post(user=user, text=text, image=image)
+        post = Post(user=user, text=text, image=image, restaurant=restaurant)
         post.save()
 
-        return redirect('forum:show_post')  # Redirect to 'show_post' after saving the post
+        return redirect('forum:show_post')
 
-    return render(request, 'add_post.html')
-
+    # Get the list of available restaurants
+    restaurants = Restaurant.objects.all()
+    return render(request, 'add_post.html', {'restaurants': restaurants})
 
 # forum/views.py
 from django.http import JsonResponse
@@ -81,7 +93,7 @@ def post_comment(request):
         data = json.loads(request.body)
         post_id = data.get('post_id')
         comment_text = data.get('comment')
-        user = User.objects.first()  # Use the first user as the commenter
+        user = User.objects.get(username='Kaindra')  # Use the first user as the commenter
 
         if post_id and comment_text:
             post = get_object_or_404(Post, id=post_id)
@@ -89,3 +101,25 @@ def post_comment(request):
             return JsonResponse({'success': True, 'username': user.username, 'comment': comment.text})
 
     return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+def report_post(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        post_id = data.get('post_id')
+        reason = data.get('reason')
+        user = request.user if request.user.is_authenticated else None
+
+        # Pastikan pengguna terautentikasi
+        if user is None:
+            return JsonResponse({'success': False, 'error': 'Pengguna harus login untuk melaporkan postingan.'})
+
+        # Ambil postingan yang akan dilaporkan
+        post = get_object_or_404(Post, id=post_id)
+
+        # Buat laporan baru
+        Report.objects.create(post=post, reported_by=user, reason=reason)
+
+        # Kembalikan respons berhasil
+        return JsonResponse({'success': True, 'message': 'Postingan telah dilaporkan.'})
+    
+    return JsonResponse({'success': False, 'error': 'Metode permintaan tidak valid'})

@@ -24,7 +24,7 @@ function handleLike(postId) {
 
 function toggleComments(postId) {
     const commentsSection = document.getElementById(`comments-${postId}`);
-    commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
+    commentsSection.classList.toggle('hidden');
 }
 
 function postComment(event, postId) {

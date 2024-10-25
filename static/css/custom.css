@@ -234,3 +234,8 @@ body {
 .btn:hover {
     background-color: var(--button-hover-bg);
 }
+
+.liked {
+    color: #28a745 !important; /* Ensures the green color is applied */
+    font-weight: bold;
+}

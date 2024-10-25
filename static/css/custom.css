@@ -239,3 +239,99 @@ body {
     color: #28a745 !important; /* Ensures the green color is applied */
     font-weight: bold;
 }
+
+
+/* Autocomplete styles */
+#restaurant-list {
+    position: absolute;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.autocomplete-item {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.autocomplete-item:hover {
+    background-color: #f1f1f1;
+}
+
+/* styles.css */
+
+/* Style for the form container */
+/* styles.css */
+
+/* Existing styles... */
+
+/* Style for the form container */
+.form-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Page title styling */
+.form-container .page-title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+/* Form elements styling */
+.form-container .form-group {
+    margin-bottom: 15px;
+}
+
+.form-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-container input[type="text"],
+.form-container input[type="file"],
+.form-container textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-container textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-container button.btn {
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.form-container button.btn:hover {
+    background-color: #218838;
+}
+
+/* Error message styling */
+.error {
+    color: red;
+    margin-bottom: 15px;
+}
+
+/* Adjust main element if needed */
+main {
+    padding: 20px;
+}
+

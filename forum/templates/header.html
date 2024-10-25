@@ -1,11 +1,9 @@
-<!-- templates/header.html -->
-<div class="bg-yellow-400 text-black py-5 text-center shadow-md mb-5">
-    <!-- Add a container with max-width and centering -->
-    <div class="max-w-2xl mx-auto px-5">
-        <h1 class="text-3xl font-bold mb-2">Jelajahi Makanan di Surabaya!</h1>
-        <p class="font-semibold mb-4">Temukan makanan terbaik di kota dan bergabunglah dalam diskusi dengan pengguna lainnya.</p>
-        <a href="{% url 'forum:add_post' %}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-            Posting di Forum
-        </a>
+<!-- templates/partials/header.html -->
+
+<div class="header-wrapper">
+    <div class="header-content">
+        <h1>Jelajahi Makanan di Surabaya!</h1>
+        <p><strong>Berbagi cerita bersama kulineran di Surabaya!</strong></p>
+        <a href="{% url 'forum:add_post' %}" class="btn">Posting di Forum</a>
     </div>
 </div>

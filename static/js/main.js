@@ -4,15 +4,20 @@ function handleLike(postId) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken
+            'X-CSRFToken': csrfToken // Ensure csrfToken is defined in your template
         },
         body: JSON.stringify({ post_id: postId })
     })
     .then(response => response.json())
     .then(data => {
-        const likeButton = document.querySelector(`#like-btn-${postId}`);
+        const likeButton = document.getElementById(`like-btn-${postId}`);
         if (data.success) {
-            likeButton.classList.toggle('liked', data.liked);
+            // Toggle the 'liked' class based on the 'liked' status from the server
+            if (data.liked) {
+                likeButton.classList.add('liked');
+            } else {
+                likeButton.classList.remove('liked');
+            }
         } else {
             alert(`Failed to like the post: ${data.error}`);
         }
@@ -24,7 +29,11 @@ function handleLike(postId) {
 
 function toggleComments(postId) {
     const commentsSection = document.getElementById(`comments-${postId}`);
-    commentsSection.classList.toggle('hidden');
+    if (commentsSection.style.display === 'none' || commentsSection.style.display === '') {
+        commentsSection.style.display = 'block';
+    } else {
+        commentsSection.style.display = 'none';
+    }
 }
 
 function postComment(event, postId) {
@@ -32,7 +41,7 @@ function postComment(event, postId) {
     const commentInput = event.target.querySelector('textarea');
     const commentText = commentInput.value;
 
-    fetch('/post_comment/', {
+    fetch('/comment_post/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -106,3 +115,50 @@ function submitReport(postId) {
         alert('Terjadi kesalahan saat mengirim laporan.');
     });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const restaurantInput = document.getElementById('restaurant-input');
+    const restaurantList = document.getElementById('restaurant-list');
+    const restaurantIdInput = document.getElementById('restaurant-id');
+
+    restaurantInput.addEventListener('input', function() {
+        const query = this.value;
+        if (query.length > 0) {
+            fetch(`/search_restaurants/?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Clear previous results
+                    restaurantList.innerHTML = '';
+                    data.restaurants.forEach(function(restaurant) {
+                        const item = document.createElement('div');
+                        item.classList.add('autocomplete-item');
+                        item.textContent = restaurant.nama;
+                        item.dataset.id = restaurant.id;
+                        restaurantList.appendChild(item);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching restaurants:', error);
+                });
+        } else {
+            restaurantList.innerHTML = '';
+        }
+    });
+
+    // Click event for selecting a restaurant
+    restaurantList.addEventListener('click', function(e) {
+        if (e.target && e.target.matches('.autocomplete-item')) {
+            restaurantInput.value = e.target.textContent;
+            restaurantIdInput.value = e.target.dataset.id;
+            // Clear the list
+            restaurantList.innerHTML = '';
+        }
+    });
+
+    // Close the autocomplete list if clicked outside
+    document.addEventListener('click', function(e) {
+        if (e.target !== restaurantInput && e.target.parentNode !== restaurantList) {
+            restaurantList.innerHTML = '';
+        }
+    });
+});

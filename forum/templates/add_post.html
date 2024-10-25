@@ -1,35 +1,49 @@
-<!-- templates/forum/add_post.html -->
+<!-- templates/add_post.html -->
 {% extends 'base-forum.html' %}
+{% load static %}
 
 {% block title %}Add New Post{% endblock %}
 
+{% block header %}
+<!-- Empty header block to remove the header -->
+{% endblock %}
+
 {% block content %}
-<div class="max-w-2xl mx-auto p-5 bg-white rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold mb-5">Add New Post</h2>
-    <form action="" method="post" enctype="multipart/form-data" class="space-y-4">
-        {% csrf_token %}
-        <div>
-            <label for="text" class="block font-bold mb-1">Text</label>
-            <textarea name="text" id="text" rows="4" required class="w-full p-2 border rounded"></textarea>
-        </div>
-        <div>
-            <label for="image" class="block font-bold mb-1">Image</label>
-            <input type="file" name="image" id="image" class="w-full p-2 border rounded">
-        </div>
-        <div>
-            <label for="restaurant" class="block font-bold mb-1">Restaurant (Optional)</label>
-            <select name="restaurant" id="restaurant" class="w-full p-2 border rounded">
-                <option value="">-- Select a Restaurant --</option>
-                {% for restaurant in restaurants %}
-                    <option value="{{ restaurant.id }}">{{ restaurant.nama }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div>
-            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                Add Post
-            </button>
-        </div>
-    </form>
-</div>
+<main>
+    <div class="form-container">
+        <!-- Page Title -->
+        <h2 class="page-title">Create a New Post</h2>
+        
+        <!-- Form -->
+        <form method="post" action="{% url 'forum:add_post' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if error %}
+                <p class="error">{{ error }}</p>
+            {% endif %}
+            <!-- Restaurant Selection -->
+            <div class="form-group">
+                <label for="restaurant-input">Select Restaurant:</label>
+                <input type="text" id="restaurant-input" name="restaurant_name" autocomplete="off" placeholder="Type to search..." required>
+                <input type="hidden" id="restaurant-id" name="restaurant_id">
+                <div id="restaurant-list" class="autocomplete-items"></div>
+            </div>
+            <!-- Post Text -->
+            <div class="form-group">
+                <label for="text">Post Text:</label>
+                <textarea id="text" name="text" required></textarea>
+            </div>
+            <!-- Image Upload -->
+            <div class="form-group">
+                <label for="image">Upload Image:</label>
+                <input type="file" id="image" name="image">
+            </div>
+            <!-- Submit Button -->
+            <button type="submit" class="btn">Submit Post</button>
+        </form>
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/main.js' %}"></script>
 {% endblock %}

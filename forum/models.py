@@ -27,10 +27,6 @@ class Comment(models.Model):
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-class Share(models.Model):
-    post = models.ForeignKey(Post, related_name='shares', on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
 
 class Report(models.Model):
     ALASAN_LAPORAN = [

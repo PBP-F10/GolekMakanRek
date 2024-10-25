@@ -1,4 +1,6 @@
-/* Base Theme Colors */
+@import url('https://fonts.cdnfonts.com/css/helvetica-neue-5');
+@import url('https://fonts.googleapis.com/css?family=Poppins'); 
+
 :root {
     --primary: #28a745;
     --secondary: #000;
@@ -13,7 +15,8 @@
     --button-text-color: #fff;
     --link-color: #28a745;
     --link-hover-color: #28a745;
-    --font-family-primary: "Helvetica Neue", Arial, sans-serif;
+    --font-family-h: 'Helvetica Neue', Arial;
+    --font-family-p: 'Poppins'
 }
 
 /* Basic Reset */
@@ -25,7 +28,7 @@
 
 /* Body Styling */
 body {
-    font-family: var(--font-family-primary);
+    font-family: var(--font-family-p); /* Use Poppins as the default font for the body */
     color: var(--text-color);
     background-color: var(--background-color);
 }
@@ -34,6 +37,9 @@ body {
 h1, h2, h3, h4, h5, h6 {
     color: var(--text-color);
     margin-bottom: 1rem;
+    font-weight: 700; 
+    font-family: var(--font-family-h);
+
 }
 
 h1 {
@@ -65,6 +71,7 @@ p {
     font-size: 1rem;
     margin-bottom: 1rem;
     color: var(--text-color);
+    font-family: var(--font-family-p)
 }
 
 /* Utility Classes */
@@ -92,7 +99,6 @@ p {
     transition: background-color 0.3s;
     cursor: pointer;
     border: none;
-    font-style: normal; /* Ensure button text is not italic */
 }
 
 .btn:hover {
@@ -127,7 +133,6 @@ p {
 a {
     color: var(--link-color);
     text-decoration: none;
-    font-style: normal; /* Ensure links are not italic */
 }
 
 a:hover {
@@ -138,7 +143,6 @@ a:hover {
 form, 
 form * {
     font-style: normal !important; /* Force all form elements to have normal font style */
-    font-family: var(--font-family-primary) !important; /* Ensure consistent font family */
     font-weight: normal !important; /* Optional: ensure normal font weight */
 }
 
@@ -146,7 +150,7 @@ textarea {
     border: 1px solid var(--border-color);
     border-radius: 5px;
     padding: 10px;
-    font-family: var(--font-family-primary);
+    font-family: var(--font-family-h);
     width: 100%;
     background-color: var(--background-color);
     color: var(--text-color);
@@ -161,7 +165,6 @@ textarea {
 .form-group label {
     display: block;
     margin-bottom: 5px;
-    font-style: normal !important; /* Force label text to be normal */
 }
 
 .form-group input, 
@@ -172,7 +175,6 @@ textarea {
     border-radius: 5px;
     background-color: var(--background-color);
     color: var(--text-color);
-    font-style: normal !important; /* Force input and textarea text to be normal */
 }
 
 .form-group button {
@@ -182,7 +184,6 @@ textarea {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    font-style: normal !important; /* Force button text to be normal */
 }
 
 /* Responsive Design */

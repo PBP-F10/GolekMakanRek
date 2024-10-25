@@ -121,7 +121,12 @@
         if (modal) {
             document.body.removeChild(modal);
         }
+        window.location.href = "{% url 'resto_preview:restaurant_detail' restaurant.id %}";
     }
+
+    function submitRating(event) {
+    }
+
 </script>
 
 {% endblock %}

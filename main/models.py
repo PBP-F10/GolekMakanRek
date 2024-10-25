@@ -1,8 +1,9 @@
 from django.db import models
+import uuid
 
 # Create your models here.
 class Food(models.Model):
-    id = models.AutoField(primary_key=True)    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     nama = models.CharField(max_length=255)
     kategori = models.CharField(max_length=255)
     harga = models.IntegerField()
@@ -16,4 +17,3 @@ class Restaurant(models.Model):
     kategori = models.CharField(max_length=255)
     deskripsi = models.TextField()
     random_products = models.JSONField(default=list, blank=True)
-    

@@ -1,5 +1,5 @@
 from .models import Restaurant, Rating
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Avg
 from django.http import JsonResponse
 
@@ -27,22 +27,18 @@ def submit_rating(request):
         restaurant_id = request.POST.get('restaurant_id')
         score = request.POST.get('score')
 
-        if not score.isdigit() or int(score) < 1 or int(score) > 5:
-            return JsonResponse({'error': 'Invalid score'}, status=400)
-
         restaurant = get_object_or_404(Restaurant, id=restaurant_id)
 
-        rating, created = Rating.objects.update_or_create(
-            restaurant=restaurant,
-            user=request.user,
-            defaults={'score': int(score)}
-        )
+        # Cek jika pengguna sudah memberikan rating sebelumnya, jika ada, update
+        user_rating = Rating.objects.filter(user=request.user, restaurant=restaurant).first()
+        if user_rating:
+            user_rating.score = score
+            user_rating.save()
+        else:
+            # Jika belum ada, buat rating baru
+            Rating.objects.create(user=request.user, restaurant=restaurant, score=score)
 
-        average_rating = restaurant.rating_set.aggregate(Avg('score'))['score__avg'] or 0
-
-        return JsonResponse({
-            'average_rating': average_rating,
-            'user_rating': int(score), 
-        })
+        # Redirect kembali ke halaman detail restoran
+        return redirect('resto_preview:restaurant_detail', restaurant_id=restaurant.id)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)

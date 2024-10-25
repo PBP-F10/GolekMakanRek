@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %} 
+
+{% block meta %}
+<script src="https://cdn.tailwindcss.com"></script>
+{% endblock meta %}
+
+{% block content %}
+
+<section class="w-full overflow-hidden bg-gray-100 dark:bg-gray-900">
+    <div class="flex flex-col">
+        <!-- Cover Image with Gradient Overlay -->
+        <div class="relative w-full h-[20rem] md:h-[18rem] sm:h-[16rem] xs:h-[12rem]">
+            <img src="https://i.pinimg.com/originals/9e/47/fe/9e47fefa5a687335cf906882cecfe779.gif"
+                alt="User Cover" class="absolute inset-0 w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-blue-700 to-transparent opacity-60"></div>
+        </div>
+
+        <!-- Profile Image and Name -->
+        <div class="sm:w-[80%] xs:w-[90%] mx-auto flex flex-col sm:flex-row items-center mt-[-4rem] sm:mt-[-6rem] relative z-10">
+            <img src="https://i.pinimg.com/236x/f9/fc/f2/f9fcf236143d7eda1309a973196ce886.jpg" alt="User Profile"
+            class="rounded-full border-4 border-cyan-500 shadow-lg lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[6rem] xs:h-[6rem]" />
+            
+            <!-- Full Name -->
+            <h1 class="w-full text-center sm:text-left mt-4 sm:mt-0 sm:ml-4 text-cyan-500 lg:text-4xl md:text-3xl sm:text-2xl xs:text-xl font-bold">
+                Samuel Abera
+            </h1>
+        </div>
+
+        <!-- Details Section -->
+        <div class="xl:w-[80%] lg:w-[90%] md:w-[90%] sm:w-[92%] xs:w-[90%] flex flex-col gap-4 items-center mx-auto mt-6">
+            <!-- Description -->
+            <p class="w-[90%] text-gray-800 dark:text-gray-100 text-sm md:text-md text-center sm:text-left bg-blue-700 p-4 rounded-lg shadow-md">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quisquam debitis labore consectetur voluptatibus mollitia
+                dolorem veniam omnis ut quibusdam minima sapiente repellendus asperiores explicabo, eligendi odit, dolore similique
+                fugiat dolor, doloremque eveniet. Odit, consequatur. Ratione voluptate exercitationem hic eligendi vitae animi nam
+                in, est earum culpa illum aliquam.
+            </p>
+
+            <!-- Detail Section with Cards -->
+            <div class="w-full flex flex-col sm:flex-row justify-around gap-4 py-6">
+                <!-- Column 1 -->
+                <div class="w-full sm:w-[48%] bg-cyan-500 p-4 rounded-lg shadow-md">
+                    <dl class="text-gray-100">
+                        <div class="flex flex-col pb-3">
+                            <dt class="mb-1 text-gray-200">First Name</dt>
+                            <dd class="text-lg font-semibold">Samuel</dd>
+                        </div>
+                        <div class="flex flex-col py-3">
+                            <dt class="mb-1 text-gray-200">Last Name</dt>
+                            <dd class="text-lg font-semibold">Abera</dd>
+                        </div>
+                        <div class="flex flex-col py-3">
+                            <dt class="mb-1 text-gray-200">Date Of Birth</dt>
+                            <dd class="text-lg font-semibold">21/02/1997</dd>
+                        </div>
+                        <div class="flex flex-col py-3">
+                            <dt class="mb-1 text-gray-200">Gender</dt>
+                            <dd class="text-lg font-semibold">Male</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- Column 2 -->
+                <div class="w-full sm:w-[48%] bg-cyan-500 p-4 rounded-lg shadow-md">
+                    <dl class="text-gray-100">
+                        <div class="flex flex-col pb-3">
+                            <dt class="mb-1 text-gray-200">Location</dt>
+                            <dd class="text-lg font-semibold">Ethiopia, Addis Ababa</dd>
+                        </div>
+
+                        <div class="flex flex-col pt-3">
+                            <dt class="mb-1 text-gray-200">Phone Number</dt>
+                            <dd class="text-lg font-semibold">+251913****30</dd>
+                        </div>
+                        <div class="flex flex-col pt-3">
+                            <dt class="mb-1 text-gray-200">Email</dt>
+                            <dd class="text-lg font-semibold">samuelabera87@gmail.com</dd>
+                        </div>
+
+                        <div class="flex flex-col pt-3">
+                            <dt class="mb-1 text-gray-200">Website</dt>
+                            <dd class="text-lg font-semibold hover:text-blue-300">
+                                <a href="https://techakim.com" class="text-white">https://www.teclick.com</a>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
+

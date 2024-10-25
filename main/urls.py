@@ -3,6 +3,6 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('resto_preview.urls')),  # Meng-include URL dari aplikasi resto_preview
+    path('', include('resto_preview.urls')), 
 ]
 

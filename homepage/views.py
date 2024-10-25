@@ -61,6 +61,14 @@ def get_food(request):
             if param == "like_filter":
                 like_only = True
                 continue
+            if param == "min_harga":
+                if request.GET.get(param) != "":
+                    filters[f"harga__gte"] = request.GET.get(param)
+                continue
+            if param == "max_harga":
+                if request.GET.get(param) != "":
+                    filters[f"harga__lte"] = request.GET.get(param)
+                continue
             if request.GET.get(param) != "None":
                 filters[f"{param}__icontains"] = request.GET.get(param)
         if like_only:

@@ -8,23 +8,20 @@ from django.utils.html import strip_tags
 class SearchFoodForm(ModelForm):
     class Meta:
         model = Food
-        fields = ["nama", "kategori", "harga"]
+        fields = ["nama", "kategori"]
         widgets = {
             'nama': TextInput(attrs={'class': 'mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', 'placeholder': 'Masukkan nama makanan'}),
             'kategori': Select(attrs={'class': 'form-select mt-2 block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'}),
-            'harga': NumberInput(attrs={'class': 'mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', 'placeholder': 'Masukkan harga makanan'}),
         }
         labels = {
             'nama': 'Nama Makanan',
             'kategori': 'Kategori',
-            'harga': 'Harga Makanan'
         }
 
     def __init__(self, *args, **kwargs):
         super(SearchFoodForm, self).__init__(*args, **kwargs)
         self.fields['nama'].required = False
         self.fields['kategori'].required = False
-        self.fields['harga'].required = False
         choices = [('None', 'Pilih kategori')]
         categories = Food.objects.values_list('kategori', flat=True).distinct()
         for category in categories:

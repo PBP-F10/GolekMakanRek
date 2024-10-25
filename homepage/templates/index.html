@@ -40,11 +40,11 @@
   <label for="toggleSearch" class="flex items-center cursor-pointer">
     <div class="relative">
       <input id="toggleSearch" type="checkbox" class="sr-only" />
-      <div class="block bg-white w-60 h-12 rounded-full border-2 border-gray-400 relative">
-        <div class="dot absolute left-1.5 top-0.5 bg-orange-600 w-28 h-10 rounded-full transition flex items-center justify-center text-white font-bold text-s">
+      <div class="block bg-white w-60 h-14 rounded-full border-2 border-gray-400 relative">
+        <div class="dot absolute left-1.5 top-1.5 bg-orange-600 w-28 h-10 rounded-full transition flex items-center justify-center text-white font-bold text-s">
         </div>
-        <div class="text-black font-bold text-lg absolute right-6 top-2">Restoran</div>
-        <div class="text-black font-bold text-lg absolute left-6 top-2">Makanan</div>
+        <div class="text-black font-bold text-lg absolute right-6 top-3">Restoran</div>
+        <div class="text-black font-bold text-lg absolute left-6 top-3">Makanan</div>
       </div>
     </div>
   </label>
@@ -53,6 +53,14 @@
   <div class="mb-4">
     <form id="searchFoodForm" class="flex flex-col space-y-4">
       {{ food_search }}
+      <div>
+        <label for="min_harga">Harga minimum:</label>
+        <input type="number" name="min_harga" class="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Harga minimum" id="min_harga" min="0" step="1">
+      </div>
+      <div>
+        <label for="max_harga">Harga maksimum:</label>
+        <input type="number" name="max_harga" class="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Harga maksimum" id="max_harga" min="0" step="1">
+      </div>
       <label class="inline-flex items-center mt-2">
         <input type="checkbox" name="like_filter" class="form-checkbox h-5 w-5 text-blue-600">
         <span class="ml-2 text-gray-700">Tampilkan makanan yang disukai saja</span>
@@ -88,6 +96,14 @@
           <div class="mb-4">
             <form id="searchFoodForm" class="flex flex-col space-y-4">
               {{ food_search }}
+              <div>
+                <label for="min_harga">Harga minimum:</label>
+                <input type="number" name="min_harga" class="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Harga minimum" id="min_harga" min="0" step="1">
+              </div>
+              <div>
+                <label for="max_harga">Harga maksimum:</label>
+                <input type="number" name="max_harga" class="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Harga maksimum" id="max_harga" min="0" step="1">
+              </div>
               <label class="inline-flex items-center mt-2">
                 <input type="checkbox" name="like_filter" class="form-checkbox h-5 w-5 text-blue-600">
                 <span class="ml-2 text-gray-700">Tampilkan makanan yang disukai saja</span>
@@ -105,6 +121,13 @@
       document.querySelector("#searchFoodForm").addEventListener("submit", (e) => {
           e.preventDefault();
           refreshFood(true);
+      });
+      document.getElementById('min_harga').addEventListener('input', function() {
+          if (this.value == "") {
+              document.getElementById('max_harga').min = "0";
+              return;
+          } 
+          document.getElementById('max_harga').min = parseFloat(this.value) + 1;
       });
       refreshFood();
     }
@@ -338,6 +361,13 @@
             document.querySelector('.dot').classList.remove('translate-x-full');
             toggleFood();
         }
+    });
+    document.getElementById('min_harga').addEventListener('input', function() {
+        if (this.value == "") {
+            document.getElementById('max_harga').min = "0";
+            return;
+        } 
+        document.getElementById('max_harga').min = parseFloat(this.value) + 1;
     });
     refreshFood();
 </script>

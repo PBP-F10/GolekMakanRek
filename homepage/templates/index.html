@@ -175,25 +175,29 @@
                     const numLikesParsed = numLikes.count;
                     htmlString += `
                     <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4 border-2 border-gray-300 relative">
-                        <img src="${item.fields.image_url}" width="256" height="256" class="object-cover rounded-lg">
-                        <h2 class="text-xl font-semibold">${name}</h2>
-                        <p class="text-gray-700">${description}</p>
-                        ${hargaDiskon == "0" ? '<p class="text-xl font-bold">Rp ' + harga + '</p>' : '<p class="text-xl font-bold"><span class="text-red-600"><s>Rp ' + harga + '</s></span> <span class="text-green-600">Rp ' + hargaDiskon + '</span></p>'}
-                        <form class="like_form absolute right-0 top-1/2 transform -translate-y-1/2 mr-4" id="${item.pk}">
-                          <a href="/login"><button type="button" class="text-white rounded flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-1" viewBox="0 0 24 24" fill="rgb(245, 158, 11)" stroke="gray" stroke-width="1.5" fill-opacity="0">
-                              <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.782 1.4 8.168L12 18.896l-7.334 3.864 1.4-8.168L.132 9.21l8.2-1.192z"/>
+                      <div class="flex">
+                        <img src="${item.fields.image_url}" class="object-cover w-28 h-28 rounded-lg mr-4">
+                        <div>
+                          <h2 class="text-xl font-semibold">${name}</h2>
+                          <p class="text-gray-700">${description}</p>
+                          ${item.fields.diskon == 0 ? '<p class="text-xl font-bold">Rp ' + harga + '</p>' : '<p class="text-xl font-bold"><span class="text-red-600"><s>Rp ' + harga + '</s></span> <span class="text-green-600">Rp ' + hargaDiskon + '</span></p>'}
+                          <div class="like_form absolute right-0 top-1/2 transform -translate-y-1/2 mr-4" id="${item.pk}">
+                            <a href="/login"><button type="button" class="text-white rounded flex items-center">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-1" viewBox="0 0 24 24" fill="rgb(245, 158, 11)" stroke="gray" stroke-width="1.5" fill-opacity="0">
+                                <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.782 1.4 8.168L12 18.896l-7.334 3.864 1.4-8.168L.132 9.21l8.2-1.192z"/>
+                              </svg>
+                            </button></a>
+                            <span class="like-count absolute left-1/2 transform -translate-x-1/2 top-full mt-1">${numLikesParsed}</span>
+                          </div>
+                          <a href="food/${item.pk}"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5zm0-8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/>
                             </svg>
                           </button></a>
-                          <span class="like-count absolute left-1/2 transform -translate-x-1/2 top-full mt-1">${numLikesParsed}</span>
-                        </form>
-                        <a href="/food/${item.pk}"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 flex items-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5zm0-8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/>
-                          </svg>
-                        </button></a>
+                        </div>
                       </div>
-                    `;
+                    </div>
+                  `;
                 };
                 htmlString += "</div>";
             }
@@ -209,32 +213,32 @@
                     const numLikes = await getFoodLikes(item.pk);
                     const numLikesParsed = numLikes.count;
                     htmlString += `
-                      <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4 border-2 border-gray-300 relative">
-                        <div class="flex">
-                          <img src="${item.fields.image_url}" class="object-cover w-28 h-28 rounded-lg mr-4">
-                          <div>
-                            <h2 class="text-xl font-semibold">${name}</h2>
-                            <p class="text-gray-700">${description}</p>
-                            ${item.fields.diskon == 0 ? '<p class="text-xl font-bold">Rp ' + harga + '</p>' : '<p class="text-xl font-bold"><span class="text-red-600"><s>Rp ' + harga + '</s></span> <span class="text-green-600">Rp ' + hargaDiskon + '</span></p>'}
-                            <form class="like_form absolute right-0 top-1/2 transform -translate-y-1/2 mr-4" id="${item.pk}">
-                              <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
-                              <input type="hidden" id="id_food_id" name="food_id" value="${item.pk}">
-                              <button type="submit" class="text-white rounded flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-1" viewBox="0 0 24 24" fill="rgb(245, 158, 11)" stroke="gray" stroke-width=${isLiked ? "0" : "1.5"} fill-opacity=${isLiked ? "1" : "0"}>
-                                  <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.782 1.4 8.168L12 18.896l-7.334 3.864 1.4-8.168L.132 9.21l8.2-1.192z"/>
-                                </svg>
-                              </button>
-                              <span class="like-count absolute left-1/2 transform -translate-x-1/2 top-full mt-1">${numLikesParsed}</span>
-                            </form>
-                            <a href="food/${item.pk}"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 flex items-center">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5zm0-8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/>
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4 border-2 border-gray-300 relative">
+                      <div class="flex">
+                        <img src="${item.fields.image_url}" class="object-cover w-28 h-28 rounded-lg mr-4">
+                        <div>
+                          <h2 class="text-xl font-semibold">${name}</h2>
+                          <p class="text-gray-700">${description}</p>
+                          ${item.fields.diskon == 0 ? '<p class="text-xl font-bold">Rp ' + harga + '</p>' : '<p class="text-xl font-bold"><span class="text-red-600"><s>Rp ' + harga + '</s></span> <span class="text-green-600">Rp ' + hargaDiskon + '</span></p>'}
+                          <form class="like_form absolute right-0 top-1/2 transform -translate-y-1/2 mr-4" id="${item.pk}">
+                            <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
+                            <input type="hidden" id="id_food_id" name="food_id" value="${item.pk}">
+                            <button type="submit" class="text-white rounded flex items-center">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-1" viewBox="0 0 24 24" fill="rgb(245, 158, 11)" stroke="gray" stroke-width=${isLiked ? "0" : "1.5"} fill-opacity=${isLiked ? "1" : "0"}>
+                                <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.782 1.4 8.168L12 18.896l-7.334 3.864 1.4-8.168L.132 9.21l8.2-1.192z"/>
                               </svg>
-                            </button></a>
-                          </div>
+                            </button>
+                            <span class="like-count absolute left-1/2 transform -translate-x-1/2 top-full mt-1">${numLikesParsed}</span>
+                          </form>
+                          <a href="food/${item.pk}"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5zm0-8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/>
+                            </svg>
+                          </button></a>
                         </div>
                       </div>
-                `;
+                    </div>
+                  `;
                 };
                 htmlString += "</div>";
             }

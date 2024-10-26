@@ -1,0 +1,193 @@
+/* Base Theme Colors */
+:root {
+    --primary: #28a745;
+    --secondary: #000;
+    --accent: #ffcc00;
+    --background-color: #fff;
+    --text-color: #000;
+    --muted-text-color: #666;
+    --border-color: #ccc;
+    --hairline-color: #e8e8e8;
+    --button-bg: var(--primary);
+    --button-hover-bg: #28a745;
+    --button-text-color: #fff;
+    --link-color: #28a745;
+    --link-hover-color: #28a745;
+    --font-family-primary: "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Basic Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Body Styling */
+body {
+    font-family: var(--font-family-primary);
+    color: var(--text-color);
+    background-color: var(--background-color);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.75rem;
+}
+
+h4 {
+    font-size: 1.5rem;
+}
+
+h5 {
+    font-size: 1.25rem;
+}
+
+h6 {
+    font-size: 1rem;
+    color: var(--muted-text-color);
+}
+
+p {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+/* Utility Classes */
+.text-center {
+    text-align: center;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: var(--background-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+/* Button Styles */
+.btn {
+    background-color: var(--button-bg);
+    color: var(--button-text-color);
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    cursor: pointer;
+    border: none;
+    font-style: normal; /* Ensure button text is not italic */
+}
+
+.btn:hover {
+    background-color: var(--button-hover-bg);
+}
+
+/* Header Styles */
+.header-wrapper {
+    background-color: var(--accent);
+    color: var(--text-color);
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+/* Card Styling */
+.card {
+    background-color: var(--background-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.card-content {
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+/* Link Styles */
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    font-style: normal; /* Ensure links are not italic */
+}
+
+a:hover {
+    color: var(--link-hover-color);
+}
+
+/* Form Styling */
+form, 
+form * {
+    font-style: normal !important; /* Force all form elements to have normal font style */
+    font-family: var(--font-family-primary) !important; /* Ensure consistent font family */
+    font-weight: normal !important; /* Optional: ensure normal font weight */
+}
+
+textarea {
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    padding: 10px;
+    font-family: var(--font-family-primary);
+    width: 100%;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-style: normal; /* Ensure textarea text is not italic */
+}
+
+/* Form Group Styling */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-style: normal !important; /* Force label text to be normal */
+}
+
+.form-group input, 
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-style: normal !important; /* Force input and textarea text to be normal */
+}
+
+.form-group button {
+    background-color: var(--primary);
+    color: var(--button-text-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-style: normal !important; /* Force button text to be normal */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 20px;
+    }
+}

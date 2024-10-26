@@ -1,0 +1,603 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load multiply %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+<style>
+
+    .feature-card:hover{
+        max-height: 200px;
+        opacity: 1;
+        margin-top: 0.75rem;
+    }
+
+    .feature-card:hover .absolute.bottom-3.right-3 div {
+        background-color: #22c55e;
+        transition: background-color 0.3s ease;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'navbar.html' %}
+<div class="fixed top-4 right-4 z-50" id="audioControl">
+    <audio id="bgMusic" loop>
+        <source src="{% static '../../static/audio/backsound.mp3' %}" type="audio/mp3">
+    </audio>
+    
+    <button onclick="toggleMusic()" class="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-lg hover:bg-white transition-all duration-300 group">
+        <svg id="musicOnIcon" class="w-6 h-6 text-green-600 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+        </svg>
+        <svg id="musicOffIcon" class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/>
+        </svg>
+    </button>
+</div>
+
+<section class="bg-gray-200 py-16 relative overflow-hidden">
+    <div class="grid md:grid-cols-2 gap-8 items-center">
+        <div class="max-w-7xl mx-auto px-4" data-aos="fade-up" data-aos-delay="100">
+            <h1 class="text-5xl font-bold mb-4">
+                Taste the 
+                <span class="text-orange-500" data-aos="fade-right" data-aos-delay="300"> Best</span><span>, </span>
+                <br>
+                Bite <span class="text-orange-500" data-aos="fade-right" data-aos-delay="500">at a Time</span><span>!</span>
+            </h1>
+            <p class="mb-8 text-gray-600" data-aos="fade-up" data-aos-delay="700">
+                Finding the best flavors in Surabaya
+                <br>
+                has never been easier!
+            </p>
+            <div class="flex justify-center mt-4" data-aos="zoom-in" data-aos-delay="900">
+                <label for="toggleSearch" class="flex items-center cursor-pointer">
+                    <div class="relative">
+                    <input id="toggleSearch" type="checkbox" class="sr-only" />
+                    <div class="block bg-white w-60 h-14 rounded-full border-2 border-gray-400 relative">
+                        <div class="dot absolute left-1.5 top-1.5 bg-orange-600 w-28 h-10 rounded-full transition flex items-center justify-center text-white font-bold text-s">
+                        </div>
+                        <div class="text-black font-bold text-lg absolute right-6 top-3">Restoran</div>
+                        <div class="text-black font-bold text-lg absolute left-6 top-3">Makanan</div>
+                    </div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <div class="flex items-start space-x-8">
+            <div class="relative flex-shrink-0" data-aos="zoom-in" data-aos-delay="300">
+                <div class="bg-yellow-400 rounded-full p-4 w-96 h-96 ml-[-200px] hover:rotate-3 transition-transform duration-300">
+                    <img src="{% static '../../static/img/homepage/sby.png' %}" 
+                        alt="Food Delivery" 
+                        class="rounded-full w-full h-full object-cover">
+                </div>
+            </div>
+
+            <div class="flex-grow space-y-8 px-4 py-20">
+                {% for feature in features %}
+                <div class="feature-card bg-white w-80 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 mb-6 cursor-pointer hover:scale-105 border border-gray-100 overflow-hidden relative" 
+                    data-aos="fade-left" 
+                    data-aos-delay="{{ forloop.counter|multiply:200 }}">
+                    <div class="absolute w-2 h-full bg-gradient-to-b from-green-500 to-green-600 left-0"></div>
+
+                    <div class="p-2 pl-8">
+                        <h3 class="font-semibold text-lg text-gray-800">{{ feature.title }}</h3>
+                    </div>
+
+                    <div class="absolute bottom-3 right-3 flex space-x-1">
+                        <div class="w-1 h-1 rounded-full bg-gray-300"></div>
+                        <div class="w-1 h-1 rounded-full bg-gray-300"></div>
+                        <div class="w-1 h-1 rounded-full bg-gray-300"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Search Results Section -->
+<div id="container" class="max-w-4xl mx-auto p-4 bg-white shadow-md rounded-lg mt-8">
+    <div class="mb-4">
+        <form id="searchFoodForm" class="flex flex-col space-y-4">
+        {{ food_search }}
+        <div>
+            <label for="min_harga">Harga minimum:</label>
+            <input type="number" name="min_harga" class="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Harga minimum" id="min_harga" min="0" step="1">
+        </div>
+        <div>
+            <label for="max_harga">Harga maksimum:</label>
+            <input type="number" name="max_harga" class="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Harga maksimum" id="max_harga" min="0" step="1">
+        </div>
+        <label class="inline-flex items-center mt-2">
+            <input type="checkbox" name="like_filter" class="form-checkbox h-5 w-5 text-blue-600">
+            <span class="ml-2 text-gray-700">Tampilkan makanan yang disukai saja</span>
+        </label>
+        <button type="submit" class="mt-4 bg-green-600 hover:bg-green-500 cursor-pointer text-white font-bold py-3 px-2 rounded-full flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.387a1 1 0 01-1.414 1.414l-4.387-4.387zM8 14a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd" />
+            </svg>
+            Cari
+        </button>
+        </form>
+    </div>
+    <div id="food_cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+</div>
+
+<section class="max-w-7xl mx-auto py-16 px-4">
+    <h2 class="text-4xl font-bold mb-12 text-center" data-aos="fade-up">
+        Most <span class="text-orange-500" data-aos="fade-right" data-aos-delay="200">Favorite Menu</span>
+        in All of Surabaya
+    </h2>
+    <div class="grid md:grid-cols-3 gap-8">
+        {% for category in categories %}
+        <div class="text-center flex flex-col items-center" 
+            data-aos="flip-left" 
+            data-aos-delay="{{ forloop.counter|multiply:100 }}"
+            data-aos-duration="1000">
+            <div class="bg-{{ category.color }}-100 rounded-full p-8 mb-4 w-64 h-64 flex items-center justify-center transform hover:scale-105 transition-transform duration-300">
+                <img src="{% static category.image %}" alt="{{ category.name }}" class="w-full h-full object-cover rounded-full">
+            </div>
+            <h3 class="font-semibold mb-2">{{ category.name }}</h3>
+            <button class="text-orange-500 flex items-center justify-center group">
+                Preview
+                <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="bg-gray-900 py-16 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="grid md:grid-cols-2 gap-8 items-center">
+            <div class="text-white" data-aos="fade-right" data-aos-duration="1000">
+                <h2 class="text-5xl font-bold mb-4 text-white">
+                    Alien from Surabaya
+                    <br>
+                    <span class="text-orange-500" data-aos="fade-up" data-aos-delay="300">ever</span> said...
+                </h2>
+                <p class="text-gray-300 mb-8" data-aos="fade-up" data-aos-delay="500">
+                    GolekMakanRek! is an app that provides
+                    <br>
+                    the most up-to-date information across Surabaya.
+                </p>
+            </div>
+
+            <div class="relative" data-aos="zoom-in-left" data-aos-duration="1000">
+                <div class="relative transform hover:scale-105 transition-transform duration-300">
+                    <img src="{% static '../../static/img/homepage/imroatus.jpg' %}" alt="Hot Pizza" class="w-full">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="bg-gray-50 py-16">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-4xl font-bold text-center mb-12" data-aos="fade-up">
+            Inside of <span class="text-orange-500">GolekMakanRek</span>!
+        </h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            {% for service in services %}
+            <div class="text-center" data-aos="fade-up" data-aos-delay="{{ forloop.counter|multiply:100 }}">
+                <div class="bg-white rounded-full p-8 mb-4 mx-auto w-32 h-32 flex items-center justify-center transform hover:scale-110 transition-transform duration-300">
+                    <img src="{% static service.icon %}" alt="{{ service.name }}" class="w-12 h-12 text-orange-500">
+                </div>
+                <h3 class="font-semibold mb-2">{{ service.title }}</h3>
+                <p class="text-gray-600 text-sm">{{ service.description }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<footer class="relative">
+    <div class="w-full h-16 bg-green-600 relative">
+        <div class="absolute bottom-0 w-full">
+            <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,48 L1440,48 L1440,0 Q720,48 0,0 Z" fill="#1F2937"/>
+            </svg>
+        </div>
+    </div>
+
+    <div class="bg-gray-900 py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="mb-12">
+                <h2 class="text-white text-4xl font-bold text-center mb-4">
+                    Enjoy <span class="text-orange-500">3000+</span> foods from
+                    <br>
+                    <span class="text-yellow-500">400</span> Restaurants
+                </h2>
+                <div class="flex justify-center mt-8">
+                    <button class="bg-gray-800 text-white px-8 py-3 rounded-full hover:bg-gray-700">
+                        Find Now
+                        <span class="ml-2">→</span>
+                    </button>
+                </div>
+                <div class="flex flex-wrap justify-center items-center gap-8 mt-12">
+                    <img src="{% static '../../static/img/homepage/footer/f1.jpg' %}" alt="food1" class="w-12 h-12 bg-white rounded-full p-2">
+                    <img src="{% static '../../static/img/homepage/footer/f2.webp' %}" alt="food2" class="w-12 h-12 bg-white rounded-full p-2">
+                    <img src="{% static '../../static/img/homepage/footer/f3.jpg' %}" alt="food3" class="w-12 h-12 bg-white rounded-full p-2">
+                    <img src="{% static '../../static/img/homepage/footer/f4.webp' %}" alt="food4" class="w-12 h-12 bg-white rounded-full p-2">
+                    <img src="{% static '../../static/img/homepage/footer/f5.jpg' %}" alt="food5" class="w-12 h-12 bg-white rounded-full p-2">
+                    <img src="{% static '../../static/img/homepage/footer/f6.jpeg' %}" alt="food6" class="w-12 h-12 bg-white rounded-full p-2">
+                    <img src="{% static '../../static/img/homepage/footer/f7.jpeg' %}" alt="food7" class="w-12 h-12 bg-white rounded-full p-2">
+                    <img src="{% static '../../static/img/homepage/footer/f8.jpeg' %}" alt="food8" class="w-12 h-12 bg-white rounded-full p-2">
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 pt-8 flex justify-between items-center">
+                <div class="flex items-center">
+                    <h2 class="text-white text-xl font-bold">
+                        GolekMakanRek!<span class="text-orange-500"></span>
+                    </h2>
+                </div>
+                
+                <div class="text-gray-400 text-sm">
+                    © 2024 <a class="text-orange-500">PBP F-10</a> | All Rights Reserved
+                </div>
+
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+    const audio = document.getElementById('bgMusic');
+    const musicOnIcon = document.getElementById('musicOnIcon');
+    const musicOffIcon = document.getElementById('musicOffIcon');
+    let isPlaying = false;
+
+    function toggleMusic() {
+        if (isPlaying) {
+            audio.pause();
+            musicOnIcon.classList.add('hidden');
+            musicOffIcon.classList.remove('hidden');
+        } else {
+            audio.play();
+            musicOnIcon.classList.remove('hidden');
+            musicOffIcon.classList.add('hidden');
+        }
+        isPlaying = !isPlaying;
+    }
+    
+    AOS.init({
+        once: true,
+        duration: 1000,
+        easing: 'ease-out-cubic',
+        delay: 100,
+        offset: 120,
+        anchorPlacement: 'top-bottom'
+    });
+
+    async function getFood() {
+        return fetch("{% url 'homepage:get_food' %}").then(
+            (res) => res.json()
+        )
+    }
+
+    async function getRestaurants() {
+        return fetch("{% url 'homepage:get_restaurant' %}").then(
+            (res) => res.json()
+        )
+    }
+    async function getLikes() {
+        return fetch("{% url 'homepage:get_likes' %}").then(
+            (res) => res.json()
+        )
+    }
+    function toggleFood() {
+        document.getElementById("container").innerHTML = `
+          <div class="mb-4">
+            <form id="searchFoodForm" class="flex flex-col space-y-4">
+              {{ food_search }}
+              <div>
+                <label for="min_harga">Harga minimum:</label>
+                <input type="number" name="min_harga" class="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Harga minimum" id="min_harga" min="0" step="1">
+              </div>
+              <div>
+                <label for="max_harga">Harga maksimum:</label>
+                <input type="number" name="max_harga" class="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Harga maksimum" id="max_harga" min="0" step="1">
+              </div>
+              <label class="inline-flex items-center mt-2">
+                <input type="checkbox" name="like_filter" class="form-checkbox h-5 w-5 text-blue-600">
+                <span class="ml-2 text-gray-700">Tampilkan makanan yang disukai saja</span>
+              </label>
+              <button type="submit" class="mt-4 bg-green-600 hover:bg-green-500 cursor-pointer text-white font-bold py-3 px-2 rounded-full flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.387a1 1 0 01-1.414 1.414l-4.387-4.387zM8 14a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd" />
+                </svg>
+                Cari
+              </button>
+            </form>
+          </div>
+          <div id="food_cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      `;
+      document.querySelector("#searchFoodForm").addEventListener("submit", (e) => {
+          e.preventDefault();
+          refreshFood(true);
+      });
+      document.getElementById('min_harga').addEventListener('input', function() {
+          if (this.value == "") {
+              document.getElementById('max_harga').min = "0";
+              return;
+          } 
+          document.getElementById('max_harga').min = parseFloat(this.value) + 1;
+      });
+      refreshFood();
+    }
+    function toggleRestaurant() {
+        document.getElementById("container").innerHTML = `
+          <div style="margin-bottom: 10px;">
+            <form id="searchRestaurantForm" class="flex flex-col space-y-4">
+              {{ restaurant_search }}
+              <button type="submit" class="mt-4 bg-green-600 hover:bg-green-500 cursor-pointer text-white font-bold py-3 px-2 rounded-full flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.387a1 1 0 01-1.414 1.414l-4.387-4.387zM8 14a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd" />
+                </svg>
+                Cari
+              </button>
+            </form>
+          </div>
+          <div id="restaurant_cards"></div>
+        `;
+        document.querySelector("#searchRestaurantForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            refreshRestaurants(true);
+        });
+        refreshRestaurants();
+    }
+    async function refreshFood(search=false) {
+        document.getElementById("food_cards").innerHTML = "";
+        document.getElementById("food_cards").className = "";
+        let food;
+        if (search) {
+            food = await searchFood();              
+        }
+        else {
+            food = await getFood();
+        }
+        {% if user.is_authenticated %}
+        const likes = await getLikes();
+        {% else %}
+        const likes = null;
+        {% endif %}
+        let htmlString = "";
+        let classNameString = "";
+    
+        if (food.length === 0) {
+            classNameString = "container";
+            htmlString = `
+                <h2 class="text-3xl font-bold text-center mt-8">Belum ada makanan terdaftar!</h2>
+            `;
+        }
+        else {
+            if (likes == null) {
+                classNameString = "container";
+                htmlString = "";
+                food.forEach((item) => {
+                    const name = DOMPurify.sanitize(item.fields.nama);
+                    const description = DOMPurify.sanitize(item.fields.deskripsi);
+                    const harga = item.fields.harga.toLocaleString('id-id');
+                    const hargaDiskon = item.fields.diskon.toLocaleString('id-id');
+                    htmlString += `
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4 border-2 border-gray-300 relative">
+                        <h2 class="text-xl font-semibold">${name}</h2>
+                        <p class="text-gray-700">${description}</p>
+                        ${hargaDiskon == "0" ? '<p class="text-xl font-bold">Rp ' + harga + '</p>' : '<p class="text-xl font-bold"><span class="text-red-600"><s>Rp ' + harga + '</s></span> <span class="text-green-600">Rp ' + hargaDiskon + '</span></p>'}
+                        <form class="like_form absolute right-0 top-1/2 transform -translate-y-1/2" id="${item.pk}">
+                            <input type="hidden" id="id_food_id" name="food_id" value="${item.pk}">
+                                <button type="submit" class="text-white rounded flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-1" viewBox="0 0 24 24" fill="rgb(245, 158, 11)" stroke="gray" stroke-width="1.5" fill-opacity="0">
+                                    <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.782 1.4 8.168L12 18.896l-7.334 3.864 1.4-8.168L.132 9.21l8.2-1.192z"/>
+                                    </svg>
+                                </button>
+                            </form>
+                            <a href=""><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5zm0-8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/>
+                            </svg>
+                        </button></a>
+                    </div>
+                `;
+                });
+                htmlString += "</div>";
+            }
+            else {
+                classNameString = "container";
+                htmlString = "";
+                food.forEach((item) => {
+                    const isLiked = likes.some((like) => like.fields.food_id === item.pk);
+                    const name = DOMPurify.sanitize(item.fields.nama);
+                    const description = DOMPurify.sanitize(item.fields.deskripsi);
+                    const harga = item.fields.harga.toLocaleString('id-id');
+                    const hargaDiskon = item.fields.diskon.toLocaleString('id-id');
+                    htmlString += `
+                        <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4 border-2 border-gray-300 relative">
+                            <h2 class="text-xl font-semibold">${name}</h2>
+                            <p class="text-gray-700">${description}</p>
+                            ${hargaDiskon == "0" ? '<p class="text-xl font-bold">Rp ' + harga + '</p>' : '<p class="text-xl font-bold"><span class="text-red-600"><s>Rp ' + harga + '</s></span> <span class="text-green-600">Rp ' + hargaDiskon + '</span></p>'}
+                            <form class="like_form absolute right-0 top-1/2 transform -translate-y-1/2 mr-4" id="${item.pk}">
+                            <input type="hidden" id="id_user_id" name="user_id" value="{{ user.pk }}">
+                            <input type="hidden" id="id_food_id" name="food_id" value="${item.pk}">
+                            <button type="submit" class="text-white rounded flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-1" viewBox="0 0 24 24" fill="rgb(245, 158, 11)" stroke="gray" stroke-width=${isLiked ? "0" : "1.5"} fill-opacity=${isLiked ? "1" : "0"}>
+                                <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.782 1.4 8.168L12 18.896l-7.334 3.864 1.4-8.168L.132 9.21l8.2-1.192z"/>
+                                </svg>
+                            </button>
+                            </form>
+                            <a href=""><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5zm0-8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/>
+                            </svg>
+                        </button></a>
+                    </div>
+                `;
+                });
+                htmlString += "</div>";
+            }
+        }
+        
+        document.getElementById("food_cards").className = classNameString;
+        document.getElementById("food_cards").innerHTML = htmlString;
+        document.querySelectorAll(".like_form").forEach((form) => {
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+                toggleLike(form.id);
+            });
+        });
+    }
+    async function refreshRestaurants(search=false) {
+        document.getElementById("restaurant_cards").innerHTML = "";
+        document.getElementById("restaurant_cards").className = "";
+        let restaurant;
+        if (search) {
+            restaurant = await searchRestaurant();
+        }
+        else {
+            restaurant = await getRestaurants();
+        }
+        let htmlString = "";
+        let classNameString = "";
+    
+        if (restaurant.length === 0) {
+            classNameString = "container";
+            htmlString = `
+                <h2 class="text-3xl font-bold text-center mt-8">Belum ada makanan terdaftar!</h2>
+            `;
+        }
+        else {
+            classNameString = "container";
+            htmlString = "";
+            restaurant.forEach((resto) => {
+                const name = DOMPurify.sanitize(resto.fields.nama);
+                const description = DOMPurify.sanitize(resto.fields.deskripsi);
+                htmlString += `
+                <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4 border-2 border-gray-300">
+                    <h2 class="text-xl font-semibold">${name}</h2>
+                    <p class="text-gray-700">${description}</p>
+                    <a href=""><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5zm0-8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/>
+                        </svg>
+                    </button></a>
+                </div>
+            `;
+            });
+            htmlString += "</div>";
+        }
+        
+        document.getElementById("restaurant_cards").className = classNameString;
+        document.getElementById("restaurant_cards").innerHTML = htmlString;
+    }
+    async function searchFood() {
+        const params = new URLSearchParams(new FormData(document.getElementById("searchFoodForm"))).toString();
+        return fetch("{% url 'homepage:get_food' %}?" + params).then(
+            response => response.json()
+        );
+    }
+    async function searchRestaurant() {
+        const params = new URLSearchParams(new FormData(document.getElementById("searchRestaurantForm"))).toString();
+        return fetch("{% url 'homepage:get_restaurant' %}?" + params).then(
+            response => response.json()
+        );
+    }
+    function toggleLike(formId) {
+        fetch("{% url 'homepage:toggle_like' %}", {
+            method: "POST",
+            body: new FormData(document.getElementById(formId)),
+        })
+        .then(response => { 
+            if (response.ok) {
+                return response.text();
+            }
+            else if (response.redirected){
+                window.location.href = response.url;
+            }
+            else {
+                alert("Failed to save changes! Try again later.");
+            }
+            return null;
+        }).then((payload) => {
+            if (payload !== null) {
+                let svg = document.getElementById(formId).querySelector("svg");
+                let button = document.getElementById(formId).querySelector("button");
+                button.classList.add("animate-like");
+                setTimeout(() => {
+                    button.classList.remove("animate-like");
+                }, 300);
+                if (payload === "Liked!") {
+                svg.setAttribute("fill-opacity", "1");
+                svg.setAttribute("stroke-width", "0");
+                }
+                else {
+                svg.setAttribute("fill-opacity", "0");
+                svg.setAttribute("stroke-width", "1.5");
+                }
+            }
+        });
+        return false;
+    }
+    document.querySelectorAll(".like_form").forEach((form) => {
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            toggleLike(form.id);
+        });
+    });
+    document.querySelector("#searchFoodForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        refreshFood(true);
+    });
+    document.getElementById('toggleSearch').addEventListener('change', () => {
+        if (document.getElementById('toggleSearch').checked) {
+            document.querySelector('.dot').classList.add('translate-x-full');
+            toggleRestaurant();
+        } else {
+            document.querySelector('.dot').classList.remove('translate-x-full');
+            toggleFood();
+        }
+    });
+    document.getElementById('min_harga').addEventListener('input', function() {
+        if (this.value == "") {
+            document.getElementById('max_harga').min = "0";
+            return;
+        } 
+        document.getElementById('max_harga').min = parseFloat(this.value) + 1;
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        refreshFood();
+    });
+</script>
+{% endblock %}

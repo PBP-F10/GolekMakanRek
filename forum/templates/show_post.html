@@ -1,0 +1,104 @@
+<!-- GolekMakanRek/forum/templates/show_post.html -->
+{% extends 'base-forum.html' %}
+{% load static %}
+
+{% block title %}Forum - Jelajahi Makanan di Surabaya!{% endblock %}
+
+{% block content %}
+<main>
+    {% include 'navbar.html' %}
+    {% include 'header.html' %}
+
+    <section class="post-list">
+        {% for post in page_obj %}
+        <article class="post-card">
+            <div class="post-header">
+                <img src="{% if post.user.profile_image %}{{ post.user.profile_image.url }}{% else %}{% static 'image/user-pic-default.png' %}{% endif %}" alt="User Profile" class="profile-image">
+                <div class="user-info">
+                    <p class="username">{{ post.user.username }}</p>
+                    <p class="timestamp">{{ post.created_at|timesince }} ago</p>
+                </div>
+            </div>
+            <div class="post-content">
+                {% if post.restaurant %}
+                    <p><strong>Restoran:</strong> {{ post.restaurant.nama }}</p>
+                {% endif %}
+                <p>{{ post.text }}</p>
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="Post Image" class="post-image">
+                {% endif %}
+            </div>
+            <div class="post-actions">
+                <button onclick="handleLike({{ post.id }})" id="like-btn-{{ post.id }}" class="{% if post.id in user_liked_posts %}liked{% endif %}">
+                    <i class="fas fa-thumbs-up"></i> Like
+                </button>
+                <button onclick="toggleComments({{ post.id }})"><i class="fas fa-comment"></i> Comment</button>
+                <button onclick="handleShare('{{ request.build_absolute_uri }}')" id="share-btn-{{ post.id }}">
+                    <i class="fas fa-share"></i> Share
+                </button>
+                <button onclick="showReportModal({{ post.id }})"><i class="fas fa-flag"></i> Laporkan</button>
+            </div>
+            <div id="comments-{{ post.id }}" class="comments-section" style="display: none;">
+                <h4>Comments</h4>
+                <div class="existing-comments">
+                    {% if not user.is_authenticated %}
+                        <p>You need to <a href="{% url 'login' %}">log in</a> to see the commenters' usernames.</p>
+                    {% endif %}
+                    {% for comment in post.comments.all %}
+                        <p>
+                            {% if user.is_authenticated %}
+                                <strong>{{ comment.user.username }}:</strong>
+                            {% else %}
+                                <strong>Anonymous:</strong>
+                            {% endif %}
+                            {{ comment.text }}
+                        </p>
+                    {% empty %}
+                        <p>No comments yet.</p>
+                    {% endfor %}
+                </div>
+                <form class="comment-form" onsubmit="postComment(event, {{ post.id }})">
+                    <textarea name="comment" placeholder="Add a comment..." required></textarea>
+                    <button type="submit" class="btn">Post Comment</button>
+                </form>
+            </div>
+            <div id="report-modal-{{ post.id }}" class="report-modal" style="display: none;">
+                <div class="report-modal-content">
+                    <h4>Laporkan Postingan</h4>
+                    <form class="report-form">
+                        <select id="report-reason-{{ post.id }}">
+                            <option value="Konten Tidak Pantas">Konten Tidak Pantas</option>
+                            <option value="Spam atau Iklan">Spam atau Iklan</option>
+                            <option value="Bahasa Kasar atau Menyinggung">Bahasa Kasar atau Menyinggung</option>
+                            <option value="Misinformasi">Misinformasi</option>
+                            <option value="Topik Tidak Relevan">Topik Tidak Relevan</option>
+                        </select>
+                        <div class="report-buttons">
+                            <button type="button" class="btn" onclick="closeReportModal({{ post.id }})">Batal</button>
+                            <button type="button" class="btn" onclick="submitReport({{ post.id }})">Kirim</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <p class="text-center">Tidak ada postingan tersedia.</p>
+        {% endfor %}
+    </section>
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</main>
+{% endblock %}

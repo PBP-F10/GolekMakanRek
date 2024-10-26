@@ -13,4 +13,7 @@ urlpatterns = [
     path('get_restaurant/', get_restaurant, name='get_restaurant'),
     path('get_likes/', get_likes, name='get_likes'),
     # path('test/', set_test, name='test'),
+    path('login/', login_user, name='login'),
+    path('register/', register_user, name='register'),
+    path('logout/', logout_user, name='logout')
 ]

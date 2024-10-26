@@ -1,0 +1,51 @@
+<!-- templates/add_post.html -->
+{% extends 'base-forum.html' %}
+{% load static %}
+
+{% block title %}Add New Post{% endblock %}
+
+{% block header %}
+<!-- Empty header block to remove the header -->
+{% endblock %}
+
+{% block content %}
+<main>
+    {% include 'navbar.html' %}
+    
+    <div class="form-container">
+        <!-- Page Title -->
+        <h2 class="page-title">Create a New Post</h2>
+        
+        <!-- Form -->
+        <form method="post" action="{% url 'forum:add_post' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if error %}
+                <p class="error">{{ error }}</p>
+            {% endif %}
+            <!-- Restaurant Selection -->
+            <div class="form-group">
+                <label for="restaurant-input">Select Restaurant:</label>
+                <input type="text" id="restaurant-input" name="restaurant_name" autocomplete="off" placeholder="Type to search..." required>
+                <input type="hidden" id="restaurant-id" name="restaurant_id">
+                <div id="restaurant-list" class="autocomplete-items"></div>
+            </div>
+            <!-- Post Text -->
+            <div class="form-group">
+                <label for="text">Post Text:</label>
+                <textarea id="text" name="text" required></textarea>
+            </div>
+            <!-- Image Upload -->
+            <div class="form-group">
+                <label for="image">Upload Image:</label>
+                <input type="file" id="image" name="image">
+            </div>
+            <!-- Submit Button -->
+            <button type="submit" class="btn">Submit Post</button>
+        </form>
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/main.js' %}"></script>
+{% endblock %}

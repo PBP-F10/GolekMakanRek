@@ -26,13 +26,13 @@
             <div class="flex justify-evenly bg-orange-500 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl">
                 <ul class="flex flex-row font-medium mt-0 space-x-20 rtl:space-x-reverse text-md px-20 py-2">
                     <li>
-                        <a href="{% url 'main:show_main' %}" class="text-white hover:text-gray-900 transition-colors duration-300 relative after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-white after:left-0 after:-bottom-1 after:rounded-full after:transform after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300">Home</a>
+                        <a href="{% url 'homepage:show_homepage' %}" class="text-white hover:text-gray-900 transition-colors duration-300 relative after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-white after:left-0 after:-bottom-1 after:rounded-full after:transform after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300">Home</a>
                     </li>
                     <li>
                         <a href="#" class="text-white hover:text-gray-900 transition-colors duration-300 relative after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-white after:left-0 after:-bottom-1 after:rounded-full after:transform after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300">Restaurant</a>
                     </li>
                     <li>
-                        <a href="#" class="text-white hover:text-gray-900 transition-colors duration-300 relative after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-white after:left-0 after:-bottom-1 after:rounded-full after:transform after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300">Forum</a>
+                        <a href="{% url 'forum:show_post' %}" class="text-white hover:text-gray-900 transition-colors duration-300 relative after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-white after:left-0 after:-bottom-1 after:rounded-full after:transform after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300">Forum</a>
                     </li>
                     <li>
                         <a href="#" class="text-white hover:text-gray-900 transition-colors duration-300 relative after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-white after:left-0 after:-bottom-1 after:rounded-full after:transform after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300">Wishlist</a>
@@ -47,12 +47,12 @@
                                 <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-100 transition-colors duration-200">
                                     Edit Profile
                                 </a>
-                                <a href="{% url 'main:logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-100 transition-colors duration-200">
+                                <a href="{% url 'homepage:logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-100 transition-colors duration-200">
                                     Logout
                                 </a>
                             </div>
                         {% else %}
-                            <a href="{% url 'main:login' %}" class="text-white hover:text-gray-900 transition-colors duration-300">Login</a>
+                            <a href="{% url 'homepage:login' %}" class="text-white hover:text-gray-900 transition-colors duration-300">Login</a>
                         {% endif %}
                     </li>
                 </ul>
@@ -76,13 +76,13 @@
             <div class="mobile-menu hidden w-full md:block md:w-auto">
                 <ul class="font-medium flex flex-col p-4 mt-4 rounded-lg bg-orange-400 rtl:space-x-reverse">
                     <li>
-                        <a href="{% url 'main:show_main' %}" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">Home</a>
+                        <a href="{% url 'homepage:show_homepage' %}" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">Home</a>
                     </li>
                     <li>
                         <a href="#" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">Restaurant</a>
                     </li>
                     <li>
-                        <a href="#" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">Forum</a>
+                        <a href="{% url 'forum:show_post' %}" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">Forum</a>
                     </li>
                     <li>
                         <a href="#" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">Wishlist</a>
@@ -96,12 +96,12 @@
                                 <a href="#" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">
                                     Edit Profile
                                 </a>
-                                <a href="{% url 'main:logout' %}" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">
+                                <a href="{% url 'homepage:logout' %}" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">
                                     Logout
                                 </a>
                             </div>
                         {% else %}
-                            <a href="{% url 'main:login' %}" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">Login</a>
+                            <a href="{% url 'homepage:login' %}" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">Login</a>
                         {% endif %}
                     </li>
                 </ul>

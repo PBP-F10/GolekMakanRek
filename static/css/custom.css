@@ -1,0 +1,337 @@
+/* static/css/custom.css */
+
+body {
+    font-family: var(--font-family-h);
+}
+
+.header-wrapper {
+    background-color: #FFD700;
+    color: var(--text-color);
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.header-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.content-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.post-card {
+    background-color: var(--background-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.post-header img {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+}
+
+.user-info .username {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.user-info .created-at {
+    font-size: 16px;
+    color: var(--muted-text-color);
+    margin: 0;
+}
+
+.post-content {
+    font-size: 16px;
+    margin-top: 5px;
+}
+
+.post-image {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.post-actions {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+    border-top: 1px solid var(--hairline-color);
+    padding-top: 10px;
+}
+
+.post-actions button {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.post-actions button i {
+    margin-right: 5px;
+}
+
+.liked {
+    color: var(--primary) !important;
+    font-weight: bold;
+}
+
+.comments-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+.comment-form textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+}
+
+.pagination {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.pagination .step-links a {
+    margin: 0 5px;
+    padding: 5px 10px;
+    text-decoration: none;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 4px;
+}
+
+.pagination .step-links a:hover {
+    background-color: var(--button-hover-bg);
+}
+
+.pagination .step-links .current {
+    font-weight: bold;
+    margin: 0 5px;
+}
+
+.report-modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.report-modal-content {
+    background: var(--background-color);
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.report-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.report-form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: var(--font-family-h);
+}
+
+.report-buttons {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.report-form .btn {
+    width: 48%;
+    margin: 5px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: var(--primary);
+    color: var(--button-text-color);
+    font-weight: bold;
+}
+
+.report-form .btn:hover {
+    background-color: var(--button-hover-bg);
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-group textarea,
+.form-group input[type="file"],
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+}
+
+.btn {
+    background-color: var(--primary);
+    color: var(--button-text-color);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn:hover {
+    background-color: var(--button-hover-bg);
+}
+
+.liked {
+    color: #28a745 !important; /* Ensures the green color is applied */
+    font-weight: bold;
+}
+
+
+/* Autocomplete styles */
+#restaurant-list {
+    position: absolute;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.autocomplete-item {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.autocomplete-item:hover {
+    background-color: #f1f1f1;
+}
+
+/* styles.css */
+
+/* Style for the form container */
+/* styles.css */
+
+/* Existing styles... */
+
+/* Style for the form container */
+.form-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Page title styling */
+.form-container .page-title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+/* Form elements styling */
+.form-container .form-group {
+    margin-bottom: 15px;
+}
+
+.form-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-container input[type="text"],
+.form-container input[type="file"],
+.form-container textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-container textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-container button.btn {
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.form-container button.btn:hover {
+    background-color: #218838;
+}
+
+/* Error message styling */
+.error {
+    color: red;
+    margin-bottom: 15px;
+}
+
+/* Adjust main element if needed */
+main {
+    padding: 20px;
+}
+

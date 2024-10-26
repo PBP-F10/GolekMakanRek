@@ -26,14 +26,9 @@ def show_main(request):
             {'name': 'Sego Sambel', 'color': 'yellow', 'image': '../../static/img/homepage/segosambel.jpg'},
         ],
         'services': [
-            {'title': 'Curated Food Listings', 'description': 'We handpick the best eateries and food stalls in Surabaya, ensuring you always have access to the tastiest and most authentic dishes the city has to offer.', 'icon': '../../static/img/homepage/ap.avif'},
-            {'title': 'Up-to-Date Information', 'description': 'Stay informed with the latest updates, including menus, pricing, and operating hours, so you can plan your food adventures without any surprises.', 'icon': '../../static/img/homepage/pl.jpg'},
+            {'title': 'Curated Food Listings', 'description': 'We handpick the best eateries and food stalls in Surabaya, ensuring you always have access to the tastiest and most authentic dishes the city has to offer.', 'icon': '../../static/img/homepage/cur.png'},
+            {'title': 'Up-to-Date Information', 'description': 'Stay informed with the latest updates, including menus, pricing, and operating hours, so you can plan your food adventures without any surprises.', 'icon': '../../static/img/homepage/update.png'},
             {'title': 'Community Feedback', 'description': 'Benefit from real reviews and ratings by fellow food enthusiasts, helping you make informed decisions on where to eat.', 'icon': '../../static/img/homepage/feedback.png'},
-        ],
-        'special_offer': {'price': 28, 'image': 'images/burger.jpg'},
-        'additional_offers': [
-            {'title': 'Special Dessert', 'discount': 'Save 20%', 'price': 21, 'color': 'brown'},
-            {'title': 'Tortilla wrap tacos', 'discount': '$12 off', 'price': 18, 'color': 'orange'},
         ],
     }
     return render(request, 'main.html', context)

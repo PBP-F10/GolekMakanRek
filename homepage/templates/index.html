@@ -165,12 +165,7 @@
             `;
             if (likes == null) {
                 classNameString = "container";
-                htmlString = `
-                    <div class="flex justify-center items-center">
-                      <div class="mt-5 animate-spin rounded-full border-8 border-t-8 border-gray-200 h-20 w-20 border-t-blue-500"></div>
-                    </div>
-                    <p class="text-gray-700 text-xl text-center mt-4">Memuat konten...</p>
-                `;
+                htmlString = "";
                 for (const item of food) {
                     const name = DOMPurify.sanitize(item.fields.nama);
                     const description = DOMPurify.sanitize(item.fields.deskripsi);
@@ -189,15 +184,15 @@
                               <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.782 1.4 8.168L12 18.896l-7.334 3.864 1.4-8.168L.132 9.21l8.2-1.192z"/>
                             </svg>
                           </button>
+                          <span class="like-count absolute left-1/2 transform -translate-x-1/2 top-full mt-1">${numLikesParsed}</span>
                         </form>
                         <a href=""><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 flex items-center">
                           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5zm0-8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/>
                           </svg>
                         </button></a>
-                        <span class="likeCount absolute left-1/2 transform -translate-x-1/2 top-full mt-1">${numLikesParsed}</span>
-                    </div>
-                `;
+                      </div>
+                    `;
                 };
                 htmlString += "</div>";
             }

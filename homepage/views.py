@@ -18,8 +18,8 @@ import os
 def show_homepage(request):
     food_search = SearchFoodForm()
     restaurant_search = SearchRestaurantForm()
-    login(request, User.objects.get(username='joshua')) # hapus nanti kalau udah ada auth
-    # logout(request)
+    # login(request, User.objects.get(username='something')) # hapus nanti kalau udah ada auth
+    logout(request)
     context = {
         'food_search': food_search,
         'restaurant_search': restaurant_search,
@@ -29,6 +29,9 @@ def show_homepage(request):
 def search_food(request):
     filters = {}
     like_only = False
+    # edge case diskon hiks (solusi jelek keknya mending diubah di model tapi sudah terlanjur)
+    min_price_edgecase = None
+    max_price_edgecase = None
     for param in request.GET:
         if param == "like_filter":
             like_only = True
@@ -36,17 +39,29 @@ def search_food(request):
         if param == "min_harga":
             if request.GET.get(param) != "":
                 filters[f"harga__gte"] = request.GET.get(param)
+                # karena yang disimpan barang diskon, harus filter juga dari harga diskon
+                min_price_edgecase = Food.objects.filter(diskon__lt=request.GET.get(param), diskon__gt=0)
             continue
         if param == "max_harga":
             if request.GET.get(param) != "":
                 filters[f"harga__lte"] = request.GET.get(param)
+                # karena yang disimpan barang diskon, harus filter juga dari harga diskon
+                max_price_edgecase = Food.objects.filter(diskon__lte=request.GET.get(param), diskon__gt=0)
             continue
         if request.GET.get(param) != "None":
             filters[f"{param}__icontains"] = request.GET.get(param)
+    filtered_data = Food.objects.filter(**filters)
+    # gabungin hasil filter dengan edge case
+    if min_price_edgecase:
+        # hapus barang-barang yang setelah diskon tidak memenuhi kriteria
+        filtered_data = filtered_data.difference(min_price_edgecase)
+    if max_price_edgecase:
+        # tambah barang-barang yang setelah diskon memenuhi kriteria
+        filtered_data = filtered_data.union(max_price_edgecase)
     if like_only:
-        data = serializers.serialize("json", Food.objects.filter(**filters).filter(likes__user_id=request.user))
+        data = serializers.serialize("json", filtered_data.filter(likes__user_id=request.user))
         return HttpResponse(data, content_type="application/json")
-    data = serializers.serialize("json", Food.objects.filter(**filters))
+    data = serializers.serialize("json", filtered_data)
     return HttpResponse(data, content_type="application/json")
 
 def search_restaurant(request):
@@ -92,6 +107,7 @@ def get_user_likes(request):
 
 def get_food_likes(request, food_id):
     count = Likes.objects.filter(food_id=food_id).count()
+    # ???
     payload = {
         "food_id": str(food_id),
         "count": count

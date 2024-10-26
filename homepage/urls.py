@@ -7,10 +7,12 @@ app_name = 'homepage'
 
 urlpatterns = [
     path('', show_homepage, name='show_homepage'),
-    path('search/<str:type>/', search, name='search'),
+    path('search/food/', search_food, name='search_food'),
+    path('search/restaurant/', search_restaurant, name='search_restaurant'),
     path('toggle_like/', toggle_like, name='toggle_like'),
     path('get_food/', get_food, name='get_food'),
     path('get_restaurant/', get_restaurant, name='get_restaurant'),
-    path('get_likes/', get_likes, name='get_likes'),
+    path('get_user_likes/', get_user_likes, name='get_user_likes'),
+    path('get_food_likes/<uuid:food_id>', get_food_likes, name='get_food_likes'),
     # path('test/', set_test, name='test'),
 ]

@@ -10,8 +10,8 @@ class SearchFoodForm(ModelForm):
         model = Food
         fields = ["nama", "kategori"]
         widgets = {
-            'nama': TextInput(attrs={'class': 'mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', 'placeholder': 'Masukkan nama makanan'}),
-            'kategori': Select(attrs={'class': 'form-select mt-2 block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'}),
+            'nama': TextInput(attrs={'class': 'form mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', 'placeholder': 'Masukkan nama makanan'}),
+            'kategori': Select(attrs={'class': 'form mt-2 block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'}),
         }
         labels = {
             'nama': 'Nama Makanan',
@@ -40,8 +40,8 @@ class SearchRestaurantForm(ModelForm):
         model = Restaurant
         fields = ["nama", "kategori"]
         widgets = {
-            'nama': TextInput(attrs={'class': 'mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', 'placeholder': 'Masukkan nama restoran'}),
-            'kategori': Select(attrs={'class': 'form-select mt-2 block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'}),
+            'nama': TextInput(attrs={'class': 'form mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent', 'placeholder': 'Masukkan nama restoran'}),
+            'kategori': Select(attrs={'class': 'form mt-2 block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'}),
         }
         labels = {
             'nama': 'Nama Restoran',

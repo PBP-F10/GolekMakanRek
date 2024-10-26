@@ -20,8 +20,6 @@ import os
 def show_homepage(request):
     food_search = SearchFoodForm()
     restaurant_search = SearchRestaurantForm()
-    # login(request, User.objects.get(username='joshua')) # hapus nanti kalau udah ada auth
-    # logout(request)
     context = {
         'food_search': food_search,
         'restaurant_search': restaurant_search,
@@ -123,7 +121,7 @@ def set_test(request):
                 nama=food['product'],
                 kategori=food['category'],
                 harga=food['price'],
-                diskon=food['discount_price'] if food['discount_price'] else 0,
+                diskon=int((food['price'] - food['discount_price']) / 100) if food['discount_price'] else 0,
                 deskripsi=food['description'],
                 restoran=Restaurant.objects.get(nama=food['merchant_name'])
             )

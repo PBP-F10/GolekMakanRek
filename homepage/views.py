@@ -6,15 +6,12 @@ from .models import Likes
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core import serializers
 from django.urls import reverse
-from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.utils.html import strip_tags
-from django.contrib.auth.models import User
-import datetime
-import json
+from django.db.models import F, ExpressionWrapper, IntegerField
 import os
+import json
 
 # Create your views here.
 def show_homepage(request):
@@ -29,35 +26,24 @@ def show_homepage(request):
 def search_food(request):
     filters = {}
     like_only = False
-    # edge case diskon hiks (solusi jelek keknya mending diubah di model tapi sudah terlanjur)
-    min_price_edgecase = None
-    max_price_edgecase = None
+    # sihir hitam untuk menghitung nilai @property harga_setelah_diskon
+    harga_diskon = ExpressionWrapper(F('harga') * (100 - F('diskon')) / 100, output_field=IntegerField())
+    food_diskon = Food.objects.annotate(harga_diskon=harga_diskon)
     for param in request.GET:
         if param == "like_filter":
             like_only = True
             continue
         if param == "min_harga":
             if request.GET.get(param) != "":
-                filters[f"harga__gte"] = request.GET.get(param)
-                # karena yang disimpan barang diskon, harus filter juga dari harga diskon
-                min_price_edgecase = Food.objects.filter(diskon__lt=request.GET.get(param), diskon__gt=0)
+                filters[f"harga_diskon__gte"] = request.GET.get(param)
             continue
         if param == "max_harga":
             if request.GET.get(param) != "":
-                filters[f"harga__lte"] = request.GET.get(param)
-                # karena yang disimpan barang diskon, harus filter juga dari harga diskon
-                max_price_edgecase = Food.objects.filter(diskon__lte=request.GET.get(param), diskon__gt=0)
+                filters[f"harga_diskon__lte"] = request.GET.get(param)
             continue
         if request.GET.get(param) != "None":
             filters[f"{param}__icontains"] = request.GET.get(param)
-    filtered_data = Food.objects.filter(**filters)
-    # gabungin hasil filter dengan edge case
-    if min_price_edgecase:
-        # hapus barang-barang yang setelah diskon tidak memenuhi kriteria
-        filtered_data = filtered_data.difference(min_price_edgecase)
-    if max_price_edgecase:
-        # tambah barang-barang yang setelah diskon memenuhi kriteria
-        filtered_data = filtered_data.union(max_price_edgecase)
+    filtered_data = food_diskon.filter(**filters)
     if like_only:
         data = serializers.serialize("json", filtered_data.filter(likes__user_id=request.user))
         return HttpResponse(data, content_type="application/json")
@@ -138,9 +124,10 @@ def set_test(request):
                 nama=food['product'],
                 kategori=food['category'],
                 harga=food['price'],
-                diskon=int((food['price'] - food['discount_price']) / 100) if food['discount_price'] else 0,
+                diskon=int((food['price'] - food['discount_price']) / food['price'] * 100) if food['discount_price'] else 0,
                 deskripsi=food['description'],
-                restoran=Restaurant.objects.get(nama=food['merchant_name'])
+                restoran=Restaurant.objects.get(nama=food['merchant_name']),
+                image_url="https://cdn-icons-png.flaticon.com/256/5784/5784919.png"
             )
             new_food.save()
     return HttpResponseRedirect(reverse('homepage:show_homepage'))

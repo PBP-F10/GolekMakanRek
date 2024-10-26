@@ -93,9 +93,15 @@
     </div>
 </div>
 
-<!-- JavaScript functions for rating modal (optional) -->
 <script>
     function openRatingModal() {
+        const isLoggedIn = "{{ user.is_authenticated }}";
+
+        if (isLoggedIn === "False") {
+            alert("Silakan login untuk memberikan rating.");
+            return;
+        }
+
         const modal = document.createElement('div');
         modal.id = 'ratingModal';
         modal.className = 'modal';
@@ -125,8 +131,10 @@
     }
 
     function submitRating(event) {
+        event.preventDefault();
+        const form = document.getElementById('rating-form');
+        const formData = new FormData(form);
     }
-
 </script>
 
 {% endblock %}

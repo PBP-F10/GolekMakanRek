@@ -1,6 +1,6 @@
 [
     {
-        "model": "main.Restaurant",
+        "model": "resto_preview.show_resto",
         "pk": "1",
         "fields": {
             "nama": "369 Shanghai, Jemursari",
@@ -21,7 +21,7 @@
         }
     },
     {
-        "model": "main.Restaurant",
+        "model": "resto_preview.show_resto",
         "pk": "2",
         "fields": {
             "nama": "AHA by Kudos",
@@ -42,7 +42,7 @@
         }
     },
     {
-        "model": "main.Restaurant",
+        "model": "resto_preview.show_resto",
         "pk": "3",
         "fields": {
             "nama": "Aiciro, BG Junction",
@@ -63,7 +63,7 @@
         }
     },
     {
-        "model": "main.Restaurant",
+        "model": "resto_preview.show_resto",
         "pk": "4",
         "fields": {
             "nama": "Order Sekaligus - Aiola Canteen Merr",
@@ -84,7 +84,7 @@
         }
     },
     {
-        "model": "main.Restaurant",
+        "model": "resto_preview.show_resto",
         "pk": "5",
         "fields": {
             "nama": "Amalia Cake, Wringinanom",
@@ -105,7 +105,7 @@
         }
     },
     {
-        "model": "main.Restaurant",
+        "model": "resto_preview.show_resto",
         "pk": "6",
         "fields": {
             "nama": "Amanda Brownies, Tegalsari",
@@ -126,7 +126,7 @@
         }
     },
     {
-        "model": "main.Restaurant",
+        "model": "resto_preview.show_resto",
         "pk": "7",
         "fields": {
             "nama": "AMPM SDA, Buduran",
@@ -147,7 +147,7 @@
         }
     },
     {
-        "model": "main.Restaurant",
+        "model": "resto_preview.show_resto",
         "pk": "8",
         "fields": {
             "nama": "Aneka Bothok, Sukolilo",
@@ -168,7 +168,7 @@
         }
     },
     {
-        "model": "main.Restaurant",
+        "model": "resto_preview.show_resto",
         "pk": "9",
         "fields": {
             "nama": "Aneka Seblak Endull",
@@ -189,12 +189,12 @@
         }
     },
     {
-            "model": "main.Restaurant",
-            "pk": "10",
-            "fields": {
-            "nama": "Angkringan Abas Krian",
-            "kategori": "Jajanan/Sate/Aneka nasi",
-            "random_products": [
+        "model": "resto_preview.show_resto",
+        "pk": "10",
+        "fields": {
+        "nama": "Angkringan Abas Krian",
+        "kategori": "Jajanan/Sate/Aneka nasi",
+        "random_products": [
             "Nasi Bakar Ayam Suwir",
             "Nasi Bakar Teri",
             "Nasi Bakar Tuna Suwir",
@@ -206,7 +206,7 @@
             "Ceker Ayam (Isi 2 Ceker)",
             "Balungan Ayam Rica Bakar"
             ],
-            "deskripsi": "Angkringan Abas Krian adalah tempat yang tepat untuk menikmati berbagai jajanan khas Indonesia, termasuk sate dan aneka nasi yang menggugah selera. Nikmati kelezatan hidangan seperti Balungan Ayam Rica Bakar dan Nasi Bakar Ayam Suwir, serta segarkan hari Anda dengan minuman khas seperti Es Susu Coklat dan Es Teh Tarik. Temukan cita rasa otentik yang pasti membuat Anda kembali lagi."
+        "deskripsi": "Angkringan Abas Krian adalah tempat yang tepat untuk menikmati berbagai jajanan khas Indonesia, termasuk sate dan aneka nasi yang menggugah selera. Nikmati kelezatan hidangan seperti Balungan Ayam Rica Bakar dan Nasi Bakar Ayam Suwir, serta segarkan hari Anda dengan minuman khas seperti Es Susu Coklat dan Es Teh Tarik. Temukan cita rasa otentik yang pasti membuat Anda kembali lagi."
             }
     }      
 ]

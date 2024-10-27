@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from main.models import *
 
 class FoodRating(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     deskripsi_food = models.ForeignKey(Food, on_delete=models.CASCADE)
     rating = models.IntegerField()

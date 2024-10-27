@@ -236,12 +236,11 @@ body {
 }
 
 .liked {
-    color: #28a745 !important; /* Ensures the green color is applied */
+    color: #28a745 !important; 
     font-weight: bold;
 }
 
 
-/* Autocomplete styles */
 #restaurant-list {
     position: absolute;
     border: 1px solid #ddd;
@@ -260,14 +259,6 @@ body {
     background-color: #f1f1f1;
 }
 
-/* styles.css */
-
-/* Style for the form container */
-/* styles.css */
-
-/* Existing styles... */
-
-/* Style for the form container */
 .form-container {
     max-width: 600px;
     margin: 50px auto;
@@ -278,7 +269,6 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Page title styling */
 .form-container .page-title {
     text-align: center;
     margin-bottom: 20px;
@@ -324,13 +314,11 @@ body {
     background-color: #218838;
 }
 
-/* Error message styling */
 .error {
     color: red;
     margin-bottom: 15px;
 }
 
-/* Adjust main element if needed */
 main {
     padding: 20px;
 }

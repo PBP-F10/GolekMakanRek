@@ -51,16 +51,17 @@
                             <p class="text-l font-semibold" style="margin: 10px 0;">Kategori: {{ restaurant.kategori }}</p>
                         </div>
                         <div class="restaurant-actions" style="display: flex; justify-content: flex-end; margin-top: 10px;">
-                            <form action="{% url 'resto_preview:follow_restaurant' restaurant.id %}" method="post" style="margin-right: 10px;" class="follow-form">
+                            <form action="{% if restaurant.id in followed_restaurants %}{% url 'resto_preview:unfollow_restaurant' restaurant.id %}{% else %}{% url 'resto_preview:follow_restaurant' restaurant.id %}{% endif %}" method="post" style="margin-right: 10px;" class="follow-form">
                                 {% csrf_token %}
-                                <button type="submit" class="follow-button {% if restaurant.id in followed_restaurants %}followed{% endif %}" style="padding: 10px 20px; background-color: {% if restaurant.id in followed_restaurants %}#ffcc00{% else %}#28a745{% endif %}; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                <button type="submit" class="follow-button {% if restaurant.id in followed_restaurants %}followed{% endif %}" 
+                                        style="padding: 10px 20px; background-color: {% if restaurant.id in followed_restaurants %}#ffcc00{% else %}#28a745{% endif %}; color: white; border: none; border-radius: 5px; cursor: pointer;">
                                     {% if restaurant.id in followed_restaurants %}
                                         Following
                                     {% else %}
                                         Follow
                                     {% endif %}
                                 </button>
-                            </form>
+                            </form>                          
                             <a href="{% url 'resto_preview:restaurant_detail' restaurant.id %}" style="padding: 10px 15px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; display: inline-block;">
                                 Detail
                             </a>
@@ -75,6 +76,7 @@
 
     <script>
         const followButtons = document.querySelectorAll('.follow-button');
+        const unfollowButtons = document.querySelectorAll('.unfollow-button');
 
         followButtons.forEach(button => {
             button.addEventListener('click', function(event) {
@@ -82,7 +84,18 @@
 
                 if (isLoggedIn === "False" && this.innerText === 'Follow') {
                     event.preventDefault();
-                    showLoginMessage(); // Tampilkan pop-up modal
+                    showLoginMessage();
+                }
+            });
+        });
+
+        unfollowButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                const isLoggedIn = "{{ user.is_authenticated }}";
+
+                if (isLoggedIn === "False" && this.innerText === 'Unfollow') {
+                    event.preventDefault();
+                    showLoginMessage();
                 }
             });
         });

@@ -55,8 +55,26 @@ def follow_restaurant(request, restaurant_id):
     if request.method == "POST":
         if request.user.is_authenticated:
             restaurant = get_object_or_404(show_resto, id=restaurant_id)
-            Follow.objects.get_or_create(user=request.user, restaurant=restaurant)
+            follow = Follow.objects.get_or_create(user=request.user, restaurant=restaurant)
+            if not follow:
+                follow.delete()
             return redirect('resto_preview:restaurant_detail', restaurant_id=restaurant_id)
         else:
             return redirect('resto_preview:show_preview', alert="Silakan login untuk mengikuti restoran.")
     return redirect('resto_preview:show_preview')
+
+@login_required
+def unfollow_restaurant(request, restaurant_id):
+    if request.method == "POST":
+        if request.user.is_authenticated:
+            restaurant = get_object_or_404(show_resto, id=restaurant_id)
+
+            try:
+                follow = Follow.objects.get(user=request.user, restaurant=restaurant)
+                follow.delete() 
+            except Follow.DoesNotExist:
+                pass
+
+            return redirect('resto_preview:restaurant_detail', restaurant_id=restaurant_id)
+
+    return redirect('resto_preview:restaurant_detail')

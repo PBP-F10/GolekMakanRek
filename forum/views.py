@@ -25,6 +25,7 @@ from django.urls import reverse
 from .models import Post
 from main.models import Restaurant
 from django.contrib.auth.decorators import login_required
+
 def show_post(request):
     posts = Post.objects.all().order_by('-created_at')
     paginator = Paginator(posts, 5)  # Show 10 posts per page

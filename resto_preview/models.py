@@ -8,6 +8,9 @@ class show_resto(models.Model):
     deskripsi = models.TextField()
     random_products = models.JSONField(default=list, blank=True)
 
+    def total_ratings(self):
+        return self.rating_set.count()
+
 class Rating(models.Model):
     restaurant = models.ForeignKey(show_resto, on_delete=models.CASCADE)  
     user = models.ForeignKey(User, on_delete=models.CASCADE)

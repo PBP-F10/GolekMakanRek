@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'forum',
     'resto_preview',
     'wishlist',
-    # 'food_preview'
+    'food_review',
 ]
 
 MIDDLEWARE = [

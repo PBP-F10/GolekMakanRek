@@ -66,12 +66,12 @@
 
         <!-- Rating Section -->
         <div class="card text-center">
-            <h2 class="text-xl font-semibold" style="color: var(--primary);">Rating</h2>
+            <h2 class="text-xl font-semibold" style="color: var(--primary);">Penilaian</h2>
             <p class="average-rating text-l mt-2">
                 <span id="average-rating">{{ average_rating|floatformat:1 }}</span>
             </p>
-            <p class="user-rating text-l mt-2">
-                Your Rate: <span id="user-rating">{{ user_rating.score|floatformat:1 }}</span>
+            <p class="user-rating text-l mt-2" style="color: var(--muted-text-color);">
+                Penilaianmu: <span id="user-rating">{{ user_rating.score|floatformat:1 }}</span>
             </p>
             <button onclick="openRatingModal()" class="btn mt-4">Berikan Rating</button>
         </div>    

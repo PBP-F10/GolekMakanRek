@@ -46,7 +46,7 @@ def search_food(request):
         if request.GET.get(param) != "None":
             filters[f"{param}__icontains"] = request.GET.get(param)
     filtered_data = food_diskon.filter(**filters)
-    if like_only:
+    if like_only and request.user.is_authenticated:
         data = serializers.serialize("json", filtered_data.filter(likes__user_id=request.user))
         return HttpResponse(data, content_type="application/json")
     data = serializers.serialize("json", filtered_data)
@@ -129,7 +129,7 @@ def set_test(request):
                 diskon=int((food['price'] - food['discount_price']) / food['price'] * 100) if food['discount_price'] else 0,
                 deskripsi=food['description'],
                 restoran=Restaurant.objects.get(nama=food['merchant_name']),
-                image_url="https://cdn-icons-png.flaticon.com/256/5784/5784919.png"
+                #image_url="https://cdn-icons-png.flaticon.com/256/5784/5784919.png"
             )
             new_food.save()
     return HttpResponseRedirect(reverse('homepage:show_homepage'))

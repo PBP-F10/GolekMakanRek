@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<body>
+    <div class="container">
+        <h1 class="text-4xl font-bold text-center text-green-600 mb-4">Restaurant Preview</h1>
+        <div>
+            {% if restaurants %}
+                {% for restaurant in restaurants %}
+                    <div class="card" style="background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); padding: 20px; margin-bottom: 20px;">
+                        <div class="card-content">
+                            <h2 class="text-xl font-semibold" style="margin: 0;">{{ restaurant.nama }}</h2>
+                            <hr style="border: none; border-top: 1px solid #ccc; margin: 10px 0;">
+                            <p style="margin: 10px 0;">{{ restaurant.deskripsi }}</p>
+                        </div>
+                        <div class="restaurant-actions" style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                            <form action="#" method="post" style="margin-right: 10px;">
+                                {% csrf_token %}
+                                <button type="submit" class="follow-button" style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                    Follow
+                                </button>
+                            </form>
+                            <a href="{% url 'resto_preview:restaurant_detail' restaurant.id %}" style="padding: 10px 15px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; display: inline-block;">
+                                Detail
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Tidak ada restoran yang ditemukan.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        const buttons = document.querySelectorAll('.restaurant-actions button');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault(); 
+                if (this.innerText === 'Follow') {
+                    this.innerText = 'Followed'; 
+                    this.style.backgroundColor = '#ffcc00'; // Ganti warna tombol menjadi hijau
+                } else {
+                    this.innerText = 'Follow'; 
+                    this.style.backgroundColor = '#28a745'; // Ganti warna tombol kembali ke kuning
+                }
+            });
+        });
+    </script>
+</body>
+
+{% endblock %}

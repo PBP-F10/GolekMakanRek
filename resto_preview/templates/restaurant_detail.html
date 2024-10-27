@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+<title>{{ restaurant.nama }} Details</title>
+{% endblock meta %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<style>
+    .modal {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background-color: var(--background-color);
+        padding: 20px;
+        border-radius: 5px;
+        width: 300px;
+        position: relative;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+
+    .food-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .food-item {
+        padding: 10px 0;
+        text-align: center;
+        font-size: 1.1rem;
+        color: var(--text-color);
+    }
+
+    .divider {
+        border: none;
+        border-top: 1px solid var(--hairline-color);
+        margin: 0;
+    }
+</style>
+
+<div class="flex flex-col min-h-screen bg-gray-100">
+    <div class="container mx-auto px-4 py-8 mt-16 max-w-3xl">
+        <!-- Restaurant Details -->
+        <h1 class="text-3xl font-bold text-center text-primary mb-4">{{ restaurant.nama }}</h1>
+        <p class="text-l text-muted-text-color text-center mb-6">{{ restaurant.deskripsi }}</p>
+
+        <!-- Rating Section -->
+        <div class="card text-center">
+            <h2 class="text-xl font-semibold" style="color: var(--primary);">Rating</h2>
+            <p class="average-rating text-l mt-2">
+                <span id="average-rating">{{ average_rating|floatformat:1 }}</span>
+            </p>
+            <p class="user-rating text-l mt-2">
+                Your Rate: <span id="user-rating">{{ user_rating.score }}</span>
+            </p>
+            <button onclick="openRatingModal()" class="btn mt-4">Berikan Rating</button>
+        </div>    
+
+        <!-- Food List Section -->
+        <div class="card">
+            <h2 class="text-xl font-semibold" style="color: var(--primary); text-align: center;">Makanan</h2>
+            <ul class="food-list">
+                {% for food in foods %}
+                    <li class="food-item">
+                        <h3 class="font-semibold">{{ food.nama }}</h3>
+                        <p class="text-sm">Rp {{ food.harga }}</p>
+                        {% if food.diskon > 0 %}
+                            <p class="text-sm text-red-600">Diskon: {{ food.diskon }}%</p>
+                            <p class="text-sm font-semibold">Harga Akhir: Rp {{ food.harga_setelah_diskon }}</p>
+                        {% endif %}
+                        <p class="text-sm text-gray-600">{{ food.deskripsi }}</p>
+                    </li>
+                    {% if not forloop.last %}
+                        <hr class="divider">
+                    {% endif %}
+                {% empty %}
+                    <li class="card-content text-muted">Tidak ada makanan yang tersedia.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openRatingModal() {
+        const isLoggedIn = "{{ user.is_authenticated }}";
+
+        if (isLoggedIn === "False") {
+            alert("Silakan login untuk memberikan rating.");
+            return;
+        }
+
+        const modal = document.createElement('div');
+        modal.id = 'ratingModal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <span class="close" onclick="closeRatingModal()">&times;</span>
+                <h2 class="text-lg font-semibold text-center">Rate This Restaurant</h2>
+                <form id="rating-form" onsubmit="submitRating(event)">
+                    <input type="hidden" name="restaurant_id" value="{{ restaurant.id }}">
+                    <input type="number" id="ratingInput" name="score" min="1" max="5" required placeholder="Enter rating (1-5)" style="width: 100%; padding: 8px; margin-top: 10px;">
+                    <button type="submit" id="submitRatingButton" class="btn" style="margin-top: 10px; width: 100%;">
+                        Submit
+                    </button>
+                </form>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.classList.remove('hidden');
+    }
+
+    function closeRatingModal() {
+        const modal = document.getElementById('ratingModal');
+        if (modal) {
+            document.body.removeChild(modal);
+        }
+        window.location.href = "{% url 'resto_preview:restaurant_detail' restaurant.id %}";
+    }
+
+    function submitRating(event) {
+        event.preventDefault();
+        const form = document.getElementById('rating-form');
+        const formData = new FormData(form);
+    }
+</script>
+
+{% endblock %}

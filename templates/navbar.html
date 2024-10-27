@@ -29,13 +29,13 @@
                         <a href="{% url 'homepage:show_homepage' %}" class="text-white hover:text-gray-900 transition-colors duration-300 relative after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-white after:left-0 after:-bottom-1 after:rounded-full after:transform after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300">Home</a>
                     </li>
                     <li>
-                        <a href="#" class="text-white hover:text-gray-900 transition-colors duration-300 relative after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-white after:left-0 after:-bottom-1 after:rounded-full after:transform after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300">Restaurant</a>
+                        <a href="{% url 'resto_preview:restaurant_preview' %}" class="text-white hover:text-gray-900 transition-colors duration-300 relative after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-white after:left-0 after:-bottom-1 after:rounded-full after:transform after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300">Restaurant</a>
                     </li>
                     <li>
                         <a href="{% url 'forum:show_post' %}" class="text-white hover:text-gray-900 transition-colors duration-300 relative after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-white after:left-0 after:-bottom-1 after:rounded-full after:transform after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300">Forum</a>
                     </li>
                     <li>
-                        <a href="#" class="text-white hover:text-gray-900 transition-colors duration-300 relative after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-white after:left-0 after:-bottom-1 after:rounded-full after:transform after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300">Wishlist</a>
+                        <a href="{% url 'wishlist:show_wishlist' %}" class="text-white hover:text-gray-900 transition-colors duration-300 relative after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-white after:left-0 after:-bottom-1 after:rounded-full after:transform after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300">Wishlist</a>
                     </li>
 
                     <li class="relative group">
@@ -44,7 +44,7 @@
                                 {{ user.username }}
                             </button>
                             <div id="profileDropdown" class="hidden absolute transform -translate-x-[calc(100%-5rem)] mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-100 transition-colors duration-200">
+                                <a href="{% url 'userprofile:userprofile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-100 transition-colors duration-200">
                                     Edit Profile
                                 </a>
                                 <a href="{% url 'homepage:logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-100 transition-colors duration-200">
@@ -79,13 +79,13 @@
                         <a href="{% url 'homepage:show_homepage' %}" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">Home</a>
                     </li>
                     <li>
-                        <a href="#" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">Restaurant</a>
+                        <a href="{% url 'resto_preview:restaurant_preview' %}" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">Restaurant</a>
                     </li>
                     <li>
                         <a href="{% url 'forum:show_post' %}" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">Forum</a>
                     </li>
                     <li>
-                        <a href="#" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">Wishlist</a>
+                        <a href="{% url 'wishlist:show_wishlist' %}" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">Wishlist</a>
                     </li>
                     <li>
                         {% if user.is_authenticated %}
@@ -93,7 +93,7 @@
                                 {{ user.username }}
                             </button>
                             <div id="mobileProfileDropdown" class="hidden pl-6 animate-slideDown">
-                                <a href="#" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">
+                                <a href="{% url 'userprofile:userprofile' %}" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">
                                     Edit Profile
                                 </a>
                                 <a href="{% url 'homepage:logout' %}" class="block py-2 px-3 text-white rounded hover:bg-orange-500 transition-all duration-300">

@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'homepage',
     'userprofile',
     'forum',
+    'resto_preview',
+    'wishlist',
+    # 'food_preview'
 ]
 
 MIDDLEWARE = [

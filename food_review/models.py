@@ -15,3 +15,7 @@ class FoodRating(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s rating for {self.deskripsi_food.nama}"
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    item = models.ForeignKey(Food, on_delete=models.CASCADE)

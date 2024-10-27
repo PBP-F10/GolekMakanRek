@@ -8,9 +8,15 @@ from main.models import *
 from django.utils import timezone
 import json
 import datetime
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
+from django.core.exceptions import ObjectDoesNotExist
+import logging
 
 TIME_ZONE = 'Asia/Jakarta'
 USE_TZ = True
+logger = logging.getLogger(__name__)
 
 def restaurant_preview(request):
     restaurants = Restaurant.objects.all()  
@@ -146,7 +152,6 @@ def add_comment(request, food_id):
         
         food = get_object_or_404(Food, id=food_id)
         
-        # Get or create rating with comment
         rating, created = FoodRating.objects.get_or_create(
             user=request.user,
             deskripsi_food=food,
@@ -166,3 +171,53 @@ def add_comment(request, food_id):
         return JsonResponse({'status': 'error', 'message': 'Invalid JSON data'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)})
+
+@require_http_methods(["POST"])
+@login_required
+def toggle_wishlist(request, food_id):
+    try:
+        food = Food.objects.get(id=food_id)
+        wishlist_item = Wishlist.objects.filter(
+            user=request.user,
+            item=food
+        ).first()
+        
+        if wishlist_item:
+            wishlist_item.delete()
+            return JsonResponse({
+                'status': 'success',
+                'is_wishlisted': False,
+                'message': 'Removed from wishlist'
+            })
+        else:
+            Wishlist.objects.create(user=request.user, item=food)
+            return JsonResponse({
+                'status': 'success',
+                'is_wishlisted': True,
+                'message': 'Added to wishlist'
+            })
+            
+    except Food.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Food not found'
+        }, status=404)
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
+
+@login_required
+def wishlist(request):
+    wishlist_items = Wishlist.objects.filter(user=request.user).select_related('item', 'item__restoran')
+    
+    context = {
+        'wishlist_items': wishlist_items,
+    }
+    return render(request, 'wishlist.html', context)
+
+@login_required
+def get_wishlist_status(request):
+    wishlisted_items = list(Wishlist.objects.filter(user=request.user).values_list('food_id', flat=True))
+    return JsonResponse({'wishlisted_items': wishlisted_items})

@@ -14,4 +14,8 @@ urlpatterns = [
 
     path('food/<uuid:food_id>/comments/', views.get_comments, name='get_comments'),
     path('food/<uuid:food_id>/comment/', views.add_comment, name='add_comment'),
+
+    path('wishlist/toggle/<uuid:food_id>/', views.toggle_wishlist, name='toggle_wishlist'),
+    path('wishlist/', views.wishlist, name='show_wishlist'),
+    path('wishlist/status/', views.get_wishlist_status, name='get_wishlist_status'),
 ]

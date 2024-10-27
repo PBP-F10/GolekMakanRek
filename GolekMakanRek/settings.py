@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'userprofile',
     'forum',
     'resto_preview',
-    'wishlist',
     'food_review'
 ]
 

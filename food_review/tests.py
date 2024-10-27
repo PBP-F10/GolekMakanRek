@@ -60,3 +60,4 @@ class FoodReview(TestCase):
         client.login(username='tes', password='testpass123')
         response = client.get(f'/food_review/get-user-rating/{Food.objects.first().id}/')
         self.assertEqual(response.status_code, 200)
+

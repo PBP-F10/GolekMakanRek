@@ -29,7 +29,7 @@ Berikut adalah daftar modul yang akan di-implementasikan:
 | **Autentikasi & Admin** | All | **Autentikasi:** Berperan mengatur Registrasi dan Login akun pengguna dan admin. <br> **Admin:** Berperan dalam mengelola konten aplikasi. Admin memiliki hak untuk menambahkan, menghapus, dan mengubah data restoran atau makanan. Selain itu, Admin juga dapat mengawasi dan memoderasi ulasan pengguna. |
 | **User Dashboard** | Bram | Berisikan informasi pengguna seperti nama, umur, nomor handphone, dan alamat. Pengguna juga dapat mengedit informasi pribadinya. |
 | **Homepage: Search, Filter, Like** | Joshua | Pada homepage, pengguna dapat melihat dan mencari dari data-data yang tersedia pada aplikasi. Pengguna dapat memilih untuk mencari dari daftar restoran ataupun daftar makanan. Selain itu, pengguna dapat melakukan reaction yaitu menyukai makanan yang ditampilkan pada Homepage. Nantinya, angka dari *like* tersebut akan dijumlahkan dari semua user yang menyukai makanan tersebut. |
-| **Restaurant Preview & Follow** | Ais | Fitur ini menampilkan restoran-restoran beserta deskripsinya. Ditampilkan pula daftar menu yang tersedia. Pengguna dapat memberikan rating yang hasilnya akan terakumuasi sebagai rating restoran dan melakukan _follow-unfollow_ restoran. Daftar restoran yang telah diikuti akan muncul di bagian atas halaman restaurant preview. |
+| **Restaurant Preview & Follow** | Ais | Fitur ini menampilkan restoran-restoran beserta deskripsinya. Ditampilkan pula daftar menu yang tersedia. Pengguna dapat memberikan rating yang hasilnya akan terakumulasi sebagai rating restoran dan melakukan _follow-unfollow_ restoran. |
 | **Food Preview** | Hafizh | Pada fitur Food Preview, pengguna dapat memberikan ulasan dan rating mengenai produk makanan yang ada pada setiap restoran. Setiap ulasan yang diberikan akan ditampikan ketika pengguna melakukan klik pada button terkait “ulasan produk”. Selain itu, terdapat penghitungan rating yang memungkinkan hasil rata-rata dari setiap rating yang diberikan pengguna akan ditampilkan pada masing-masing produk makanan. |
 | **Wishlist** | Falah | Pengguna dapat menambahkan suatu makanan ke dalam daftar berupa wishlist. Daftar ini berisikan makanan-makanan yang diinginkan pengguna. Pengguna dapat melihat daftar tersebut dan mengedit daftarnya seperti menambahkan makanan lainnya dan juga menghapus suatu makanan dari wishlist. |
 | **Forum Kuliner** | Kaindra | Antar para pengguna dapat melakukan komunikasi dalam bentuk forum yang dibuat. Sebagai contoh, Pengguna A membuka topik pembicaraan di forum. Nantinya, Pengguna B atau Pengguna lainnya dapat ikut mengikuti forum tersebut dengan melakukan reply. |
@@ -53,7 +53,7 @@ Role admin memiliki akses untuk mengelola aplikasi.
 - Menghapus rating & ulasan makanan
 - Menghapus review makanan
 - Menambah restaurant
-- Menghaous restaurant
+- Menghapus restaurant
 - Menambah makanan
 - Menghapus makanan
 - Menghapus chat forum

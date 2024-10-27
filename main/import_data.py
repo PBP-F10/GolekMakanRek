@@ -1,9 +1,9 @@
-# GolekMakanRek/main/import_data.py
-
 import os
 import django
 import csv
 import sys
+import logging
+
 # Set up Django environment
 project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_path)
@@ -11,6 +11,10 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'GolekMakanRek.settings')
 django.setup()
 
 from main.models import Food, Restaurant
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def import_restaurants(file_path):
     with open(file_path, mode='r', encoding='utf-8') as file:
@@ -24,9 +28,14 @@ def import_restaurants(file_path):
                     'deskripsi': row['merchant_description']
                 }
             )
-    print(f'Successfully imported data from {file_path} into Restaurant model.')
+            if created:
+                logger.info(f"Created restaurant: {restaurant.nama}")
+            else:
+                logger.info(f"Restaurant already exists: {restaurant.nama}")
+    logger.info(f'Successfully imported data from {file_path} into Restaurant model.')
 
 def import_foods(file_path):
+    food_items = []
     with open(file_path, mode='r', encoding='utf-8') as file:
         reader = csv.DictReader(file)
         for row in reader:
@@ -34,11 +43,11 @@ def import_foods(file_path):
             try:
                 restaurant = Restaurant.objects.get(nama=row['merchant_name'])
             except Restaurant.DoesNotExist:
-                print(f"Restaurant {row['merchant_name']} not found. Skipping food item.")
+                logger.warning(f"Restaurant {row['merchant_name']} not found. Skipping food item: {row['product']}.")
                 continue
-
-            # Importing Food data
-            Food.objects.create(
+            
+            # Prepare Food data
+            food_item = Food(
                 nama=row['product'],
                 kategori=row['category'],
                 harga=int(row['price']),
@@ -46,7 +55,11 @@ def import_foods(file_path):
                 deskripsi=row['description'],
                 restoran=restaurant
             )
-    print(f'Successfully imported data from {file_path} into Food model.')
+            food_items.append(food_item)
+
+    # Bulk create Food items
+    Food.objects.bulk_create(food_items)
+    logger.info(f'Successfully imported {len(food_items)} food items from {file_path} into Food model.')
 
 if __name__ == '__main__':
     # Paths to the CSV files

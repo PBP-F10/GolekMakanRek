@@ -80,16 +80,8 @@
         <div class="card">
             <h2 class="text-xl font-semibold" style="color: var(--primary); text-align: center;">Makanan</h2>
             <ul class="food-list">
-                {% for food in foods %}
-                    <li class="food-item">
-                        <h3 class="font-semibold">{{ food.nama }}</h3>
-                        <p class="text-sm">Rp {{ food.harga }}</p>
-                        {% if food.diskon > 0 %}
-                            <p class="text-sm text-red-600">Diskon: {{ food.diskon }}%</p>
-                            <p class="text-sm font-semibold">Harga Akhir: Rp {{ food.harga_setelah_diskon }}</p>
-                        {% endif %}
-                        <p class="text-sm text-gray-600">{{ food.deskripsi }}</p>
-                    </li>
+                {% for product in restaurant.random_products %}
+                    <li class="food-item" style="font-size: 1rem;">{{ product }}</li>
                     {% if not forloop.last %}
                         <hr class="divider">
                     {% endif %}

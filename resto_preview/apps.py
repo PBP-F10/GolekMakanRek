@@ -14,7 +14,7 @@ def load_initial_data(sender, **kwargs):
     try:
         if not show_resto.objects.exists():
             print("Loading initial data from data.json...")
-            call_command('loaddata', 'datajson')
+            call_command('loaddata', 'data.json')
     except Exception as e:
         print(f"Error loading initial data: {e}")
 

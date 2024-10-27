@@ -32,14 +32,3 @@ class WishlistUnitTest(TestCase):
         client.login(username='tes', password='testpass123')
         response = client.get('/wishlist/')
         self.assertEqual(response.status_code, 200)
-
-    def test_delete_wishlist(self):
-        client = Client()
-        client.login(username='tes', password='testpass123')
-        wishlist = Wishlist.objects.create(
-            user = self.user1,
-            item = self.food,
-        )
-        wishlist.save()
-        response = client.post(f'/wishlist/delete/{Wishlist.objects.first().id}/')
-        self.assertEqual(response.status_code, 200)

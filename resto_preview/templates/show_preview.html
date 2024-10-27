@@ -18,16 +18,21 @@
                             <p style="margin: 10px 0;">{{ restaurant.deskripsi }}</p>
                         </div>
                         <div class="restaurant-actions" style="display: flex; justify-content: flex-end; margin-top: 10px;">
-                            <form action="#" method="post" style="margin-right: 10px;">
+                            <form action="{% url 'resto_preview:follow_restaurant' restaurant.id %}" method="post" style="margin-right: 10px;">
                                 {% csrf_token %}
-                                <button type="submit" class="follow-button" style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                                    Follow
+                                <button type="submit" class="follow-button {% if restaurant.id in followed_restaurants %}followed{% endif %}" style="padding: 10px 20px; background-color: {% if restaurant.id in followed_restaurants %}#ffcc00{% else %}#28a745{% endif %}; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                    {% if restaurant.id in followed_restaurants %}
+                                        Following
+                                    {% else %}
+                                        Follow
+                                    {% endif %}
                                 </button>
                             </form>
                             <a href="{% url 'resto_preview:restaurant_detail' restaurant.id %}" style="padding: 10px 15px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; display: inline-block;">
                                 Detail
                             </a>
                         </div>
+                                           
                     </div>
                 {% endfor %}
             {% else %}
@@ -37,21 +42,20 @@
     </div>
 
     <script>
-        const buttons = document.querySelectorAll('.restaurant-actions button');
-
-        buttons.forEach(button => {
+        const followButtons = document.querySelectorAll('.follow-button');
+    
+        followButtons.forEach(button => {
             button.addEventListener('click', function(event) {
-                event.preventDefault(); 
-                if (this.innerText === 'Follow') {
-                    this.innerText = 'Followed'; 
-                    this.style.backgroundColor = '#ffcc00'; // Ganti warna tombol menjadi hijau
-                } else {
-                    this.innerText = 'Follow'; 
-                    this.style.backgroundColor = '#28a745'; // Ganti warna tombol kembali ke kuning
+                const isLoggedIn = "{{ user.is_authenticated }}";
+    
+                if (isLoggedIn === "False" && this.innerText === 'Follow') {
+                    event.preventDefault();
+                    alert("Silakan login untuk mengikuti restoran.");
                 }
             });
         });
     </script>
+    
 </body>
 
 {% endblock %}

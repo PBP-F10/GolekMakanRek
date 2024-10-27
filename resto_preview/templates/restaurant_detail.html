@@ -71,7 +71,7 @@
                 <span id="average-rating">{{ average_rating|floatformat:1 }}</span>
             </p>
             <p class="user-rating text-l mt-2">
-                Your Rate: <span id="user-rating">{{ user_rating.score }}</span>
+                Your Rate: <span id="user-rating">{{ user_rating.score|floatformat:1 }}</span>
             </p>
             <button onclick="openRatingModal()" class="btn mt-4">Berikan Rating</button>
         </div>    
@@ -110,12 +110,14 @@
                 <span class="close" onclick="closeRatingModal()">&times;</span>
                 <h2 class="text-lg font-semibold text-center">Rate This Restaurant</h2>
                 <form id="rating-form" onsubmit="submitRating(event)">
+                    {% csrf_token %}
                     <input type="hidden" name="restaurant_id" value="{{ restaurant.id }}">
                     <input type="number" id="ratingInput" name="score" min="1" max="5" required placeholder="Enter rating (1-5)" style="width: 100%; padding: 8px; margin-top: 10px;">
                     <button type="submit" id="submitRatingButton" class="btn" style="margin-top: 10px; width: 100%;">
                         Submit
                     </button>
                 </form>
+
             </div>
         `;
         document.body.appendChild(modal);
@@ -131,10 +133,38 @@
     }
 
     function submitRating(event) {
-        event.preventDefault();
+        event.preventDefault(); 
         const form = document.getElementById('rating-form');
         const formData = new FormData(form);
+        const restaurantId = formData.get('restaurant_id'); 
+
+        fetch("{% url 'resto_preview:submit_rating' restaurant.id %}", { 
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'), 
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('average-rating').innerText = data.average_rating.toFixed(1);
+            document.getElementById('user-rating').innerText = data.user_rating;
+
+            closeRatingModal(); 
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            alert("Terjadi kesalahan, silakan coba lagi."); 
+        });
     }
+
+
+
 </script>
 
 {% endblock %}

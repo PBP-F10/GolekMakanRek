@@ -31,7 +31,7 @@ def restaurant_detail(request, restaurant_id):
         'foods': restaurant_foods,
     })
 
-@login_required
+@login_required(login_url='/login/')
 def add_rating(request, food_id):
     if request.method != 'POST':
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
@@ -61,7 +61,7 @@ def add_rating(request, food_id):
         'is_new': created
     })
 
-@login_required
+@login_required(login_url='/login/')
 def edit_rating(request, rating_id):
     if request.method != 'POST':
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
@@ -88,7 +88,7 @@ def edit_rating(request, rating_id):
         'food_rating': new_average
     })
 
-@login_required
+@login_required(login_url='/login/')
 def delete_rating(request, rating_id):
     if request.method != 'POST':
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
@@ -138,7 +138,7 @@ def get_comments(request, food_id):
     
     return JsonResponse({'comments': comments})
 
-@login_required
+@login_required(login_url='/login/')
 def add_comment(request, food_id):
     if request.method != 'POST':
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
@@ -173,7 +173,7 @@ def add_comment(request, food_id):
         return JsonResponse({'status': 'error', 'message': str(e)})
 
 @require_http_methods(["POST"])
-@login_required
+@login_required(login_url='/login/')
 def toggle_wishlist(request, food_id):
     try:
         food = Food.objects.get(id=food_id)
@@ -208,7 +208,7 @@ def toggle_wishlist(request, food_id):
             'message': str(e)
         }, status=500)
 
-@login_required
+@login_required(login_url='/login/')
 def wishlist(request):
     wishlist_items = Wishlist.objects.filter(user=request.user).select_related('item', 'item__restoran')
     
@@ -217,7 +217,7 @@ def wishlist(request):
     }
     return render(request, 'wishlist.html', context)
 
-@login_required
+@login_required(login_url='/login/')
 def get_wishlist_status(request):
     wishlisted_items = list(Wishlist.objects.filter(user=request.user).values_list('food_id', flat=True))
     return JsonResponse({'wishlisted_items': wishlisted_items})

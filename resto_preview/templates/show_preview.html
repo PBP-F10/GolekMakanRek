@@ -6,6 +6,38 @@
 {% include 'navbar.html' %}
 
 <body>
+    <style>
+        .modal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            width: 300px;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+    </style>
+
     <div class="container">
         <h1 class="text-4xl font-bold text-center text-green-600 mb-4">Restaurant Preview</h1>
         <div>
@@ -16,9 +48,10 @@
                             <h2 class="text-xl font-semibold" style="margin: 0;">{{ restaurant.nama }}</h2>
                             <hr style="border: none; border-top: 1px solid #ccc; margin: 10px 0;">
                             <p style="margin: 10px 0;">{{ restaurant.deskripsi }}</p>
+                            <p class="text-l font-semibold" style="margin: 10px 0;">Kategori: {{ restaurant.kategori }}</p>
                         </div>
                         <div class="restaurant-actions" style="display: flex; justify-content: flex-end; margin-top: 10px;">
-                            <form action="{% url 'resto_preview:follow_restaurant' restaurant.id %}" method="post" style="margin-right: 10px;">
+                            <form action="{% url 'resto_preview:follow_restaurant' restaurant.id %}" method="post" style="margin-right: 10px;" class="follow-form">
                                 {% csrf_token %}
                                 <button type="submit" class="follow-button {% if restaurant.id in followed_restaurants %}followed{% endif %}" style="padding: 10px 20px; background-color: {% if restaurant.id in followed_restaurants %}#ffcc00{% else %}#28a745{% endif %}; color: white; border: none; border-radius: 5px; cursor: pointer;">
                                     {% if restaurant.id in followed_restaurants %}
@@ -42,19 +75,40 @@
 
     <script>
         const followButtons = document.querySelectorAll('.follow-button');
-    
+
         followButtons.forEach(button => {
             button.addEventListener('click', function(event) {
                 const isLoggedIn = "{{ user.is_authenticated }}";
-    
+
                 if (isLoggedIn === "False" && this.innerText === 'Follow') {
                     event.preventDefault();
-                    alert("Silakan login untuk mengikuti restoran.");
+                    showLoginMessage(); // Tampilkan pop-up modal
                 }
             });
         });
-    </script>
-    
+
+        function showLoginMessage() {
+            const modal = document.createElement('div');
+            modal.id = 'loginMessageModal';
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close" onclick="closeLoginMessage()">&times;</span>
+                    <h2 class="text-lg font-semibold text-center">Anda perlu login</h2>
+                    <p class="text-center">Silakan login untuk memberikan rating.</p>
+                    <a href="{% url 'homepage:login' %}" class="btn" style="margin-top: 10px; display: block; width: 100%; text-align: center;">Login</a>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function closeLoginMessage() {
+            const modal = document.getElementById('loginMessageModal');
+            if (modal) {
+                document.body.removeChild(modal);
+            }
+        }
+    </script>    
 </body>
 
 {% endblock %}

@@ -58,11 +58,15 @@
     }
 </style>
 
-<div class="flex flex-col min-h-screen bg-gray-100">
-    <div class="container mx-auto px-4 py-8 mt-16 max-w-3xl">
+<div class="flex flex-col min-h-screen bg-gray-100"  style="background-color: #fffaec">
+    <div class="mx-auto px-4 mt-10 max-w-3xl">
         <!-- Restaurant Details -->
-        <h1 class="text-3xl font-bold text-center text-primary mb-4">{{ restaurant.nama }}</h1>
-        <p class="text-l text-muted-text-color text-center mb-6">{{ restaurant.deskripsi }}</p>
+        <div class="card text-center">
+            <h1 class="text-3xl font-bold text-center text-primary mb-4" style="color:#f97316">{{ restaurant.nama }}</h1>
+            <p class="text-l text-muted-text-color text-center mb-6">{{ restaurant.deskripsi }}</p>
+            <h2 class="text-xl font-semibold text-center" style="color: var(--primary); margin-bottom: 10px;">Kategori</h2>
+            <p class="text-l text-muted-text-color text-center " style="margin-top: 10px; margin-bottom: 15px;">{{ restaurant.kategori }}</p>
+        </div>
 
         <!-- Rating Section -->
         <div class="card text-center">
@@ -70,7 +74,8 @@
             <p class="average-rating text-l mt-2">
                 <span id="average-rating">{{ average_rating|floatformat:1 }}</span>
             </p>
-            <p class="user-rating text-l mt-2" style="color: var(--muted-text-color);">
+            <p class="text-center text-sm" style="margin-top: 5px; margin-bottom: 15px; color: var(--muted-text-color);">dari {{ restaurant.total_ratings }} pengguna</p>
+            <p class="user-rating mt-2" >
                 Penilaianmu: <span id="user-rating">{{ user_rating.score|floatformat:1 }}</span>
             </p>
             <button onclick="openRatingModal()" class="btn mt-4">Berikan Rating</button>
@@ -98,7 +103,7 @@
         const isLoggedIn = "{{ user.is_authenticated }}";
 
         if (isLoggedIn === "False") {
-            alert("Silakan login untuk memberikan rating.");
+            showLoginMessage(); // Tampilkan pesan modal untuk login
             return;
         }
 
@@ -123,6 +128,28 @@
         `;
         document.body.appendChild(modal);
         modal.classList.remove('hidden');
+    }
+
+    function showLoginMessage() {
+        const modal = document.createElement('div');
+        modal.id = 'loginMessageModal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <span class="close" onclick="closeLoginMessage()">&times;</span>
+                <h2 class="text-lg font-semibold text-center">Anda perlu login</h2>
+                <p class="text-center">Silakan login untuk memberikan rating.</p>
+                <a href="{% url 'homepage:login' %}" class="btn" style="margin-top: 10px; display: block; width: 100%; text-align: center;">Login</a>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+
+    function closeLoginMessage() {
+        const modal = document.getElementById('loginMessageModal');
+        if (modal) {
+            document.body.removeChild(modal);
+        }
     }
 
     function closeRatingModal() {

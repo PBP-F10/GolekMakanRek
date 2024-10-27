@@ -5,6 +5,12 @@ from django.db.models import Avg
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from main.models import *
+from django.utils import timezone
+import json
+import datetime
+
+TIME_ZONE = 'Asia/Jakarta'
+USE_TZ = True
 
 def restaurant_preview(request):
     restaurants = Restaurant.objects.all()  
@@ -111,3 +117,52 @@ def get_user_rating(request, food_id):
         'has_rating': False,
         'food_rating': food.average_rating
     })
+
+def get_comments(request, food_id):
+    food = get_object_or_404(Food, id=food_id)
+    ratings = FoodRating.objects.filter(deskripsi_food=food).exclude(comment__isnull=True).exclude(comment='').order_by('-waktu_comment')
+    
+    comments = []
+    for rating in ratings:
+        comments.append({
+            'username': rating.user.username,
+            'comment': rating.comment,
+            'formatted_time': rating.waktu_comment.strftime("%B %d, %Y %I:%M %p")
+        })
+    
+    return JsonResponse({'comments': comments})
+
+@login_required
+def add_comment(request, food_id):
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+    
+    try:
+        data = json.loads(request.body)
+        comment = data.get('comment', '').strip()
+        
+        if not comment:
+            return JsonResponse({'status': 'error', 'message': 'Comment cannot be empty'})
+        
+        food = get_object_or_404(Food, id=food_id)
+        
+        # Get or create rating with comment
+        rating, created = FoodRating.objects.get_or_create(
+            user=request.user,
+            deskripsi_food=food,
+            defaults={'score': 3}  # Default score if creating new rating
+        )
+        
+        rating.comment = comment
+        rating.waktu_comment = timezone.now()  # Use Django's timezone.now() instead
+        rating.save()
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Comment added successfully'
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({'status': 'error', 'message': 'Invalid JSON data'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})

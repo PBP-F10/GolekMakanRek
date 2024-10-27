@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from main.models import Restaurant, Food
 from .models import FoodRating
 
-# Create your tests here.
 class FoodReview(TestCase):
     def setUp(self):
         self.user1 = User(username="tes")

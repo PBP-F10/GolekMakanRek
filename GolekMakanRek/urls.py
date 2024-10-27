@@ -31,7 +31,7 @@ urlpatterns = [
     path('forum/', include('forum.urls')),
     path('restaurant/', include('resto_preview.urls')),
     path('wishlist/', include('wishlist.urls')),
-    path('food/', include('food_review.urls'))
+    path('food_review/', include('food_review.urls'))
 ]
 
 if settings.DEBUG:

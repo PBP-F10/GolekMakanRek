@@ -38,13 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'main',
     'homepage',
     'userprofile',
     'forum',
     'resto_preview',
     'wishlist',
-    'food_review',
+    'food_review'
 ]
 
 MIDDLEWARE = [

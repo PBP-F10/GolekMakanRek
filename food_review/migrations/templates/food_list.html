@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+<title>{{ restaurant.nama }} Details</title>
+{% endblock meta %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<style>
+    .modal {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background-color: var(--background-color);
+        padding: 20px;
+        border-radius: 5px;
+        width: 300px;
+        position: relative;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+
+    .food-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .food-item {
+        padding: 15px;
+        margin: 10px 0;
+        border: 1px solid var(--hairline-color);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .food-item:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .food-rating {
+        color: var(--primary);
+        font-weight: bold;
+        margin-top: 5px;
+    }
+</style>
+
+<div class="flex flex-col min-h-screen bg-gray-100">
+    <div class="container mx-auto px-4 py-8 mt-16 max-w-3xl">
+        <!-- Restaurant Details -->
+        <h1 class="text-3xl font-bold text-center text-primary mb-4">{{ restaurant.nama }}</h1>
+        <p class="text-l text-muted-text-color text-center mb-6">{{ restaurant.deskripsi }}</p>
+
+        <!-- Restaurant Rating Section -->
+        <div class="card text-center mb-8">
+            <h2 class="text-xl font-semibold" style="color: var(--primary);">Restaurant Rating</h2>
+            <p class="average-rating text-l mt-2">
+                <span id="average-rating">{{ average_rating|floatformat:1 }}</span>
+            </p>
+        </div>    
+
+        <!-- Food List Section -->
+        <div class="card">
+            <h2 class="text-xl font-semibold text-center mb-4" style="color: var(--primary);">Menu</h2>
+            <div class="food-list">
+                {% for food in foods %}
+                    <div class="food-item" onclick="handleFoodClick('{{ food.id }}')">
+                        <h3 class="text-lg font-semibold">{{ food.nama }}</h3>
+                        <p class="text-sm text-gray-600">{{ food.deskripsi }}</p>
+                        {% if food.diskon > 0 %}
+                            <p class="text-sm">
+                                <span class="line-through text-gray-500">Rp {{ food.harga }}</span>
+                                <span class="text-green-600 font-semibold">Rp {{ food.harga_setelah_diskon }}</span>
+                                <span class="text-red-500">({{ food.diskon }}% OFF)</span>
+                            </p>
+                        {% else %}
+                            <p class="text-sm">Price: Rp {{ food.harga }}</p>
+                        {% endif %}
+                        <div class="food-rating">
+                            Rating: <span id="food-rating-{{ food.id }}">{{ food.average_rating|default:"No ratings" }}</span>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-center text-gray-500">No food items available.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="foodRatingModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeFoodRatingModal()">&times;</span>
+        <h2 class="text-lg font-semibold text-center mb-4">Rate This Food</h2>
+        <form id="food-rating-form" onsubmit="submitFoodRating(event)">
+            <input type="hidden" id="food-id-input" name="food_id">
+            <input type="hidden" id="rating-id-input" name="rating_id">
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Rating (1-5)</label>
+                <input type="number" id="food-rating-input" name="score" min="1" max="5" required 
+                        class="w-full p-2 border rounded" placeholder="Enter rating (1-5)">
+            </div>
+            <div class="flex justify-between">
+                <button type="submit" class="btn">Submit Rating</button>
+                <button type="button" id="delete-rating-btn" onclick="deleteFoodRating()" 
+                        class="btn bg-red-500" style="display: none;">Delete Rating</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let currentFoodId = null;
+
+    async function handleFoodClick(foodId) {
+        if ("{{ user.is_authenticated }}" === "False") {
+            alert("Please login to rate.");
+            return;
+        }
+
+        currentFoodId = foodId;
+        
+        try {
+            const response = await fetch(`{% url 'food_review:get_user_rating' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', foodId));
+            const data = await response.json();
+
+            const modal = document.getElementById('foodRatingModal');
+            const ratingInput = document.getElementById('food-rating-input');
+            const deleteBtn = document.getElementById('delete-rating-btn');
+            const foodIdInput = document.getElementById('food-id-input');
+            const ratingIdInput = document.getElementById('rating-id-input');
+
+            foodIdInput.value = foodId;
+
+            if (data.has_rating) {
+                ratingInput.value = data.rating;
+                ratingIdInput.value = data.rating_id;
+                deleteBtn.style.display = 'block';
+            } else {
+                ratingInput.value = '';
+                ratingIdInput.value = '';
+                deleteBtn.style.display = 'none';
+            }
+
+            modal.style.display = 'flex';
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error loading rating data');
+        }
+    }
+
+    function closeFoodRatingModal() {
+        const modal = document.getElementById('foodRatingModal');
+        modal.style.display = 'none';
+    }
+
+    async function submitFoodRating(event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        const ratingId = document.getElementById('rating-id-input').value;
+        
+        try {
+            let url;
+            if (ratingId) {
+                url = `{% url 'food_review:edit_rating' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', ratingId);
+            } else {
+                url = `{% url 'food_review:add_rating' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', currentFoodId);
+            }
+                
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            });
+            
+            const data = await response.json();
+            if (data.status === 'success') {
+                closeFoodRatingModal();
+                location.reload();
+            } else {
+                alert(data.message || 'Error submitting rating');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error submitting rating');
+        }
+    }
+
+    async function deleteFoodRating() {
+        const ratingId = document.getElementById('rating-id-input').value;
+        if (!ratingId) return;
+
+        if (!confirm('Are you sure you want to delete this rating?')) return;
+
+        try {
+            const url = `{% url 'food_review:delete_rating' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', ratingId);
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            });
+            
+            const data = await response.json();
+            if (data.status === 'success') {
+                closeFoodRatingModal();
+                location.reload();
+            } else {
+                alert(data.message || 'Error deleting rating');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error deleting rating');
+        }
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    window.onclick = function(event) {
+        const foodModal = document.getElementById('foodRatingModal');
+        if (event.target === foodModal) {
+            closeFoodRatingModal();
+        }
+    }
+</script>
+
+{% endblock %}

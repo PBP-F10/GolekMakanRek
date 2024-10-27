@@ -5,7 +5,8 @@ app_name = 'food_review'
 
 urlpatterns = [
     path('', views.restaurant_preview, name='foods'),
-    path('<uuid:restaurant_id>/', views.restaurant_detail, name='restaurant_food'),     
+    path('<uuid:restaurant_id>/', views.restaurant_detail, name='restaurant_food'), 
+    
     path('add-rating/<uuid:food_id>/', views.add_rating, name='add_rating'),
     path('edit-rating/<uuid:rating_id>/', views.edit_rating, name='edit_rating'),
     path('delete-rating/<uuid:rating_id>/', views.delete_rating, name='delete_rating'),

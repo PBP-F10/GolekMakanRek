@@ -1,6 +1,6 @@
 // static/js/main.js
 function handleLike(postId) {
-    fetch('/like_post/', {
+    fetch('/forum/like_post/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ function postComment(event, postId) {
     const commentInput = event.target.querySelector('textarea');
     const commentText = commentInput.value;
 
-    fetch('/comment_post/', {
+    fetch('/forum/comment_post/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ function submitReport(postId) {
         return;
     }
 
-    fetch('/report_post/', {
+    fetch('/forum/report_post/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -124,8 +124,8 @@ document.addEventListener('DOMContentLoaded', function() {
     restaurantInput.addEventListener('input', function() {
         const query = this.value;
         if (query.length > 0) {
-            fetch(`/search_restaurants/?q=${encodeURIComponent(query)}`)
-                .then(response => response.json())
+            fetch('/forum/search_restaurants/?q=' + encodeURIComponent(query))
+            .then(response => response.json())
                 .then(data => {
                     // Clear previous results
                     restaurantList.innerHTML = '';

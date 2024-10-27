@@ -109,3 +109,10 @@ def search_restaurants(request):
     restaurants = Restaurant.objects.filter(nama__icontains=query).order_by('nama')[:10]
     results = [{'id': restaurant.id, 'nama': restaurant.nama} for restaurant in restaurants]
     return JsonResponse({'restaurants': results})
+
+from django.http import HttpResponse
+from main.models import Restaurant
+
+def list_restaurants(request):
+    restaurants = Restaurant.objects.all()
+    return render(request, 'list_restaurants.html', {'restaurants': restaurants})

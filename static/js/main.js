@@ -124,8 +124,8 @@ document.addEventListener('DOMContentLoaded', function() {
     restaurantInput.addEventListener('input', function() {
         const query = this.value;
         if (query.length > 0) {
-            fetch(`/search_restaurants/?q=${encodeURIComponent(query)}`)
-                .then(response => response.json())
+            fetch('/forum/search_restaurants/?q=' + encodeURIComponent(query))
+            .then(response => response.json())
                 .then(data => {
                     // Clear previous results
                     restaurantList.innerHTML = '';

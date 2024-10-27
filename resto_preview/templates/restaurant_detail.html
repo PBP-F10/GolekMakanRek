@@ -102,6 +102,8 @@
             return;
         }
 
+        getRestaurantDetails("{{ restaurant.id }}");
+
         const modal = document.createElement('div');
         modal.id = 'ratingModal';
         modal.className = 'modal';
@@ -117,7 +119,6 @@
                         Submit
                     </button>
                 </form>
-
             </div>
         `;
         document.body.appendChild(modal);
@@ -163,7 +164,21 @@
         });
     }
 
-
+    function getRestaurantDetails(restaurantId) {
+        fetch(`/api/restaurants/${restaurantId}/`) 
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+    }
 
 </script>
 

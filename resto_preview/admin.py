@@ -1,4 +1,4 @@
 from django.contrib import admin
-from main.models import Food, Restaurant
+from .models import show_resto, Rating, Follow
 
-# Register your models here.
+admin.site.register(show_resto)

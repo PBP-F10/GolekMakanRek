@@ -12,21 +12,6 @@ class Restaurant(models.Model):
     
     def __str__(self):
         return self.nama
-    
-    @property
-    def average_rating(self):
-        food_items = self.food_set.all()
-        
-        total_rating = 0
-        total_count = 0
-        
-        for food in food_items:
-            food_rating = food.average_rating
-            if food_rating > 0:
-                total_rating += food_rating
-                total_count += 1
-        
-        return round(total_rating / total_count, 2) if total_count > 0 else 0
 
 class Food(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

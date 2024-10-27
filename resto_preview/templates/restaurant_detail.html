@@ -9,94 +9,338 @@
 {% include 'navbar.html' %}
 
 <style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        margin-top: 2rem;
+    }
+
+    .restaurant-title {
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .restaurant-description {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+        padding: 0 20px;
+    }
+
+    .rating-section {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .rating-title {
+        color: #4CAF50;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .rating-button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+    }
+
+    .rating-button:hover {
+        background-color: #45a049;
+    }
+
+    .food-section {
+        margin-top: 30px;
+    }
+
+    .food-title {
+        color: #4CAF50;
+        font-size: 18px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .food-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 0;
+        list-style: none;
+    }
+
+    .food-item {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        padding: 15px;
+    }
+
+    .food-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .food-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+        transform: translateX(-100%);
+        transition: 0.5s;
+    }
+
+    .food-item:hover::before {
+        transform: translateX(100%);
+    }
+
+    .food-name {
+        font-weight: bold;
+        font-size: 1.1em;
+        margin-bottom: 8px;
+        color: #2d3748;
+    }
+
+    .food-description {
+        color: #666;
+        font-size: 0.9em;
+        margin-bottom: 12px;
+        line-height: 1.4;
+    }
+
+    .food-category {
+        font-size: 0.85em;
+        color: #718096;
+        margin-bottom: 8px;
+    }
+
+    .food-price {
+        font-weight: bold;
+        color: #4CAF50;
+        font-size: 1.1em;
+        margin-bottom: 5px;
+    }
+
+    .food-discount {
+        color: #e53e3e;
+        font-size: 0.9em;
+        margin-bottom: 5px;
+    }
+
+    .food-final-price {
+        font-weight: bold;
+        color: #2d3748;
+        font-size: 1.1em;
+    }
+
+    /* Rating Modal Styles */
     .modal {
-        display: flex;
-        justify-content: center;
-        align-items: center;
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
         z-index: 1000;
     }
 
     .modal-content {
-        background-color: var(--background-color);
+        background: white;
         padding: 20px;
-        border-radius: 5px;
+        border-radius: 8px;
         width: 300px;
+    }
+
+    /* Food Detail Modal Styles */
+    .food-detail-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .food-detail-modal.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .food-detail-content {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 500px;
         position: relative;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
     }
 
-    .close {
+    .food-detail-modal.active .food-detail-content {
+        transform: translateY(0);
+    }
+
+    .close-modal {
         position: absolute;
-        top: 10px;
-        right: 10px;
+        top: 15px;
+        right: 15px;
+        font-size: 24px;
         cursor: pointer;
-    }
-
-    .food-list {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .food-item {
-        padding: 10px 0;
-        text-align: center;
-        font-size: 1.1rem;
-        color: var(--text-color);
-    }
-
-    .divider {
+        color: #666;
+        transition: color 0.3s ease;
+        background: none;
         border: none;
-        border-top: 1px solid var(--hairline-color);
-        margin: 0;
+        padding: 5px;
+        line-height: 1;
+    }
+
+    .close-modal:hover {
+        color: #e53e3e;
+    }
+
+    .food-detail-image {
+        width: 100%;
+        height: 200px;
+        background-color: #f0f0f0;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+    }
+
+    .food-detail-info {
+        margin-bottom: 20px;
+    }
+
+    .food-detail-name {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2d3748;
+        margin-bottom: 10px;
+    }
+
+    .food-detail-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+
+    .food-detail-price {
+        font-size: 20px;
+        font-weight: bold;
+        color: #4CAF50;
+        margin-bottom: 10px;
+    }
+
+    .food-detail-discount {
+        color: #e53e3e;
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .food-detail-final-price {
+        font-size: 22px;
+        font-weight: bold;
+        color: #2d3748;
+        margin-bottom: 20px;
+    }
+
+    .order-button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 100%;
+        transition: background-color 0.3s ease;
+    }
+
+    .order-button:hover {
+        background-color: #45a049;
     }
 </style>
 
-<div class="flex flex-col min-h-screen bg-gray-100">
-    <div class="container mx-auto px-4 py-8 mt-16 max-w-3xl">
-        <!-- Restaurant Details -->
-        <h1 class="text-3xl font-bold text-center text-primary mb-4">{{ restaurant.nama }}</h1>
-        <p class="text-l text-muted-text-color text-center mb-6">{{ restaurant.deskripsi }}</p>
+<div class="container">
+    <!-- Restaurant Title and Description -->
+    <h1 class="restaurant-title">{{ restaurant.nama }}</h1>
+    <p class="restaurant-description">{{ restaurant.deskripsi }}</p>
 
-        <!-- Rating Section -->
-        <div class="card text-center">
-            <h2 class="text-xl font-semibold" style="color: var(--primary);">Rating</h2>
-            <p class="average-rating text-l mt-2">
-                <span id="average-rating">{{ average_rating|floatformat:1 }}</span>
-            </p>
-            <p class="user-rating text-l mt-2">
-                Your Rate: <span id="user-rating">{{ user_rating.score }}</span>
-            </p>
-            <button onclick="openRatingModal()" class="btn mt-4">Berikan Rating</button>
-        </div>    
+    <!-- Rating Section -->
+    <div class="rating-section">
+        <h2 class="rating-title">Rating</h2>
+        <p>{{ average_rating|default:"0.0" }}</p>
+        <p>Your Rate: {{ user_rating.score|default:"" }}</p>
+        <button onclick="openRatingModal()" class="rating-button">Berikan Rating</button>
+    </div>
 
-        <!-- Food List Section -->
-        <div class="card">
-            <h2 class="text-xl font-semibold" style="color: var(--primary); text-align: center;">Makanan</h2>
-            <ul class="food-list">
-                {% for food in foods %}
-                    <li class="food-item">
-                        <h3 class="font-semibold">{{ food.nama }}</h3>
-                        <p class="text-sm">Rp {{ food.harga }}</p>
-                        {% if food.diskon > 0 %}
-                            <p class="text-sm text-red-600">Diskon: {{ food.diskon }}%</p>
-                            <p class="text-sm font-semibold">Harga Akhir: Rp {{ food.harga_setelah_diskon }}</p>
-                        {% endif %}
-                        <p class="text-sm text-gray-600">{{ food.deskripsi }}</p>
-                    </li>
-                    {% if not forloop.last %}
-                        <hr class="divider">
+    <!-- Food Section with Grid Layout -->
+    <div class="food-section">
+        <h2 class="food-title">Makanan</h2>
+        <ul class="food-grid">
+            {% for food in foods %}
+                <li class="food-item" onclick="showFoodDetails({{ food.id }})">
+                    <div class="food-name">{{ food.nama }}</div>
+                    <div class="food-description">{{ food.deskripsi }}</div>
+                    <div class="food-category">Kategori: {{ food.nama }}</div>
+                    <div class="food-price">Rp {{ food.harga }}</div>
+                    {% if food.diskon > 0 %}
+                        <div class="food-discount">Diskon: {{ food.diskon }}%</div>
+                        <div class="food-final-price">Harga Akhir: Rp {{ food.harga_setelah_diskon }}</div>
                     {% endif %}
-                {% empty %}
-                    <li class="card-content text-muted">Tidak ada makanan yang tersedia.</li>
-                {% endfor %}
-            </ul>
+                </li>
+            {% empty %}
+                <li class="food-item">Tidak ada makanan yang tersedia.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Food Detail Modal -->
+    <div id="foodDetailModal" class="food-detail-modal">
+        <div class="food-detail-content">
+            <button class="close-modal" onclick="closeFoodDetail()">&times;</button>
+            <div class="food-detail-image">
+                <span>Food Image Placeholder</span>
+            </div>
+            <div class="food-detail-info">
+                <div id="foodDetailName" class="food-detail-name"></div>
+                <div id="foodDetailDescription" class="food-detail-description"></div>
+                <div id="foodDetailCategory" class="food-detail-category"></div>
+                <div id="foodDetailPrice" class="food-detail-price"></div>
+                <div id="foodDetailDiscount" class="food-detail-discount"></div>
+                <div id="foodDetailFinalPrice" class="food-detail-final-price"></div>
+            </div>
+            <button class="order-button" onclick="orderFood()">Pesan Sekarang</button>
         </div>
     </div>
 </div>
@@ -104,45 +348,115 @@
 <script>
     function openRatingModal() {
         const isLoggedIn = "{{ user.is_authenticated }}";
-
+        
         if (isLoggedIn === "False") {
             alert("Silakan login untuk memberikan rating.");
             return;
         }
 
-        const modal = document.createElement('div');
-        modal.id = 'ratingModal';
-        modal.className = 'modal';
-        modal.innerHTML = `
-            <div class="modal-content">
-                <span class="close" onclick="closeRatingModal()">&times;</span>
-                <h2 class="text-lg font-semibold text-center">Rate This Restaurant</h2>
-                <form id="rating-form" onsubmit="submitRating(event)">
-                    <input type="hidden" name="restaurant_id" value="{{ restaurant.id }}">
-                    <input type="number" id="ratingInput" name="score" min="1" max="5" required placeholder="Enter rating (1-5)" style="width: 100%; padding: 8px; margin-top: 10px;">
-                    <button type="submit" id="submitRatingButton" class="btn" style="margin-top: 10px; width: 100%;">
-                        Submit
-                    </button>
-                </form>
+        const modalHTML = `
+            <div class="modal">
+                <div class="modal-content">
+                    <h2 style="margin-bottom: 15px; text-align: center;">Rate This Restaurant</h2>
+                    <form id="rating-form" onsubmit="submitRating(event)">
+                        <input type="hidden" name="restaurant_id" value="{{ restaurant.id }}">
+                        <input type="number" name="score" min="1" max="5" required
+                            style="width: 100%; padding: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px;"
+                            placeholder="Enter rating (1-5)">
+                        <button type="submit" class="rating-button" style="width: 100%;">Submit</button>
+                    </form>
+                </div>
             </div>
         `;
-        document.body.appendChild(modal);
-        modal.classList.remove('hidden');
-    }
 
-    function closeRatingModal() {
-        const modal = document.getElementById('ratingModal');
-        if (modal) {
-            document.body.removeChild(modal);
-        }
-        window.location.href = "{% url 'resto_preview:restaurant_detail' restaurant.id %}";
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+        document.querySelector('.modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.remove();
+            }
+        });
     }
 
     function submitRating(event) {
         event.preventDefault();
-        const form = document.getElementById('rating-form');
+        const form = event.target;
         const formData = new FormData(form);
+        
+        fetch("{% url 'resto_preview:submit_rating' restaurant.id %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                window.location.reload();
+            } else {
+                alert(data.message || 'Error submitting rating');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error submitting rating');
+        });
     }
-</script>
 
+    function showFoodDetails(foodId) {
+        const foodItem = document.querySelector(`[onclick="showFoodDetails(${foodId})"]`);
+        
+        if (!foodItem) return;
+
+        const name = foodItem.querySelector('.food-name').textContent;
+        const description = foodItem.querySelector('.food-description').textContent;
+        const category = foodItem.querySelector('.food-category').textContent;
+        const price = foodItem.querySelector('.food-price').textContent;
+        const discount = foodItem.querySelector('.food-discount')?.textContent || '';
+        const finalPrice = foodItem.querySelector('.food-final-price')?.textContent || '';
+
+        document.getElementById('foodDetailName').textContent = name;
+        document.getElementById('foodDetailDescription').textContent = description;
+        document.getElementById('foodDetailCategory').textContent = category;
+        document.getElementById('foodDetailPrice').textContent = price;
+        document.getElementById('foodDetailDiscount').textContent = discount;
+        document.getElementById('foodDetailFinalPrice').textContent = finalPrice;
+
+        const modal = document.getElementById('foodDetailModal');
+        modal.classList.add('active');
+
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeFoodDetail() {
+        const modal = document.getElementById('foodDetailModal');
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('foodDetailModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeFoodDetail();
+        }
+    });
+
+    function orderFood() {
+        const isLoggedIn = "{{ user.is_authenticated }}";
+        
+        if (isLoggedIn === "False") {
+            alert("Silakan login untuk memesan makanan.");
+            return;
+        }
+        
+        alert("Fitur pemesanan akan segera hadir!");
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeFoodDetail();
+        }
+    });
+</script>
 {% endblock %}

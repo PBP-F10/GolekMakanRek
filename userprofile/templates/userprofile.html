@@ -114,8 +114,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 </script>
 {% include 'navbar.html' %}
 <!-- Edit Profile Modal -->
-<div id="editProfileModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 overflow-auto z-20">
-    <div class="bg-white p-8 rounded-md max-w-md w-full max-h-[80vh] overflow-y-auto">
+<div id="editProfileModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 overflow-auto z-[100]">
+    <div class="bg-white p-8 rounded-md max-w-md w-full max-h-[80vh] overflow-y-auto mt-[60px]">
         <h2 class="text-2xl font-semibold mb-4">Edit Profile</h2>
         <form id="editProfileForm">
             {% csrf_token %}
@@ -169,7 +169,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
 
-<section class="w-full overflow-hidden bg-white">
+<section class="w-full overflow-hidden bg-white pt-[64px] md:pt-0"> 
   <div class="flex flex-col">
     <!-- Cover Image Section -->
     <div class="relative">
@@ -178,7 +178,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             class="w-full h-[20rem] md:h-[18rem] sm:h-[16rem] xs:h-[12rem] object-cover" />
 
         <!-- Button to Open Modal on Top Right -->
-        <button onclick="openModal()" class="absolute top-4 right-4 bg-orange-500 text-white px-4 py-2 rounded shadow-md hover:bg-orange-600 focus:outline-none">
+        <button onclick="openModal()" 
+                class="absolute top-4 right-4 bg-orange-500 text-white px-4 py-2 rounded shadow-md hover:bg-orange-600 focus:outline-none z-[60]">
             Edit Profile
         </button>
     </div>
@@ -187,7 +188,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       <!-- Profile Image and Name -->
       <div class="z-10 sm:w-[80%] xs:w-[90%] mx-auto flex flex-col sm:flex-row items-center mt-[-4rem] sm:mt-[-6rem]">
         <img src="{% static 'image/user.png' %}" alt="Food BCG"
-        class="rounded-lg lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[6rem] xs:h-[6rem] outline outline-2 outline-offset-2 outline-orange-700" />
+        class="rounded-full lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[6rem] xs:h-[6rem] outline outline-2 outline-offset-2 outline-orange-700" />
         
         <!-- Full Name -->
         <h1 id="username_section"

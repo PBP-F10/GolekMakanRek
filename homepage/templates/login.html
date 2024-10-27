@@ -3,17 +3,11 @@
 {% block meta %}
 <title>Login</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<style>
-  * {
-    font-family: 'Helvetica', sans-serif;
-    font-weight: bold;
-  }
-</style>
+<link rel="stylesheet" href="{% static 'css/global.css' %}">
 {% endblock meta %}
 
 {% block content %}
-{% include 'navbar.html' %}
-<div class="min-h-screen bg-cover bg-center text-gray-100 flex justify-center items-center" style="background-image: url('{% static 'img/food_bcg.jpg' %}');">
+<div class="min-h-screen bg-cover bg-center text-gray-100 flex justify-center items-center" style="background-image: url('{% static 'image/BG_WEB.png' %}');">
   <div class="max-w-screen-xl m-0 sm:m-10 bg-white shadow-xl sm:rounded-lg flex justify-center flex-1">
       <div class="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
           <div class="w-full flex flex-row mt-8 justify-center">

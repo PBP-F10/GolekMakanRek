@@ -107,7 +107,6 @@
     </div>
 </div>
 
-<!-- Food Rating Modal Template -->
 <div id="foodRatingModal" class="modal" style="display: none;">
     <div class="modal-content">
         <span class="close" onclick="closeFoodRatingModal()">&times;</span>
@@ -118,7 +117,7 @@
             <div class="mb-4">
                 <label class="block text-sm font-medium mb-2">Rating (1-5)</label>
                 <input type="number" id="food-rating-input" name="score" min="1" max="5" required 
-                       class="w-full p-2 border rounded" placeholder="Enter rating (1-5)">
+                        class="w-full p-2 border rounded" placeholder="Enter rating (1-5)">
             </div>
             <div class="flex justify-between">
                 <button type="submit" class="btn">Submit Rating</button>
@@ -141,11 +140,9 @@
         currentFoodId = foodId;
         
         try {
-            // Get existing rating if any
             const response = await fetch(`{% url 'food_review:get_user_rating' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', foodId));
             const data = await response.json();
 
-            // Show modal
             const modal = document.getElementById('foodRatingModal');
             const ratingInput = document.getElementById('food-rating-input');
             const deleteBtn = document.getElementById('delete-rating-btn');

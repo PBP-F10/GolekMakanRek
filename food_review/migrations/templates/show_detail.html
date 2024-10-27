@@ -6,7 +6,7 @@
 
 <div class="container mx-auto px-4">
     <!-- Restaurant Section -->
-    <h1 class="text-4xl font-bold text-center text-green-600 mb-4">Restaurant Preview</h1>
+    <h1 class="text-4xl font-bold text-center text-green-600 mb-4">Food Preview</h1>
     
     {% if restaurants %}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
@@ -37,7 +37,7 @@
             <div class="flex-none w-64">
                 <div class="bg-white rounded-lg shadow-md">
                     <img src="{{ food.image.url }}" alt="{{ food.nama }}" 
-                         class="w-full h-40 object-cover rounded-t-lg">
+                        class="w-full h-40 object-cover rounded-t-lg">
                     <div class="p-4">
                         <h3 class="font-semibold">{{ food.nama }}</h3>
                         {% if food.diskon > 0 %}

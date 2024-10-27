@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import *
 
-# Register your models here.
+class RatingComment(admin.ModelAdmin):
+    list_display = ('id', 'user', 'deskripsi_food', 'score', 'comment', 'waktu_comment')
+
+admin.site.register(FoodRating, RatingComment)

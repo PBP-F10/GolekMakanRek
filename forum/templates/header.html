@@ -2,8 +2,19 @@
 
 <div class="header-wrapper">
     <div class="header-content">
-        <h1>Jelajahi Makanan di Surabaya!</h1>
-        <p><strong>Berbagi cerita bersama kulineran di Surabaya!</strong></p>
-        <a href="{% url 'forum:add_post' %}" class="btn">Posting di Forum</a>
+        <div class="header" style="text-align: center; padding: 20px 0;">
+            <h1 style="margin-bottom: 10px;">Jelajahi Makanan di Surabaya!</h1>
+            <p style="margin-bottom: 20px;"><strong>Berbagi cerita bersama kulineran di Surabaya!</strong></p>
+            <a href="{% url 'forum:add_post' %}" class="btn" style="margin-top: 10px;">Posting di Forum</a>
+        </div>
     </div>
 </div>
+
+<style>
+    /* Media query untuk perangkat mobile */
+    @media (max-width: 768px) {
+        .header {
+            margin-top: 31px; /* Atur jarak atas header untuk tampilan mobile */
+        }
+    }
+</style>

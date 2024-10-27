@@ -46,7 +46,7 @@ def search_food(request):
         if request.GET.get(param) != "None":
             filters[f"{param}__icontains"] = request.GET.get(param)
     filtered_data = food_diskon.filter(**filters)
-    if like_only:
+    if like_only and request.user.is_authenticated:
         data = serializers.serialize("json", filtered_data.filter(likes__user_id=request.user))
         return HttpResponse(data, content_type="application/json")
     data = serializers.serialize("json", filtered_data)

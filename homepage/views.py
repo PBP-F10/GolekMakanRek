@@ -132,6 +132,12 @@ def set_test(request):
                 #image_url="https://cdn-icons-png.flaticon.com/256/5784/5784919.png"
             )
             new_food.save()
+    food_data = serializers.serialize("json", Food.objects.all())
+    restaurant_data = serializers.serialize("json", Restaurant.objects.all())
+    with open("food_data.json", "w") as json_file:
+        json_file.write(food_data)
+    with open("restaurant_data.json", "w") as json_file:
+        json_file.write(restaurant_data)
     return HttpResponseRedirect(reverse('homepage:show_homepage'))
 '''
 

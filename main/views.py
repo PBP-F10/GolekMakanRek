@@ -13,6 +13,7 @@ import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+'''
 def show_main(request):
     context = {
         'features': [
@@ -64,3 +65,4 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
+'''

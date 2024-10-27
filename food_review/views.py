@@ -11,16 +11,11 @@ def restaurant_preview(request):
     return render(request, 'show_detail.html', {'restaurants': restaurants})
 
 def restaurant_detail(request, restaurant_id):
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id)  
-    user_rating = None
-    
-    average_rating = restaurant.rating_set.aggregate(Avg('score'))['score__avg'] or 0
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
     restaurant_foods = Food.objects.filter(restoran=restaurant)
-
+    
     return render(request, 'food_list.html', {
         'restaurant': restaurant,
-        'user_rating': user_rating,
-        'average_rating': average_rating,
         'foods': restaurant_foods,
     })
 
@@ -28,82 +23,91 @@ def restaurant_detail(request, restaurant_id):
 def add_rating(request, food_id):
     if request.method != 'POST':
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
-        
+
     food = get_object_or_404(Food, id=food_id)
     score = request.POST.get('score')
-    comment = request.POST.get('comment', '')
-    
+
     try:
         score = int(score)
         if not (1 <= score <= 5):
             raise ValueError
     except ValueError:
         return JsonResponse({'status': 'error', 'message': 'Invalid rating score'})
-        
+
     rating, created = FoodRating.objects.update_or_create(
         user=request.user,
         deskripsi_food=food,
-        defaults={
-            'score': score,
-            'comment': comment
-        }
+        defaults={'score': score}
     )
-    
+
+    new_average = food.average_rating
+
     return JsonResponse({
         'status': 'success',
-        'message': 'Rating saved successfully'
+        'message': 'Rating added successfully',
+        'food_rating': new_average,
+        'is_new': created
     })
 
 @login_required
 def edit_rating(request, rating_id):
     if request.method != 'POST':
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
-        
+
     rating = get_object_or_404(FoodRating, id=rating_id, user=request.user)
     score = request.POST.get('score')
-    comment = request.POST.get('comment', '')
-    
+
     try:
         score = int(score)
         if not (1 <= score <= 5):
             raise ValueError
     except ValueError:
         return JsonResponse({'status': 'error', 'message': 'Invalid rating score'})
-        
+
     rating.score = score
-    rating.comment = comment
     rating.save()
-    
+
+
+    new_average = rating.deskripsi_food.average_rating
+
     return JsonResponse({
         'status': 'success',
-        'message': 'Rating updated successfully'
+        'message': 'Rating updated successfully',
+        'food_rating': new_average
     })
 
 @login_required
 def delete_rating(request, rating_id):
     if request.method != 'POST':
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
-        
+
     rating = get_object_or_404(FoodRating, id=rating_id, user=request.user)
+    food = rating.deskripsi_food
     rating.delete()
-    
+
+    new_average = food.average_rating
+
     return JsonResponse({
         'status': 'success',
-        'message': 'Rating deleted successfully'
+        'message': 'Rating deleted successfully',
+        'food_rating': new_average
     })
 
 def get_user_rating(request, food_id):
     if not request.user.is_authenticated:
         return JsonResponse({'has_rating': False})
-        
+
     food = get_object_or_404(Food, id=food_id)
     rating = FoodRating.objects.filter(user=request.user, deskripsi_food=food).first()
-    
+
     if rating:
         return JsonResponse({
             'has_rating': True,
             'rating_id': rating.id,
             'rating': rating.score,
-            'comment': rating.comment
+            'food_rating': food.average_rating
         })
-    return JsonResponse({'has_rating': False})
+    return JsonResponse({
+        'has_rating': False,
+        'food_rating': food.average_rating
+    })

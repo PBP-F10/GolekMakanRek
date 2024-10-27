@@ -58,14 +58,24 @@
     }
 
     .food-rating {
-        color: var(--primary);
-        font-weight: bold;
-        margin-top: 5px;
+        margin-top: 8px;
     }
 
     .rating-stars {
-        color: gold;
+        display: inline-flex;
+        margin-left: 5px;
+    }
+
+    .rating-stars span {
+        display: inline-block;
         font-size: 1.2em;
+    }
+
+    .rating-input .star {
+        font-size: 1.5em;
+        cursor: pointer;
+        transition: color 0.2s;
+        margin: 0 2px;
     }
 
     .toast {
@@ -92,20 +102,18 @@
 <div class="flex flex-col min-h-screen bg-gray-100">
     <div class="container mx-auto px-4 py-8 mt-16 max-w-3xl">
         <!-- Restaurant Details -->
-        <h1 class="text-3xl font-bold text-center text-primary mb-4">{{ restaurant.nama }}</h1>
-        <p class="text-l text-muted-text-color text-center mb-6">{{ restaurant.deskripsi }}</p>
-
-        <!-- Restaurant Rating Section -->
-        <div class="card text-center mb-8">
-            <h2 class="text-xl font-semibold" style="color: var(--primary);">Restaurant Rating</h2>
-            <p class="average-rating text-l mt-2">
-                <span id="average-rating">{{ average_rating|floatformat:1 }}</span>
-                <span class="rating-stars" id="restaurant-stars"></span>
-            </p>
-        </div>    
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h1 class="text-3xl font-bold text-center text-primary mb-4">{{ restaurant.nama }}</h1>
+            <p class="text-l text-muted-text-color text-center mb-4">{{ restaurant.deskripsi }}</p>
+            <div class="text-center">
+                <span class="font-semibold">Overall Rating: </span>
+                <span id="average-rating">{{ restaurant.average_rating|default:"No ratings" }}</span>
+                <div class="rating-stars" id="restaurant-stars"></div>
+            </div>
+        </div>
 
         <!-- Food List Section -->
-        <div class="card">
+        <div class="bg-white rounded-lg shadow-md p-6">
             <h2 class="text-xl font-semibold text-center mb-4" style="color: var(--primary);">Menu</h2>
             <div class="food-list">
                 {% for food in foods %}
@@ -122,8 +130,9 @@
                             <p class="text-sm">Price: Rp {{ food.harga }}</p>
                         {% endif %}
                         <div class="food-rating">
-                            Rating: <span id="food-rating-{{ food.id }}">{{ food.average_rating|default:"No ratings" }}</span>
-                            <span class="rating-stars" id="food-stars-{{ food.id }}"></span>
+                            <span class="font-semibold">Rating: </span>
+                            <span id="food-rating-{{ food.id }}">{{ food.average_rating|default:"No ratings" }}</span>
+                            <div class="rating-stars" id="food-stars-{{ food.id }}"></div>
                         </div>
                     </div>
                 {% empty %}
@@ -134,7 +143,7 @@
     </div>
 </div>
 
-<!-- Food Rating Modal Template -->
+<!-- Food Rating Modal -->
 <div id="foodRatingModal" class="modal" style="display: none;">
     <div class="modal-content">
         <span class="close" onclick="closeFoodRatingModal()">&times;</span>
@@ -145,14 +154,13 @@
             <div class="mb-4">
                 <label class="block text-sm font-medium mb-2">Rating (1-5)</label>
                 <div class="rating-input flex justify-center gap-2 mb-2">
-                    <span class="star cursor-pointer" data-rating="1">★</span>
-                    <span class="star cursor-pointer" data-rating="2">★</span>
-                    <span class="star cursor-pointer" data-rating="3">★</span>
-                    <span class="star cursor-pointer" data-rating="4">★</span>
-                    <span class="star cursor-pointer" data-rating="5">★</span>
+                    <span class="star" data-rating="1">★</span>
+                    <span class="star" data-rating="2">★</span>
+                    <span class="star" data-rating="3">★</span>
+                    <span class="star" data-rating="4">★</span>
+                    <span class="star" data-rating="5">★</span>
                 </div>
-                <input type="number" id="food-rating-input" name="score" min="1" max="5" required 
-                       class="w-full p-2 border rounded" placeholder="Enter rating (1-5)" hidden>
+                <input type="number" id="food-rating-input" name="score" min="1" max="5" required hidden>
             </div>
             <div class="flex justify-between">
                 <button type="submit" class="btn">Submit Rating</button>
@@ -163,15 +171,13 @@
     </div>
 </div>
 
-<!-- Toast Notification -->
 <div id="toast" class="toast"></div>
 
 <script>
 let currentFoodId = null;
 
-// Utility function for consistent rating formatting
 function formatRating(rating) {
-    if (rating === null || rating === undefined || isNaN(rating)) {
+    if (!rating || isNaN(rating)) {
         return "No ratings";
     }
     return parseFloat(rating).toFixed(1);
@@ -192,67 +198,58 @@ function updateStars(rating, containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    if (rating === null || rating === undefined || isNaN(rating)) {
-        container.textContent = '☆☆☆☆☆';
+    if (!rating || isNaN(rating)) {
+        container.innerHTML = '<span class="text-gray-300">☆☆☆☆☆</span>';
         return;
     }
 
-    rating = parseFloat(rating);
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
-    let stars = '★'.repeat(fullStars);
+    const emptyStars = 5 - Math.ceil(rating);
     
+    let starsHTML = '';
+    for (let i = 0; i < fullStars; i++) {
+        starsHTML += '<span class="text-yellow-400">★</span>';
+    }
     if (hasHalfStar) {
-        stars += '½';
+        starsHTML += '<span class="text-yellow-400">★</span>';
+    }
+    for (let i = 0; i < emptyStars; i++) {
+        starsHTML += '<span class="text-gray-300">☆</span>';
     }
     
-    stars += '☆'.repeat(5 - Math.ceil(rating));
-    container.textContent = stars;
+    container.innerHTML = starsHTML;
 }
 
 function initializeRatingStars() {
-    // Initialize restaurant rating stars
-    const restaurantRating = parseFloat(document.getElementById('average-rating').textContent);
-    updateStars(restaurantRating, 'restaurant-stars');
+    const restaurantRatingElement = document.getElementById('average-rating');
+    if (restaurantRatingElement) {
+        const rating = restaurantRatingElement.textContent;
+        updateStars(parseFloat(rating), 'restaurant-stars');
+    }
 
-    // Initialize food rating stars
     document.querySelectorAll('[id^="food-rating-"]').forEach(element => {
         if (element.id.startsWith('food-rating-')) {
             const foodId = element.id.replace('food-rating-', '');
-            const ratingText = element.textContent;
-            const rating = ratingText === "No ratings" ? null : parseFloat(ratingText);
-            updateStars(rating, `food-stars-${foodId}`);
+            const rating = element.textContent;
+            updateStars(parseFloat(rating), `food-stars-${foodId}`);
         }
     });
 }
 
-document.addEventListener('DOMContentLoaded', initializeRatingStars);
-
-// Rating input stars functionality
-const stars = document.querySelectorAll('.rating-input .star');
-stars.forEach(star => {
-    star.addEventListener('mouseover', function() {
-        const rating = this.dataset.rating;
-        stars.forEach(s => {
-            s.style.color = parseInt(s.dataset.rating) <= parseInt(rating) ? 'gold' : 'gray';
-        });
-    });
-
-    star.addEventListener('click', function() {
-        const rating = this.dataset.rating;
-        document.getElementById('food-rating-input').value = rating;
-        stars.forEach(s => {
-            s.style.color = parseInt(s.dataset.rating) <= parseInt(rating) ? 'gold' : 'gray';
-        });
-    });
-});
-
-document.querySelector('.rating-input').addEventListener('mouseleave', function() {
-    const currentRating = document.getElementById('food-rating-input').value;
+function resetModalStars() {
+    const stars = document.querySelectorAll('.rating-input .star');
     stars.forEach(star => {
-        star.style.color = parseInt(star.dataset.rating) <= parseInt(currentRating || 0) ? 'gold' : 'gray';
+        star.style.color = 'gray';
     });
-});
+}
+
+function updateModalStars(rating) {
+    const stars = document.querySelectorAll('.rating-input .star');
+    stars.forEach(star => {
+        star.style.color = parseInt(star.dataset.rating) <= rating ? 'gold' : 'gray';
+    });
+}
 
 async function handleFoodClick(foodId) {
     if ("{{ user.is_authenticated }}" === "False") {
@@ -273,19 +270,14 @@ async function handleFoodClick(foodId) {
         const ratingIdInput = document.getElementById('rating-id-input');
 
         foodIdInput.value = foodId;
-
-        // Reset stars
-        stars.forEach(star => star.style.color = 'gray');
+        
+        resetModalStars();
 
         if (data.has_rating) {
             ratingInput.value = data.rating;
             ratingIdInput.value = data.rating_id;
             deleteBtn.style.display = 'block';
-            
-            // Update stars display
-            stars.forEach(star => {
-                star.style.color = parseInt(star.dataset.rating) <= data.rating ? 'gold' : 'gray';
-            });
+            updateModalStars(data.rating);
         } else {
             ratingInput.value = '';
             ratingIdInput.value = '';
@@ -299,25 +291,18 @@ async function handleFoodClick(foodId) {
     }
 }
 
-async function updateRatings(foodId, newRating) {
-    // Update food item rating
+function closeFoodRatingModal() {
+    const modal = document.getElementById('foodRatingModal');
+    modal.style.display = 'none';
+    document.getElementById('food-rating-form').reset();
+    resetModalStars();
+}
+
+function updateFoodRating(foodId, newRating) {
     const foodRatingElement = document.getElementById(`food-rating-${foodId}`);
     if (foodRatingElement) {
-        // Update the text display
-        const formattedFoodRating = formatRating(newRating.food_rating);
-        foodRatingElement.textContent = formattedFoodRating;
-        // Update the stars
-        updateStars(parseFloat(newRating.food_rating), `food-stars-${foodId}`);
-    }
-
-    // Update restaurant average rating
-    const averageRatingElement = document.getElementById('average-rating');
-    if (averageRatingElement) {
-        // Update the text display
-        const formattedRestaurantRating = formatRating(newRating.restaurant_rating);
-        averageRatingElement.textContent = formattedRestaurantRating;
-        // Update the stars
-        updateStars(parseFloat(newRating.restaurant_rating), 'restaurant-stars');
+        foodRatingElement.textContent = formatRating(newRating);
+        updateStars(parseFloat(newRating), `food-stars-${foodId}`);
     }
 }
 
@@ -345,13 +330,14 @@ async function submitFoodRating(event) {
         
         const data = await response.json();
         if (data.status === 'success') {
-            // Immediately update the UI with new ratings
-            await updateRatings(currentFoodId, {
-                food_rating: data.food_rating,
-                restaurant_rating: data.restaurant_rating
-            });
+            updateFoodRating(currentFoodId, data.food_rating);
+            
             closeFoodRatingModal();
-            showToast(ratingId ? 'Rating updated successfully!' : 'Rating added successfully!');
+            showToast(data.message);
+            
+            if (data.is_new) {
+                document.getElementById('delete-rating-btn').style.display = 'block';
+            }
         } else {
             showToast(data.message || 'Error submitting rating', 'error');
         }
@@ -378,12 +364,10 @@ async function deleteFoodRating() {
         
         const data = await response.json();
         if (data.status === 'success') {
-            await updateRatings(currentFoodId, {
-                food_rating: data.food_rating,
-                restaurant_rating: data.restaurant_rating
-            });
+            updateFoodRating(currentFoodId, data.food_rating);
+
             closeFoodRatingModal();
-            showToast('Rating deleted successfully!');
+            showToast(data.message);
         } else {
             showToast(data.message || 'Error deleting rating', 'error');
         }
@@ -391,15 +375,6 @@ async function deleteFoodRating() {
         console.error('Error:', error);
         showToast('Error deleting rating', 'error');
     }
-}
-
-function closeFoodRatingModal() {
-    const modal = document.getElementById('foodRatingModal');
-    modal.style.display = 'none';
-    // Reset the form
-    document.getElementById('food-rating-form').reset();
-    // Reset the stars
-    stars.forEach(star => star.style.color = 'gray');
 }
 
 function getCookie(name) {
@@ -417,10 +392,32 @@ function getCookie(name) {
     return cookieValue;
 }
 
-// Close modal when clicking outside
+document.addEventListener('DOMContentLoaded', function() {
+    const stars = document.querySelectorAll('.rating-input .star');
+    
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = this.dataset.rating;
+            document.getElementById('food-rating-input').value = rating;
+            updateModalStars(rating);
+        });
+
+        star.addEventListener('mouseover', function() {
+            const rating = this.dataset.rating;
+            updateModalStars(rating);
+        });
+    });
+
+    const ratingContainer = document.querySelector('.rating-input');
+    ratingContainer.addEventListener('mouseleave', function() {
+        const currentRating = document.getElementById('food-rating-input').value;
+        updateModalStars(currentRating || 0);
+    });
+});
+
 window.onclick = function(event) {
-    const foodModal = document.getElementById('foodRatingModal');
-    if (event.target === foodModal) {
+    const modal = document.getElementById('foodRatingModal');
+    if (event.target === modal) {
         closeFoodRatingModal();
     }
 }

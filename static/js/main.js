@@ -4,7 +4,7 @@ function handleLike(postId) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken // Ensure csrfToken is defined in your template
+            'X-CSRFToken': csrfToken 
         },
         body: JSON.stringify({ post_id: postId })
     })

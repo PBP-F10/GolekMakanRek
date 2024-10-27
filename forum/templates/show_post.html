@@ -40,7 +40,7 @@
                     <h4>Comments</h4>
                     <div class="existing-comments">
                         {% if not user.is_authenticated %}
-                            <p>You need to <a href="{% url 'login' %}">log in</a> to see the commenters' usernames.</p>
+                            <p>You need to log in to see the commenters' usernames.</p>
                         {% endif %}
                         {% for comment in post.comments.all %}
                             <p>

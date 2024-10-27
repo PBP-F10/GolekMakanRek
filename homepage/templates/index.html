@@ -10,45 +10,47 @@
 
 {% block content %}
 {% include 'navbar.html' %}
-<h1 class="text-3xl font-bold text-center mt-8">Selamat datang!</h1>
-<div class="flex justify-center mt-4">
-  <label for="toggleSearch" class="flex items-center cursor-pointer">
-    <div class="relative">
-      <input id="toggleSearch" type="checkbox" class="sr-only" />
-      <div class="block bg-white w-60 h-14 rounded-lg border-2 border-gray-400 relative">
-        <div class="dot absolute left-1.5 top-1.5 w-28 h-10 rounded-lg transition flex items-center justify-center text-white font-bold text-s" style="background-color: #ffcc00;">
+<div class="content pt-24 md:pt-0">
+  <h1 class="text-3xl font-bold text-center">Selamat datang!</h1>
+  <div class="flex justify-center mt-4">
+    <label for="toggleSearch" class="flex items-center cursor-pointer">
+      <div class="relative">
+        <input id="toggleSearch" type="checkbox" class="sr-only" />
+        <div class="block bg-white w-60 h-14 rounded-lg border-2 border-gray-400 relative">
+          <div class="dot absolute left-1.5 top-1.5 w-28 h-10 rounded-lg transition flex items-center justify-center text-white font-bold text-s" style="background-color: #ffcc00;">
+          </div>
+          <div class="text-black text-lg absolute right-5 top-3">Restoran</div>
+          <div class="text-black text-lg absolute left-5 top-3">Makanan</div>
         </div>
-        <div class="text-black text-lg absolute right-5 top-3">Restoran</div>
-        <div class="text-black text-lg absolute left-5 top-3">Makanan</div>
       </div>
-    </div>
-  </label>
-</div>
-<div id="container" class="max-w-4xl mx-auto p-4 bg-white shadow-md rounded-lg">
-  <div class="mb-4">
-    <form id="searchFoodForm" class="flex flex-col space-y-4">
-      {{ food_search }}
-      <div>
-        <label for="min_harga">Harga minimum:</label>
-        <input type="number" name="min_harga" class="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Harga minimum" id="min_harga" min="0" step="1">
-      </div>
-      <div>
-        <label for="max_harga">Harga maksimum:</label>
-        <input type="number" name="max_harga" class="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Harga maksimum" id="max_harga" min="0" step="1">
-      </div>
-      <label class="inline-flex items-center mt-2">
-        <input type="checkbox" name="like_filter" class="form-checkbox h-5 w-5 text-blue-600">
-        <span class="ml-2 text-gray-700">Tampilkan makanan yang disukai saja</span>
-      </label>
-      <button type="submit" class="mt-4 bg-green-600 hover:bg-green-500 cursor-pointer text-white font-bold py-3 px-2 rounded-lg flex items-center justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.387a1 1 0 01-1.414 1.414l-4.387-4.387zM8 14a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd" />
-        </svg>
-        Cari
-      </button>
-    </form>
+    </label>
   </div>
-  <div id="food_cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+  <div id="container" class="max-w-4xl mx-auto p-4 bg-white shadow-md rounded-lg">
+    <div class="mb-4">
+      <form id="searchFoodForm" class="flex flex-col space-y-4">
+        {{ food_search }}
+        <div>
+          <label for="min_harga">Harga minimum:</label>
+          <input type="number" name="min_harga" class="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Harga minimum" id="min_harga" min="0" step="1">
+        </div>
+        <div>
+          <label for="max_harga">Harga maksimum:</label>
+          <input type="number" name="max_harga" class="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Harga maksimum" id="max_harga" min="0" step="1">
+        </div>
+        <label class="inline-flex items-center mt-2">
+          <input type="checkbox" name="like_filter" class="form-checkbox h-5 w-5 text-blue-600">
+          <span class="ml-2 text-gray-700">Tampilkan makanan yang disukai saja</span>
+        </label>
+        <button type="submit" class="mt-4 bg-green-600 hover:bg-green-500 cursor-pointer text-white font-bold py-3 px-2 rounded-lg flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.387a1 1 0 01-1.414 1.414l-4.387-4.387zM8 14a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd" />
+          </svg>
+          Cari
+        </button>
+      </form>
+    </div>
+    <div id="food_cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+  </div>
 </div>
 <script>
     async function getFood() {
@@ -153,13 +155,13 @@
         if (food.length === 0) {
             classNameString = "container";
             htmlString = `
-                <h2 class="text-3xl font-bold text-center mt-8">Belum ada makanan terdaftar!</h2>
+                <h2 class="text-3xl font-bold text-center pt-8 pb-8">Belum ada makanan terdaftar!</h2>
             `;
         }
         else {
             document.getElementById("food_cards").innerHTML = `
                 <div class="flex justify-center items-center">
-                  <div class="mt-5 animate-spin rounded-lg border-8 border-t-8 border-gray-200 h-20 w-20 border-t-blue-500"></div>
+                  <div class="mt-5 animate-spin rounded-full border-8 border-t-8 border-gray-200 h-20 w-20 border-t-blue-500"></div>
                 </div>
                 <p class="text-gray-700 text-xl text-center mt-4">Memuat konten...</p>
             `;
@@ -176,7 +178,6 @@
                     htmlString += `
                     <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4 border-2 border-gray-300 relative">
                       <div class="flex">
-                        <img src="${item.fields.image_url}" class="object-cover w-28 h-28 rounded-lg mr-4">
                         <div>
                           <h2 class="text-xl font-semibold">${name}</h2>
                           <p class="text-gray-700">${description}</p>
@@ -189,7 +190,7 @@
                             </button></a>
                             <span class="like-count absolute left-1/2 transform -translate-x-1/2 top-full mt-1">${numLikesParsed}</span>
                           </div>
-                          <a href="food/${item.pk}"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 flex items-center">
+                          <a href="food_review/${item.fields.restoran}"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                               <path d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5zm0-8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/>
                             </svg>
@@ -215,7 +216,6 @@
                     htmlString += `
                     <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4 border-2 border-gray-300 relative">
                       <div class="flex">
-                        <img src="${item.fields.image_url}" class="object-cover w-28 h-28 rounded-lg mr-4">
                         <div>
                           <h2 class="text-xl font-semibold">${name}</h2>
                           <p class="text-gray-700">${description}</p>
@@ -230,7 +230,7 @@
                             </button>
                             <span class="like-count absolute left-1/2 transform -translate-x-1/2 top-full mt-1">${numLikesParsed}</span>
                           </form>
-                          <a href="food/${item.pk}"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 flex items-center">
+                          <a href="food_review/${item.fields.restoran}"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                               <path d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5zm0-8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/>
                             </svg>
@@ -269,7 +269,7 @@
         if (restaurant.length === 0) {
             classNameString = "container";
             htmlString = `
-                <h2 class="text-3xl font-bold text-center mt-8">Belum ada makanan terdaftar!</h2>
+                <h2 class="text-3xl font-bold text-center pt-8 pb-8">Belum ada restoran terdaftar!</h2>
             `;
         }
         else {
@@ -282,7 +282,7 @@
                   <div class="bg-gray-100 p-4 rounded-lg shadow-md mb-4 border-2 border-gray-300">
                     <h2 class="text-xl font-semibold">${name}</h2>
                     <p class="text-gray-700">${description}</p>
-                    <a href="/restaurants/${resto.pk}"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 flex items-center">
+                    <a href="/restaurant/${resto.pk}/"><button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2 flex items-center">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 5c-7.633 0-12 7-12 7s4.367 7 12 7 12-7 12-7-4.367-7-12-7zm0 12c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5zm0-8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/>
                       </svg>

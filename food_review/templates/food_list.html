@@ -717,7 +717,8 @@ function toggleWishlist(foodId, event) {
     const isAuthenticated = document.querySelector('meta[name="user-authenticated"]')?.content === 'true';
     
     if (!isAuthenticated) {
-        showToast('Please login to add items to wishlist', 'error');
+        window.location.href = '/login/';
+        // showToast('Please login to add items to wishlist', 'error');
         return;
     }
 
@@ -765,9 +766,7 @@ function toggleWishlist(foodId, event) {
     });
 }
 
-// Initialize wishlist states when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    // First check server-rendered states
     document.querySelectorAll('[id^="wishlist-btn-"]').forEach(btn => {
         const foodId = btn.id.replace('wishlist-btn-', '');
         if (btn.classList.contains('active') || isItemWishlisted(foodId)) {
@@ -775,7 +774,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Then fetch current wishlist state from server
     if (document.querySelector('meta[name="user-authenticated"]')?.content === 'true') {
         fetch('/food_review/wishlist/status/', {
             credentials: 'include'

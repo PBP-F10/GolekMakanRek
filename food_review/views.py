@@ -1,18 +1,15 @@
-from .models import *
-from .forms import *
-from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Avg
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from main.models import *
-from django.utils import timezone
-import json
-import datetime
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_http_methods
-from django.core.exceptions import ObjectDoesNotExist
+from .models                            import *
+from .forms                             import *
+from django.shortcuts                   import render, get_object_or_404
+from django.http                        import JsonResponse
+from django.contrib.auth.decorators     import login_required
+from main.models                        import *
+from django.utils                       import timezone
+from django.http                        import JsonResponse
+from django.contrib.auth.decorators     import login_required
+from django.views.decorators.http       import require_http_methods
 import logging
+import json
 
 TIME_ZONE = 'Asia/Jakarta'
 USE_TZ = True
@@ -155,11 +152,11 @@ def add_comment(request, food_id):
         rating, created = FoodRating.objects.get_or_create(
             user=request.user,
             deskripsi_food=food,
-            defaults={'score': 3}  # Default score if creating new rating
+            defaults={'score': 3}
         )
         
         rating.comment = comment
-        rating.waktu_comment = timezone.now()  # Use Django's timezone.now() instead
+        rating.waktu_comment = timezone.now()
         rating.save()
         
         return JsonResponse({

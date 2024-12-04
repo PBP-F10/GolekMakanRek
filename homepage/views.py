@@ -10,7 +10,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.db.models import F, ExpressionWrapper, IntegerField
+from django.db.models import F, ExpressionWrapper, IntegerField, Max, Min
 import datetime
 import os
 import json
@@ -102,6 +102,31 @@ def get_food_likes(request, food_id):
     }
     data = json.dumps(payload)
     return HttpResponse(data, content_type="application/json")
+
+def get_search_options(request):
+    searchOptions = {}
+    food_categories = []
+    resto_categories = []
+    all_food_categories = Food.objects.values_list('kategori', flat=True).distinct()
+    for category in all_food_categories:
+        split_categories = category.split('/')
+        for split_category in split_categories:
+            if split_category not in food_categories:
+                food_categories.append(split_category)
+    all_resto_categories = Restaurant.objects.values_list('kategori', flat=True).distinct()
+    for category in all_resto_categories:
+        split_categories = category.split('/')
+        for split_category in split_categories:
+            if split_category not in resto_categories:
+                resto_categories.append(split_category)
+    food_with_discount = Food.objects.annotate(harga_diskon=ExpressionWrapper(F('harga') * (100 - F('diskon')) / 100, output_field=IntegerField()))
+    max_price = food_with_discount.aggregate(max_price=Max('harga_diskon'))['max_price']
+    min_price = food_with_discount.aggregate(min_price=Min('harga_diskon'))['min_price']
+    searchOptions['foodCategories'] = food_categories
+    searchOptions['restoCategories'] = resto_categories
+    searchOptions['maxPrice'] = max_price
+    searchOptions['minPrice'] = min_price
+    return HttpResponse(json.dumps(searchOptions), content_type="application/json")
 
 # hanya untuk test
 '''

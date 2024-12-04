@@ -14,6 +14,7 @@ urlpatterns = [
     path('get_restaurant/', get_restaurant, name='get_restaurant'),
     path('get_user_likes/', get_user_likes, name='get_user_likes'),
     path('get_food_likes/<uuid:food_id>', get_food_likes, name='get_food_likes'),
+    path('get_search_options/', get_search_options, name='get_search_options'),
     # path('test/', set_test, name='test'),
     path('login/', login_user, name='login'),
     path('register/', register_user, name='register'),

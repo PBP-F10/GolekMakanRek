@@ -31,6 +31,7 @@ urlpatterns = [
     path('forum/', include('forum.urls')),
     path('restaurant/', include('resto_preview.urls')),
     path('food_review/', include('food_review.urls')),
+    path('auth/', include('authentication.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

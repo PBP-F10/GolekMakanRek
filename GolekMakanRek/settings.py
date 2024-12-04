@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'forum',
     'resto_preview',
     'food_review',
+    'authentication',
     'corsheaders'
 ]
 

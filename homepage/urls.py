@@ -18,5 +18,8 @@ urlpatterns = [
     # path('test/', set_test, name='test'),
     path('login/', login_user, name='login'),
     path('register/', register_user, name='register'),
-    path('logout/', logout_user, name='logout')
+    path('logout/', logout_user, name='logout'),
+    path('login-external/', login_external, name='login_external'),
+    path('register-external/', register_external, name='register_external'),
+    path('logout-external/', logout_external, name='logout_external'),
 ]

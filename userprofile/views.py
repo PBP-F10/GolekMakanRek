@@ -15,6 +15,12 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .models import *
 from .forms import *
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .models import UserProfile
+from django.core.exceptions import ObjectDoesNotExist
+from search.models import *
 
 
 # Create your views here.
@@ -30,8 +36,8 @@ def get_user_profile(request):
 
     # Prepare profile data to send as JSON
     profile_data = {
-        "username" : profile.user.username,
-        "description" : profile.description,
+        "username": profile.user.username,
+        "description": profile.description,
         "first_name": profile.first_name,
         "last_name": profile.last_name,
         "date_of_birth": profile.date_of_birth,
@@ -41,10 +47,33 @@ def get_user_profile(request):
         "email": profile.email,
     }
 
-    # Send profile data as JSON response
+    # Get the top 3 games based on ratings
+    top_games = Game.objects.order_by('-ratings')[:3]
+    top_games_data = [
+        {
+            "id": str(game.id),
+            "name": game.name,
+            "ratings": game.ratings,
+            "developer": game.developer,
+            "genre": game.genre,
+            "year": game.year,
+            "harga": game.harga,
+            "description": game.description,
+            "toko1": game.toko1,
+            "alamat1": game.alamat1,
+            "toko2": game.toko2,
+            "alamat2": game.alamat2,
+            "toko3": game.toko3,
+            "alamat3": game.alamat3,
+        }
+        for game in top_games
+    ]
+
+    # Send profile data along with top games as JSON response
     return JsonResponse({
         "profile": profile_data,
-        "created": created 
+        "created": created,
+        "top_games": top_games_data,
     })
 
 @login_required(login_url='/authentication/login')
@@ -66,3 +95,39 @@ def update_user_profile(request):
             f"- {error[0]}" for field, error in form.errors.items()
         )
         return JsonResponse({"errors": error_messages}, status=400)
+
+@csrf_exempt
+def update_user_profile_flutter(request):
+    if request.method == 'POST':
+        try:
+            # Parse JSON data from the request body
+            data = json.loads(request.body)
+            
+            # Validate the user existence
+            user = request.user
+
+            # Get or create the user's profile
+            profile, created = UserProfile.objects.get_or_create(user=user)
+
+            # Update the profile fields with data from the request
+            profile.description = data.get("description", profile.description)
+            profile.first_name = data.get("first_name", profile.first_name)
+            profile.last_name = data.get("last_name", profile.last_name)
+            profile.date_of_birth = data.get("date_of_birth", profile.date_of_birth)
+            profile.gender = data.get("gender", profile.gender)
+            profile.location = data.get("location", profile.location)
+            profile.phone_number = data.get("phone_number", profile.phone_number)
+            profile.email = data.get("email", profile.email)
+
+            # Save the profile
+            profile.save()
+
+            print(profile)
+
+            return JsonResponse({"status": "success", "message": "Profile updated successfully!"}, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({"status": "error", "message": "Invalid JSON data"}, status=400)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    else:
+        return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)

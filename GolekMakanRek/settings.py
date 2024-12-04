@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'resto_preview',
     'food_review',
     'authentication',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [

@@ -20,7 +20,6 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import UserProfile
 from django.core.exceptions import ObjectDoesNotExist
-from search.models import *
 
 
 # Create your views here.
@@ -47,33 +46,10 @@ def get_user_profile(request):
         "email": profile.email,
     }
 
-    # Get the top 3 games based on ratings
-    top_games = Game.objects.order_by('-ratings')[:3]
-    top_games_data = [
-        {
-            "id": str(game.id),
-            "name": game.name,
-            "ratings": game.ratings,
-            "developer": game.developer,
-            "genre": game.genre,
-            "year": game.year,
-            "harga": game.harga,
-            "description": game.description,
-            "toko1": game.toko1,
-            "alamat1": game.alamat1,
-            "toko2": game.toko2,
-            "alamat2": game.alamat2,
-            "toko3": game.toko3,
-            "alamat3": game.alamat3,
-        }
-        for game in top_games
-    ]
-
     # Send profile data along with top games as JSON response
     return JsonResponse({
         "profile": profile_data,
         "created": created,
-        "top_games": top_games_data,
     })
 
 @login_required(login_url='/authentication/login')

@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, reverse
 from .forms import SearchFoodForm, SearchRestaurantForm, LikeForm
 from main.models import Food, Restaurant
 from .models import Likes
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core import serializers
 from django.urls import reverse
 from django.contrib.auth import login, logout
@@ -79,6 +79,31 @@ def toggle_like(request):
         return HttpResponse(b"Liked!", 201)
     print(like_form.errors)
     return HttpResponse(b"Invalid form", status=400)
+
+@login_required(login_url='/login')
+@require_POST
+@csrf_exempt
+def toggle_like_json(request):
+    data = json.loads(request.body)
+    try:
+        like = Likes.objects.get(user_id=request.user, food_id=data['food_id'])
+    except Exception as e:
+        like = None
+
+    if like:
+        like.delete()
+        return JsonResponse({
+            "status": 'success',
+            "message": "Unliked!"
+        }, status=201)
+
+    food = Food.objects.get(id=data['food_id'])
+    likes = Likes.objects.create(user_id=request.user, food_id=food)
+    likes.save()
+    return JsonResponse({
+        "status": 'success',
+        "message": "Liked!"
+    }, status=201)
 
 def get_food(request):
     data = serializers.serialize("json", Food.objects.all())

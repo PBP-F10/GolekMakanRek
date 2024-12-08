@@ -85,8 +85,9 @@ def toggle_like(request):
 @csrf_exempt
 def toggle_like_json(request):
     data = json.loads(request.body)
+    food = Food.objects.get(id=data['food_id'])
     try:
-        like = Likes.objects.get(user_id=request.user, food_id=data['food_id'])
+        like = Likes.objects.get(user_id=request.user, food_id=food)
     except Exception as e:
         like = None
 
@@ -97,9 +98,8 @@ def toggle_like_json(request):
             "message": "Unliked!"
         }, status=201)
 
-    food = Food.objects.get(id=data['food_id'])
-    likes = Likes.objects.create(user_id=request.user, food_id=food)
-    likes.save()
+    like = Likes.objects.create(user_id=request.user, food_id=food)
+    like.save()
     return JsonResponse({
         "status": 'success',
         "message": "Liked!"

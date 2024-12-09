@@ -6,6 +6,7 @@ from homepage.views import *
 app_name = 'homepage'
 
 urlpatterns = [
+    # homepage + search feature
     path('', show_homepage, name='show_homepage'),
     path('search/food/', search_food, name='search_food'),
     path('search/restaurant/', search_restaurant, name='search_restaurant'),
@@ -17,6 +18,8 @@ urlpatterns = [
     path('get_food_likes/<uuid:food_id>', get_food_likes, name='get_food_likes'),
     path('get_search_options/', get_search_options, name='get_search_options'),
     # path('test/', set_test, name='test'),
+
+    # auth
     path('login/', login_user, name='login'),
     path('register/', register_user, name='register'),
     path('logout/', logout_user, name='logout'),

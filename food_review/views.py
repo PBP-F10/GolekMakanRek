@@ -216,5 +216,5 @@ def wishlist(request):
 
 @login_required(login_url='/login/')
 def get_wishlist_status(request):
-    wishlisted_items = list(Wishlist.objects.filter(user=request.user).values_list('food_id', flat=True))
+    wishlisted_items = list(Wishlist.objects.filter(user=request.user).values_list('item_id', flat=True))
     return JsonResponse({'wishlisted_items': wishlisted_items})

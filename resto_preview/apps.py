@@ -10,9 +10,9 @@ class RestoPreviewConfig(AppConfig):
         post_migrate.connect(load_initial_data, sender=self)
 
 def load_initial_data(sender, **kwargs):
-    from resto_preview.models import show_resto
+    from .models import Restaurant
     try:
-        if not show_resto.objects.exists():
+        if not Restaurant.objects.exists():
             print("Loading initial data from data.json...")
             call_command('loaddata', 'data.json')
     except Exception as e:

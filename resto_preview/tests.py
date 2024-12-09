@@ -10,7 +10,7 @@ class RestoPreview(TestCase):
         self.user1.set_password("testpass123")
         self.user1.save()
 
-        self.resto = show_resto.objects.create(
+        self.resto = Restaurant.objects.create(
             nama = 'Test',
             kategori = 'Test',
             deskripsi = 'Test',
@@ -24,18 +24,18 @@ class RestoPreview(TestCase):
     def test_restaurant_detail(self):
         client = Client()
         client.login(username='tes', password='testpass123')
-        response = client.get(f'/restaurant/{show_resto.objects.first().id}/')
+        response = client.get(f'/restaurant/{Restaurant.objects.first().id}/')
         self.assertEqual(response.status_code, 200)
     
     def test_restaurant_rating(self):
         client = Client()
         client.login(username='tes', password='testpass123')
-        client.post(f'/restaurant/restaurants/{show_resto.objects.first().id}/submit-rating/', {'score': 5})
-        response = client.post(f'/restaurant/{show_resto.objects.first().id}/submit-rating/', {'score': 3})
+        client.post(f'/restaurant/restaurants/{Restaurant.objects.first().id}/submit-rating/', {'score': 5})
+        response = client.post(f'/restaurant/{Restaurant.objects.first().id}/submit-rating/', {'score': 3})
         self.assertEqual(response.status_code, 200)
     
     def test_restaurant_follow(self):
         client = Client()
         client.login(username='tes', password='testpass123')
-        response = client.post(f'/restaurant/follow/{show_resto.objects.first().id}/')
+        response = client.post(f'/restaurant/follow/{Restaurant.objects.first().id}/')
         self.assertEqual(Follow.objects.all().count(), 1)

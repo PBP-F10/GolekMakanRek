@@ -74,7 +74,7 @@
             <p class="average-rating text-l mt-2">
                 <span id="average-rating">{{ average_rating|floatformat:1 }}</span>
             </p>
-            <p class="text-center text-sm" style="margin-top: 5px; margin-bottom: 15px; color: var(--muted-text-color);">dari {{ restaurant.total_ratings }} pengguna</p>
+            <p class="text-center text-sm" style="margin-top: 5px; margin-bottom: 15px; color: var(--muted-text-color);">dari {{ total_ratings }} pengguna</p>
             <p class="user-rating mt-2">
                 Penilaianmu: <span id="user-rating">{{ user_rating.score|floatformat:1 }}</span>
             </p>
@@ -85,8 +85,8 @@
         <div class="card" style="margin-top: 20px;">
             <h2 class="text-xl font-semibold" style="color: var(--primary); text-align: center;">Makanan</h2>
             <ul class="food-list">
-                {% for product in restaurant.random_products %}
-                    <li class="food-item" style="font-size: 1rem;">{{ product }}</li>
+                {% for food in foods %}
+                    <li class="food-item" style="font-size: 1rem;">{{ food }}</li>
                     {% if not forloop.last %}
                         <hr class="divider">
                     {% endif %}
@@ -206,6 +206,21 @@
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
 
 </script>

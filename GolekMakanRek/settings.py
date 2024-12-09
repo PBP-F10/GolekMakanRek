@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-#u0b$-q#qqagp6=6hlt=u)pc)2notaofmr02e8mq82(eqkrx=o
 PRODUCTION = os.getenv("PRODUCTION", False)
 DEBUG = not PRODUCTION
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "joshua-montolalu-golekmakanrek.pbp.cs.ui.ac.id"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "10.0.2.2", "joshua-montolalu-golekmakanrek.pbp.cs.ui.ac.id"]
 
 
 # Application definition
@@ -152,6 +152,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost",
                         "http://127.0.0.1",
+                        "http://10.0.2.2/",
                         "http://joshua-montolalu-golekmakanrek.pbp.cs.ui.ac.id", 
                         "https://joshua-montolalu-golekmakanrek.pbp.cs.ui.ac.id"]
 CORS_ALLOW_ALL_ORIGINS = True

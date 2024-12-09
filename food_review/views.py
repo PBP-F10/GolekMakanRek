@@ -5,11 +5,14 @@ from django.http                        import JsonResponse
 from django.contrib.auth.decorators     import login_required
 from main.models                        import *
 from django.utils                       import timezone
-from django.http                        import JsonResponse
+from django.http                        import JsonResponse, HttpResponse
 from django.contrib.auth.decorators     import login_required
 from django.views.decorators.http       import require_http_methods
+from django.core                        import serializers
 import logging
 import json
+from django.views.decorators.csrf import csrf_exempt
+
 
 TIME_ZONE = 'Asia/Jakarta'
 USE_TZ = True
@@ -28,36 +31,49 @@ def restaurant_detail(request, restaurant_id):
         'foods': restaurant_foods,
     })
 
+@csrf_exempt
 @login_required(login_url='/login/')
 def add_rating(request, food_id):
     if request.method != 'POST':
-        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
-
-    food = get_object_or_404(Food, id=food_id)
-    score = request.POST.get('score')
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
 
     try:
-        score = int(score)
-        if not (1 <= score <= 5):
-            raise ValueError
-    except ValueError:
-        return JsonResponse({'status': 'error', 'message': 'Invalid rating score'})
+        food = get_object_or_404(Food, id=food_id)
+        
+        # Try to get score from JSON body first
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            score = data.get('score')
+        except (json.JSONDecodeError, TypeError):
+            # If JSON parsing fails, fall back to POST data
+            score = request.POST.get('score')
 
-    rating, created = FoodRating.objects.update_or_create(
-        user=request.user,
-        deskripsi_food=food,
-        defaults={'score': score}
-    )
+        try:
+            score = int(score)
+            if not (1 <= score <= 5):
+                raise ValueError
+        except (ValueError, TypeError):
+            return JsonResponse({'status': 'error', 'message': 'Invalid rating score'}, status=400)
 
-    new_average = food.average_rating
+        rating, created = FoodRating.objects.update_or_create(
+            user=request.user,
+            deskripsi_food=food,
+            defaults={'score': score}
+        )
 
-    return JsonResponse({
-        'status': 'success',
-        'message': 'Rating added successfully',
-        'food_rating': new_average,
-        'is_new': created
-    })
+        new_average = food.average_rating
 
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Rating added successfully',
+            'food_rating': new_average,
+            'is_new': created
+        })
+
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+@csrf_exempt
 @login_required(login_url='/login/')
 def edit_rating(request, rating_id):
     if request.method != 'POST':
@@ -85,6 +101,7 @@ def edit_rating(request, rating_id):
         'food_rating': new_average
     })
 
+@csrf_exempt
 @login_required(login_url='/login/')
 def delete_rating(request, rating_id):
     if request.method != 'POST':
@@ -135,6 +152,7 @@ def get_comments(request, food_id):
     
     return JsonResponse({'comments': comments})
 
+@csrf_exempt
 @login_required(login_url='/login/')
 def add_comment(request, food_id):
     if request.method != 'POST':
@@ -169,6 +187,7 @@ def add_comment(request, food_id):
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)})
 
+@csrf_exempt
 @require_http_methods(["POST"])
 @login_required(login_url='/login/')
 def toggle_wishlist(request, food_id):
@@ -204,6 +223,17 @@ def toggle_wishlist(request, food_id):
             'status': 'error',
             'message': str(e)
         }, status=500)
+
+def serialize_data(request, model, fmt, id=None):
+    if id:
+        data = get_object_or_404(model, pk=id)
+        data = [data]
+    else:
+        data = model.objects.all()
+    return HttpResponse(serializers.serialize(fmt, data), content_type=f"application/{fmt}")
+
+def foodrating_json(request):
+    return serialize_data(request, FoodRating, "json")
 
 @login_required(login_url='/login/')
 def wishlist(request):

@@ -1,7 +1,7 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from .models import *
 
 '''
 def show_main(request):
@@ -66,3 +67,36 @@ def logout_user(request):
     response.delete_cookie('last_login')
     return response
 '''
+
+def food_json(request):
+    foods = Food.objects.all()
+    data = []
+    for food in foods:
+        data.append({
+            'model': 'main.food',
+            'pk': str(food.id),
+            'fields': {
+                'nama': food.nama,
+                'kategori': food.kategori,
+                'harga': food.harga,
+                'diskon': food.diskon,
+                'deskripsi': food.deskripsi,
+                'restoran': food.restoran.nama  # Use the restaurant name
+            }
+        })
+    return JsonResponse(data, safe=False)
+
+def restaurant_json(request):
+    restaurants = Restaurant.objects.all()
+    data = []
+    for restaurant in restaurants:
+        data.append({
+            'model': 'main.restaurant',
+            'pk': str(restaurant.id),
+            'fields': {
+                'nama': restaurant.nama,
+                'kategori': restaurant.kategori,
+                'deskripsi': restaurant.deskripsi
+            }
+        })
+    return JsonResponse(data, safe=False)

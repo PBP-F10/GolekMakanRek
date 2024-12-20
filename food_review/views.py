@@ -40,13 +40,11 @@ def add_rating(request, food_id):
     try:
         food = get_object_or_404(Food, id=food_id)
         
-        # Try to get score from JSON body first
-        try:
-            data = json.loads(request.body.decode('utf-8'))
-            score = data.get('score')
-        except (json.JSONDecodeError, TypeError):
-            # If JSON parsing fails, fall back to POST data
-            score = request.POST.get('score')
+        data = json.loads(request.body) if request.content_type == 'application/json' else request.POST
+        score = data.get('score')
+
+        if not score:
+            return JsonResponse({'status': 'error', 'message': 'Score is required'}, status=400)
 
         try:
             score = int(score)
@@ -54,7 +52,7 @@ def add_rating(request, food_id):
                 raise ValueError
         except (ValueError, TypeError):
             return JsonResponse({'status': 'error', 'message': 'Invalid rating score'}, status=400)
-
+        
         rating, created = FoodRating.objects.update_or_create(
             user=request.user,
             deskripsi_food=food,
@@ -66,11 +64,12 @@ def add_rating(request, food_id):
         return JsonResponse({
             'status': 'success',
             'message': 'Rating added successfully',
-            'food_rating': new_average,
-            'is_new': created
+            'rating_id': str(rating.id),
+            'food_rating': new_average
         })
 
     except Exception as e:
+        logger.error(f"Error in add_rating: {str(e)}")
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 @csrf_exempt
@@ -156,21 +155,24 @@ def get_comments(request, food_id):
 @login_required(login_url='/login/')
 def add_comment(request, food_id):
     if request.method != 'POST':
-        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
     
     try:
-        data = json.loads(request.body)
+        if request.content_type == 'application/json':
+            data = json.loads(request.body.decode('utf-8'))
+        else:
+            data = request.POST
+            
         comment = data.get('comment', '').strip()
         
         if not comment:
-            return JsonResponse({'status': 'error', 'message': 'Comment cannot be empty'})
+            return JsonResponse({'status': 'error', 'message': 'Comment cannot be empty'}, status=400)
         
         food = get_object_or_404(Food, id=food_id)
-        
         rating, created = FoodRating.objects.get_or_create(
             user=request.user,
             deskripsi_food=food,
-            defaults={'score': 3}
+            defaults={'score': 0}
         )
         
         rating.comment = comment
@@ -179,14 +181,17 @@ def add_comment(request, food_id):
         
         return JsonResponse({
             'status': 'success',
-            'message': 'Comment added successfully'
+            'message': 'Comment added successfully',
+            'comment': {
+                'username': request.user.username,
+                'comment': comment,
+                'formatted_time': rating.waktu_comment.strftime("%B %d, %Y %I:%M %p")
+            }
         })
-        
-    except json.JSONDecodeError:
-        return JsonResponse({'status': 'error', 'message': 'Invalid JSON data'})
     except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)})
-
+        logger.error(f"Error in add_comment: {str(e)}")
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    
 @csrf_exempt
 @require_http_methods(["POST"])
 @login_required(login_url='/login/')

@@ -100,3 +100,29 @@ def restaurant_json(request):
             }
         })
     return JsonResponse(data, safe=False)
+
+# def create_post_flutter(request):
+#     if request.method == 'POST':
+#         restaurant_id = request.POST.get('restaurant_id')
+#         text = request.POST.get('text')
+#         image = request.FILES.get('image')
+
+#         restaurant = None
+
+#         if restaurant_id:
+#             try:
+#                 restaurant = Restaurant.objects.get(id=restaurant_id)
+#             except Restaurant.DoesNotExist:
+#                 return render(request, 'add_post.html', {'error': 'Invalid restaurant selected.'})
+
+#         # Create the new post with or without the restaurant
+#         post = Post.objects.create(
+#             user=request.user,
+#             restaurant=restaurant,  # This will be None if no restaurant is selected
+#             text=text,
+#             image=image,
+#         )
+
+#         return redirect(reverse('forum:show_post'))
+#     else:
+#         return render(request, 'add_post.html')

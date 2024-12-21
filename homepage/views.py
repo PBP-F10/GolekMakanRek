@@ -126,7 +126,6 @@ def get_user_likes(request):
 
 def get_food_likes(request, food_id):
     count = Likes.objects.filter(food_id=food_id).count()
-    # ???
     payload = {
         "food_id": str(food_id),
         "count": count

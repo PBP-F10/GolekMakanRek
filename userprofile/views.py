@@ -33,7 +33,6 @@ def get_user_profile(request):
     user = request.user
     profile, created = UserProfile.objects.get_or_create(user=user)
 
-    print("user " + str(request.user.id))
     # Prepare profile data to send as JSON
     profile_data = {
         "username": profile.user.username,

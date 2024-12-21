@@ -191,7 +191,7 @@ def add_comment(request, food_id):
     except Exception as e:
         logger.error(f"Error in add_comment: {str(e)}")
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
-    
+
 @csrf_exempt
 @require_http_methods(["POST"])
 @login_required(login_url='/login/')
@@ -253,3 +253,74 @@ def wishlist(request):
 def get_wishlist_status(request):
     wishlisted_items = list(Wishlist.objects.filter(user=request.user).values_list('food_id', flat=True))
     return JsonResponse({'wishlisted_items': wishlisted_items})
+
+@login_required(login_url='/login/')
+def wishlist_json(request):
+    try:
+        wishlist_items = Wishlist.objects.filter(user=request.user).select_related('item', 'item__restoran')
+
+        wishlist_data = []
+        for wishlist_item in wishlist_items:
+            food = wishlist_item.item
+            wishlist_data.append({
+                'wishlist_id': str(wishlist_item.id),
+                'food': {
+                    'id': str(food.id),
+                    'name': food.nama,
+                    'category': food.kategori,
+                    'description': food.deskripsi,
+                    'original_price': food.harga,
+                    'discount_percentage': food.diskon,
+                    'discounted_price': food.harga_setelah_diskon,
+                    'average_rating': food.average_rating,
+                    'restaurant': {
+                        'id': str(food.restoran.id),
+                        'name': food.restoran.nama,
+                        'category': food.restoran.kategori,
+                        'description': food.restoran.deskripsi
+                    }
+                }
+            })
+        
+        return JsonResponse({
+            'status': 'success',
+            'count': len(wishlist_data),
+            'wishlist': wishlist_data
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
+
+@login_required(login_url='/login/')
+def check_wishlist_items(request):
+    try:
+        if request.method == 'POST':
+            data = json.loads(request.body)
+            food_ids = data.get('food_ids', [])
+        else:
+            food_ids = request.GET.getlist('food_ids[]')
+
+        if not food_ids:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'No food IDs provided'
+            }, status=400)
+
+        wishlisted_items = Wishlist.objects.filter(
+            user=request.user,
+            item_id__in=food_ids
+        ).values_list('item_id', flat=True)
+
+        return JsonResponse({
+            'status': 'success',
+            'wishlisted_items': list(str(id) for id in wishlisted_items)
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)

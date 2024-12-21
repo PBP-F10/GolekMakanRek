@@ -20,4 +20,6 @@ urlpatterns = [
     path('wishlist/toggle/<uuid:food_id>/', views.toggle_wishlist, name='toggle_wishlist'),
     path('wishlist/', views.wishlist, name='show_wishlist'),
     path('wishlist/status/', views.get_wishlist_status, name='get_wishlist_status'),
+    path('wishlist/json/', views.wishlist_json, name='wishlist_json'),
+    path('wishlist/check/', views.check_wishlist_items, name='check_wishlist_items'),
 ]

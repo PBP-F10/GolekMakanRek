@@ -139,23 +139,14 @@ def get_user_rating(request, food_id):
 
 def get_comments(request, food_id):
     food = get_object_or_404(Food, id=food_id)
-    ratings = FoodRating.objects.filter(deskripsi_food=food)\
-        .exclude(comment__isnull=True)\
-        .exclude(comment='')\
-        .order_by('-waktu_comment')
+    ratings = FoodRating.objects.filter(deskripsi_food=food).exclude(comment__isnull=True).exclude(comment='').order_by('-waktu_comment')
     
     comments = []
     for rating in ratings:
-        comment_time = rating.waktu_comment
-        if comment_time:
-            if timezone.is_naive(comment_time):
-                comment_time = timezone.make_aware(comment_time)
-            comment_time = timezone.localtime(comment_time, timezone.pytz.timezone('Asia/Jakarta'))
-            
         comments.append({
             'username': rating.user.username,
             'comment': rating.comment,
-            'timestamp': comment_time.isoformat() if comment_time else None
+            'formatted_time': rating.waktu_comment.strftime("%B %d, %Y %I:%M %p")
         })
     
     return JsonResponse({'comments': comments})
@@ -183,13 +174,9 @@ def add_comment(request, food_id):
             deskripsi_food=food,
             defaults={'score': 0}
         )
-
-        current_time = timezone.now()
-        jakarta_tz = timezone.pytz.timezone('Asia/Jakarta')
-        current_time = timezone.localtime(current_time, jakarta_tz)
         
         rating.comment = comment
-        rating.waktu_comment = current_time
+        rating.waktu_comment = timezone.now()
         rating.save()
         
         return JsonResponse({
@@ -198,7 +185,7 @@ def add_comment(request, food_id):
             'comment': {
                 'username': request.user.username,
                 'comment': comment,
-                'timestamp': current_time.isoformat()
+                'formatted_time': rating.waktu_comment.strftime("%B %d, %Y %I:%M %p")
             }
         })
     except Exception as e:

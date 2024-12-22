@@ -7,5 +7,6 @@ urlpatterns = [
     path('userprofile', show_user_profile_page, name='userprofile'),    
     path('userprofiel/update', update_user_profile, name="update_user_profile"),
     path('userprofile/get', get_user_profile, name="get_user_profile"),
-    path('userprofile/update-flutter', update_user_profile_flutter, name="update_user_profile_flutter")
+    path('userprofile/update-flutter', update_user_profile_flutter, name="update_user_profile_flutter"),
+    path('userprofile/top-liked-foods', top_liked_foods, name="top_liked_foods")
 ]

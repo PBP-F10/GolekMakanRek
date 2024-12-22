@@ -13,6 +13,8 @@ from django.contrib.auth.decorators import login_required
 import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+
+from main.models import Food
 from .models import *
 from .forms import *
 from django.http import JsonResponse
@@ -20,6 +22,9 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import UserProfile
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import JsonResponse
+from django.db.models import Count
+from django.db.models.functions import Random
 
 
 # Create your views here.
@@ -107,3 +112,27 @@ def update_user_profile_flutter(request):
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
     else:
         return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+    
+def top_liked_foods(request):
+    # Aggregate the number of likes for each food item
+    top_foods = (
+        Food.objects.annotate(like_count=Count('likes'))
+        .order_by('-like_count')[:3]  # Get the top 3 liked food items
+    )
+
+    # Serialize the data into JSON
+    data = [
+        {
+            'id': str(food.id),
+            'nama': food.nama,
+            'kategori': food.kategori,
+            'harga': food.harga,
+            'diskon': food.diskon,
+            'harga_setelah_diskon': food.harga_setelah_diskon,
+            'average_rating': food.average_rating,
+            'like_count': food.like_count,
+        }
+        for food in top_foods
+    ]
+
+    return JsonResponse({'top_liked_foods': data})

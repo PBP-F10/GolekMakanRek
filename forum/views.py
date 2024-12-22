@@ -450,6 +450,21 @@ def get_all_users(request):
         ]
         return JsonResponse({'users': user_data}, status=200)
 
+def get_all_users(request):
+    """
+    Returns a list of all users with their IDs and usernames.
+    """
+    if request.method == 'GET':
+
+        users = User.objects.all()
+        user_data = [
+            {
+                'id': user.id,
+                'username': user.username,
+            }
+            for user in users
+        ]
+        return JsonResponse({'users': user_data}, status=200)
 
 # def get_all_users(request):
 #     if request.method == 'GET':
@@ -512,3 +527,46 @@ def delete_post_flutter(request):
         return JsonResponse({"status": "success", "message": "Post deleted successfully."})
 
     return JsonResponse({"status": "error", "message": "Invalid request method."})
+
+@csrf_exempt
+def like_post_flutter(request):
+    if request.method == 'POST':
+        try:
+            # Log the incoming request body for debugging
+            print(f"Request Body: {request.body}")
+
+            # Attempt to parse the JSON data
+            # data = json.loads(request.body)
+            post_id = request.POST.get('post_id')
+            
+            # Ensure user is authenticated
+            user = request.user
+            if not user.is_authenticated:
+                return JsonResponse({"status": "error", "message": "User not authenticated."}, status=401)
+
+            # Validate post ID
+            try:
+                post = Post.objects.get(pk=post_id)
+            except Post.DoesNotExist:
+                return JsonResponse({"status": "error", "message": "Post not found."}, status=404)
+
+            # Handle the like toggle logic
+            like, created = Like.objects.get_or_create(post=post, user=user)
+            if not created:
+                like.delete()
+                liked = False
+            else:
+                liked = True
+
+            return JsonResponse({
+                "status": "success",
+                "liked": liked,
+                "like_count": post.likes.count()
+            })
+
+        except json.JSONDecodeError:
+            return JsonResponse({"status": "error", "message": "Invalid JSON payload."}, status=400)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": f"Unexpected error: {str(e)}"}, status=500)
+    else:
+        return JsonResponse({"status": "error", "message": "Method not allowed."}, status=405)

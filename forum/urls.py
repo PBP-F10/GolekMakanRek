@@ -24,6 +24,5 @@ urlpatterns = [
     path('edit_comment_flutter/', views.edit_comment_flutter, name='edit_comment_flutter'),
     path('delete_post_flutter/', views.delete_post_flutter, name='delete_post_flutter'),
     path('restaurant_json/', views.restaurant_json, name='restaurant_json'),
-
-
+    path('like_post_flutter/', views.like_post_flutter, name='like_post_flutter'),
 ]

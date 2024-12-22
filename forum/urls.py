@@ -17,5 +17,13 @@ urlpatterns = [
     path('comment_json/', comment_json, name='comment_json'),
     path('report_json/', report_json, name='report_json'),
     path('create_post_flutter/', views.create_post_flutter, name='create_post_flutter'),
+    path('like_post_flutter/', views.like_post_flutter, name='like_post_flutter'),
+    path('comment_post_flutter/', views.comment_post_flutter, name='comment_post_flutter'),
+    path('report_post_flutter/', views.report_post_flutter, name='report_post_flutter'),
+    path('get_all_users/', views.get_all_users, name='get_all_users'),
+    path('edit_comment_flutter/', views.edit_comment_flutter, name='edit_comment_flutter'),
+    path('delete_post_flutter/', views.delete_post_flutter, name='delete_post_flutter'),
+    path('restaurant_json/', views.restaurant_json, name='restaurant_json'),
+
 
 ]

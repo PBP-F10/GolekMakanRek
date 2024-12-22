@@ -9,6 +9,8 @@ from django.views.decorators.http import require_POST, require_GET
 import json
 from django.core.serializers import serialize
 from django.core import serializers
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
 
 def show_post(request):
     posts = Post.objects.all().order_by('-created_at')
@@ -145,8 +147,8 @@ def post_json(request):
 
 def like_json(request):
     if request.method == 'GET':
-        posts = Like.objects.all()
-        data = serializers.serialize('json', posts)
+        likes = Like.objects.all()
+        data = serializers.serialize('json', likes)
         return HttpResponse(data, content_type="application/json")
     else:
         return JsonResponse({"status": "error", "message": "Method not allowed."}, status=405)
@@ -154,8 +156,8 @@ def like_json(request):
 
 def comment_json(request):
     if request.method == 'GET':
-        posts = Comment.objects.all()
-        data = serializers.serialize('json', posts)
+        comments = Comment.objects.all()
+        data = serializers.serialize('json', comments)
         return HttpResponse(data, content_type="application/json")
     else:
         return JsonResponse({"status": "error", "message": "Method not allowed."}, status=405)
@@ -163,65 +165,350 @@ def comment_json(request):
 
 def report_json(request):
     if request.method == 'GET':
-        posts = Report.objects.all()
-        data = serializers.serialize('json', posts)
+        reports = Report.objects.all()
+        data = serializers.serialize('json', reports)
         return HttpResponse(data, content_type="application/json")
     else:
         return JsonResponse({"status": "error", "message": "Method not allowed."}, status=405)
 
 
+def restaurant_json(request):
+    if request.method == 'GET':
+        restaurants = Restaurant.objects.all()
+        data = serializers.serialize('json', restaurants)
+        return HttpResponse(data, content_type="application/json")
+    else:
+        return JsonResponse({"status": "error", "message": "Method not allowed."}, status=405)
 
+
+@csrf_exempt
 def create_post_flutter(request):
+    print("Masuk")
     if request.method == 'POST':
         try:
-            #             username = request.POST['username']
-            # password = request.POST['password']
-            # Parse JSON body
-            # data = json.loads(request.body.decode('utf-8'))
-            # restaurant_id = data.get('restaurant_id')
-            # restaurant_id = request.POST.get('restaurant_id')
-            restaurant_id = False
             text = request.POST.get('text')
-            # image = request.FILES.get('image')
-            image = None
+            restaurant_id = request.POST.get('restaurant_id')
 
+            # Validasi atau cari instance Restaurant
             restaurant = None
-
             if restaurant_id:
                 try:
                     restaurant = Restaurant.objects.get(id=restaurant_id)
                 except Restaurant.DoesNotExist:
-                    return JsonResponse({
-                        'status': 'error',
-                        'message': 'Invalid restaurant selected.'
-                    }, status=400)
+                    print(f"Restaurant with id {restaurant_id} not found. Proceeding without restaurant.")
 
-            # Create the new post with or without the restaurant
+            # Buat Post baru
+            default_user, _ = User.objects.get_or_create(id=999, defaults={'username': 'default_user'})
+            user = request.user if request.user.is_authenticated else default_user
+            print('User ', user)
             post = Post.objects.create(
-                user=request.user,
-                restaurant=restaurant,  # This will be None if no restaurant is selected
+                user=user,
                 text=text,
-                image=image,
+                restaurant=restaurant  # Bisa None jika tidak ditemukan
             )
 
+            # Response JSON
             return JsonResponse({
                 'status': 'success',
                 'message': 'Post created successfully.',
                 'post': {
                     'id': post.id,
-                    'user': post.user.id,
                     'text': post.text,
-                    'restaurant': post.restaurant.nama if post.restaurant else None,
-                    'created_at': post.created_at.isoformat()
+                    'restaurant': restaurant.nama if restaurant else None,
+                    'created_at': post.created_at.isoformat(),
                 }
-            }, status=200)
+            })
+
         except Exception as e:
             return JsonResponse({
                 'status': 'error',
-                'message': f'An error occurred: {str(e)}'
+                'message': str(e),
             }, status=500)
+
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Method not allowed.'
+    }, status=405)
+
+@csrf_exempt
+def like_post_flutter(request):
+    """
+    Menerima POST dengan body:
+      {
+        'post_id': <ID dari Post>
+      }
+    Mengembalikan JSON:
+      {
+        'status': 'success',
+        'liked': True/False,
+        'like_count': <updated like count>
+      }
+    """
+    if request.method == 'POST':
+        try:
+            # Dapatkan data. Flutter biasanya mengirim lewat request.body atau request.POST
+            data = request.POST or json.loads(request.body)
+            post_id = data.get('post_id')
+
+            if not post_id:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'post_id is required'
+                }, status=400)
+
+            post = get_object_or_404(Post, id=post_id)
+
+            # Jika user tidak login, gunakan default_user
+            if request.user.is_authenticated:
+                current_user = request.user
+            else:
+                # fallback user default
+                default_user, _ = User.objects.get_or_create(
+                    id=999, 
+                    defaults={'username': 'default_user'}
+                )
+                current_user = default_user
+
+            # Cek apakah user sudah pernah like
+            liked_obj = Like.objects.filter(post=post, user=current_user).first()
+
+            if liked_obj:
+                # Sudah like -> un-like
+                liked_obj.delete()
+                liked = False
+            else:
+                # Belum like -> tambahkan
+                Like.objects.create(post=post, user=current_user)
+                liked = True
+
+            # Hitung jumlah like terbaru
+            like_count = Like.objects.filter(post=post).count()
+
+            return JsonResponse({
+                'status': 'success',
+                'liked': liked,
+                'like_count': like_count
+            })
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     else:
         return JsonResponse({
             'status': 'error',
-            'message': 'Method not allowed.'
+            'message': 'Method not allowed'
         }, status=405)
+
+@csrf_exempt
+def comment_post_flutter(request):
+    """
+    Menerima POST dengan body:
+      {
+        'post_id': <ID dari Post>,
+        'comment': <Isi komentar>
+      }
+    Mengembalikan JSON:
+      {
+        'status': 'success',
+        'username': <username atau 'default_user'>,
+        'comment': <isi komentar>,
+        'post_id': <ID post>,
+        'comment_count': <comment count baru>
+      }
+    """
+    if request.method == 'POST':
+        try:
+            data = request.POST
+            post_id = data.get('post_id')
+            comment_text = data.get('comment')
+
+            if not post_id or not comment_text:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'post_id and comment are required'
+                }, status=400)
+
+            post = get_object_or_404(Post, id=post_id)
+
+            # Jika user tidak login, gunakan default_user
+            if request.user.is_authenticated:
+                current_user = request.user
+            else:
+                default_user, _ = User.objects.get_or_create(
+                    id=999, 
+                    defaults={'username': 'default_user'}
+                )
+                current_user = default_user
+
+            # Buat komentar baru
+            comment = Comment.objects.create(
+                post=post,
+                user=current_user,
+                text=comment_text
+            )
+
+            # Hitung comment terbaru
+            comment_count = Comment.objects.filter(post=post).count()
+
+            return JsonResponse({
+                'status': 'success',
+                 'comment': {
+                'model': 'forum.comment',
+                'pk': comment.id,
+                'fields': {
+                    'post': post.id,
+                    'user': current_user.id,
+                    'text': comment.text,
+                    'created_at': comment.created_at.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                }
+            },
+            'comment_count': comment_count
+            })
+
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    else:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Method not allowed'
+        }, status=405)
+
+
+# -------------------------------------------
+# REPORT POST (Flutter)
+# -------------------------------------------
+@csrf_exempt
+def report_post_flutter(request):
+    """
+    Menerima POST dengan body:
+      {
+        'post_id': <ID dari Post>,
+        'reason': <Alasan report>
+      }
+    Mengembalikan JSON:
+      {
+        'status': 'success',
+        'message': 'Postingan telah dilaporkan.'
+      }
+    """
+    if request.method == 'POST':
+        try:
+            data = request.POST or json.loads(request.body)
+            post_id = data.get('post_id')
+            reason = data.get('reason')
+
+            if not post_id or not reason:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'post_id and reason are required'
+                }, status=400)
+
+            post = get_object_or_404(Post, id=post_id)
+
+            # Jika user tidak login, gunakan default_user
+            if request.user.is_authenticated:
+                current_user = request.user
+            else:
+                default_user, _ = User.objects.get_or_create(
+                    id=999, 
+                    defaults={'username': 'default_user'}
+                )
+                current_user = default_user
+
+            # Buat laporan
+            Report.objects.create(
+                post=post,
+                reported_by=current_user,
+                reason=reason
+            )
+
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Postingan telah dilaporkan.'
+            })
+
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    else:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Method not allowed'
+        }, status=405)
+
+
+def get_all_users(request):
+    """
+    Returns a list of all users with their IDs and usernames.
+    """
+    if request.method == 'GET':
+
+        users = User.objects.all()
+        user_data = [
+            {
+                'id': user.id,
+                'username': user.username,
+            }
+            for user in users
+        ]
+        return JsonResponse({'users': user_data}, status=200)
+
+
+# def get_all_users(request):
+#     if request.method == 'GET':
+#         users = User.objects.all()
+#         data = serializers.serialize('json', users)
+#         return HttpResponse(data, content_type="application/json")
+#     else:
+#         return JsonResponse({"status": "error", "message": "Method not allowed."}, status=405)
+@csrf_exempt
+def edit_comment_flutter(request):
+    if request.method == "POST":
+        comment_id = request.POST.get("comment_id")
+        new_text = request.POST.get("text")
+
+        if not comment_id or not new_text:
+            return JsonResponse({"status": "error", "message": "Invalid input."})
+
+        # Get the comment
+        comment = get_object_or_404(Comment, pk=comment_id)
+
+        # Check if the logged-in user is the owner of the comment
+        if comment.user != request.user:
+            return JsonResponse({"status": "error", "message": "Unauthorized."})
+
+        # Update the comment
+        comment.text = new_text
+        comment.save()
+
+        return JsonResponse({
+            "status": "success",
+            "message": "Comment updated successfully.",
+            "new_comment": {
+                "id": comment.id,
+                "text": comment.text,
+                "post": comment.post.id,
+                "user": comment.user.id,
+            },
+        })
+
+    return JsonResponse({"status": "error", "message": "Invalid request method."})
+
+@csrf_exempt
+def delete_post_flutter(request):
+    if request.method == "POST":
+        post_id = request.POST.get("post_id")
+
+        if not post_id:
+            return JsonResponse({"status": "error", "message": "Post ID is required."})
+
+        # Get the post
+        post = get_object_or_404(Post, pk=post_id)
+
+        # Check if the logged-in user is the owner of the post
+        if post.user != request.user:
+            return JsonResponse({"status": "error", "message": "Unauthorized."})
+
+        # Delete the post
+        post.delete()
+
+        return JsonResponse({"status": "success", "message": "Post deleted successfully."})
+
+    return JsonResponse({"status": "error", "message": "Invalid request method."})

@@ -154,7 +154,8 @@ CSRF_TRUSTED_ORIGINS = ["http://localhost",
                         "http://127.0.0.1",
                         "http://10.0.2.2/",
                         "http://joshua-montolalu-golekmakanrek.pbp.cs.ui.ac.id", 
-                        "https://joshua-montolalu-golekmakanrek.pbp.cs.ui.ac.id"]
+                        "https://joshua-montolalu-golekmakanrek.pbp.cs.ui.ac.id",
+                         'https://fictional-space-palm-tree-69gpw75pr7g5cr44j-3000.app.github.dev']
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_SECURE = True

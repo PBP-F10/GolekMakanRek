@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 import json
+from django.contrib.auth.decorators import login_required
 
 @csrf_exempt
 def login(request):
@@ -85,3 +86,9 @@ def logout(request):
         "status": False,
         "message": "Logout gagal."
         }, status=401)
+
+
+@login_required(login_url='/authentication/login')
+def get_username(request):
+    user = request.user
+    return JsonResponse({"username": user.username})

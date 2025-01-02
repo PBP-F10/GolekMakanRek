@@ -694,7 +694,7 @@ function syncWishlistState(foodId, isWishlisted) {
         
         setTimeout(() => {
             wishlistItem.remove();
-
+            
             const remainingItems = document.querySelectorAll('[id^="wishlist-item-"]');
             if (remainingItems.length === 0) {
                 const wishlistContainer = document.querySelector('#wishlist-container');
@@ -718,6 +718,7 @@ function toggleWishlist(foodId, event) {
     
     if (!isAuthenticated) {
         window.location.href = '/login/';
+        // showToast('Please login to add items to wishlist', 'error');
         return;
     }
 
@@ -748,10 +749,8 @@ function toggleWishlist(foodId, event) {
             syncWishlistState(foodId, data.is_wishlisted);
             
             if (data.is_wishlisted) {
-                addToWishlistStorage(foodId);
                 showToast('Added to wishlist!', 'success');
             } else {
-                removeFromWishlistStorage(foodId);
                 showToast('Removed from wishlist!', 'info');
             }
         } else {
@@ -768,6 +767,13 @@ function toggleWishlist(foodId, event) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[id^="wishlist-btn-"]').forEach(btn => {
+        const foodId = btn.id.replace('wishlist-btn-', '');
+        if (btn.classList.contains('active') || isItemWishlisted(foodId)) {
+            syncWishlistState(foodId, true);
+        }
+    });
+
     if (document.querySelector('meta[name="user-authenticated"]')?.content === 'true') {
         fetch('/food_review/wishlist/status/', {
             credentials: 'include'
@@ -775,13 +781,10 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.wishlisted_items) {
-                data.wishlisted_items.forEach(itemId => {
-                    const wishlistBtn = document.querySelector(`#wishlist-btn-${itemId}`);
-                    if (wishlistBtn) {
-                        wishlistBtn.classList.add('active');
-                    }
-                });
                 saveWishlistedItems(data.wishlisted_items);
+                data.wishlisted_items.forEach(foodId => {
+                    syncWishlistState(foodId, true);
+                });
             }
         })
         .catch(error => console.error('Error fetching wishlist status:', error));

@@ -22,6 +22,10 @@
         transform: translateY(-4px);
         box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1);
     }
+
+    .delete-animation {
+        transition: all 0.3s ease;
+    }
 </style>
 {% endblock meta %}
 
@@ -34,7 +38,7 @@
             <h1 class="text-3xl font-bold text-center text-gray-900 mb-2">
                 My Wishlist
             </h1>
-            <p class="text-gray-600 text-center">
+            <p class="text-gray-600 text-center" id="wishlist-count">
                 {% if wishlist_items %}
                     You have {{ wishlist_items|length }} item{{ wishlist_items|length|pluralize }} in your wishlist
                 {% else %}
@@ -44,9 +48,19 @@
         </div>
 
         {% if wishlist_items %}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="wishlist-grid">
             {% for wishlist_item in wishlist_items %}
-            <div class="bg-white rounded-lg shadow-md p-6 card-hover animate-fade-in">
+            <div class="bg-white rounded-lg shadow-md p-6 card-hover animate-fade-in relative" data-wishlist-id="{{ wishlist_item.item.id }}">
+                <button 
+                    class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors duration-200 delete-wishlist-item"
+                    data-food-id="{{ wishlist_item.item.id }}"
+                    title="Remove from wishlist"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
                 <div class="mb-4">
                     <h3 class="text-xl font-semibold text-orange-600 mb-2">{{ wishlist_item.item.nama }}</h3>
                     <p class="text-gray-600 text-sm mb-3">{{ wishlist_item.item.deskripsi }}</p>
@@ -85,7 +99,7 @@
             {% endfor %}
         </div>
         {% else %}
-        <div class="bg-white rounded-lg shadow-md p-8 text-center animate-fade-in">
+        <div class="bg-white rounded-lg shadow-md p-8 text-center animate-fade-in" id="empty-wishlist">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
@@ -97,4 +111,74 @@
         {% endif %}
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteButtons = document.querySelectorAll('.delete-wishlist-item');
+    const wishlistGrid = document.getElementById('wishlist-grid');
+    const emptyWishlistTemplate = document.getElementById('empty-wishlist');
+    
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', async function() {
+            if (!confirm('Are you sure you want to remove this item from your wishlist?')) {
+                return;
+            }
+
+            const foodId = this.dataset.foodId;
+            const card = this.closest('.card-hover');
+            
+            try {
+                const response = await fetch(`/food_review/wishlist/toggle/${foodId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    card.classList.add('delete-animation');
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.9)';
+                    
+                    setTimeout(() => {
+                        card.remove();
+                        const remainingItems = document.querySelectorAll('.card-hover').length;
+                        const countText = document.getElementById('wishlist-count');
+                        
+                        if (remainingItems === 0) {
+                            wishlistGrid.style.display = 'none';
+                            const emptyState = emptyWishlistTemplate.cloneNode(true);
+                            emptyState.style.display = 'block';
+                            wishlistGrid.parentNode.appendChild(emptyState);
+                            countText.textContent = 'Your wishlist is empty';
+                        } else {
+                            countText.textContent = `You have ${remainingItems} item${remainingItems !== 1 ? 's' : ''} in your wishlist`;
+                        }
+                    }, 300);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to remove item from wishlist. Please try again.');
+            }
+        });
+    });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+</script>
 {% endblock content %}

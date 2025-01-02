@@ -251,7 +251,7 @@ def wishlist(request):
 
 @login_required(login_url='/login/')
 def get_wishlist_status(request):
-    wishlisted_items = list(Wishlist.objects.filter(user=request.user).values_list('food_id', flat=True))
+    wishlisted_items = list(Wishlist.objects.filter(user=request.user).values_list('item_id', flat=True))
     return JsonResponse({'wishlisted_items': wishlisted_items})
 
 @login_required(login_url='/login/')
@@ -299,19 +299,19 @@ def check_wishlist_items(request):
     try:
         if request.method == 'POST':
             data = json.loads(request.body)
-            food_ids = data.get('food_ids', [])
+            item_ids = data.get('item_ids', [])
         else:
-            food_ids = request.GET.getlist('food_ids[]')
+            item_ids = request.GET.getlist('item_ids[]')
 
-        if not food_ids:
+        if not item_ids:
             return JsonResponse({
                 'status': 'error',
-                'message': 'No food IDs provided'
+                'message': 'No item IDs provided'
             }, status=400)
 
         wishlisted_items = Wishlist.objects.filter(
             user=request.user,
-            item_id__in=food_ids
+            item_id__in=item_ids
         ).values_list('item_id', flat=True)
 
         return JsonResponse({
